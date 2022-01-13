@@ -166,6 +166,7 @@ REST_FRAMEWORK = {
         'simplejwt.authentication.JWTAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    "EXCEPTION_HANDLER": "eduon.utils.custom_exception_handler",
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
