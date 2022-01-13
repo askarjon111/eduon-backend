@@ -438,7 +438,7 @@ def get_money_from_wallet(request):
     if not seria.is_valid():
         return Response({'status': False, 'error': seria.errors})
 
-    if speaker.cash < 50000:
+    if speaker.cash < 10000:
         return Response({'status': False, 'error': "Hisobingizda 50 ming dan kam mablag' bor!!!"})
 
     data = {
