@@ -1,0 +1,811 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    {# <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">#}
+    <style>
+        .section__info {
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .section__info .section__info-top {
+            width: 100%;
+            box-shadow: 0 0 11px 2px rgba(0, 0, 0, 0.04);
+            border-radius: 8px;
+            padding: 30px;
+            margin: 0;
+        }
+
+        .section__info .section__info-top .right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section__info .right svg {
+            width: 100%;
+        }
+
+        .box-right {
+            box-sizing: border-box;
+        }
+
+        .section__info-left .section__info-card {
+            padding: 20px;
+            box-shadow: 0 0 11px 2px rgba(0, 0, 0, 0.04);
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .section__info .section__info-bottom {
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .section__info .section__info-bottom .left {
+            padding: 0;
+        }
+
+        .section__info .section__info-bottom .left .bottom-card-wrapper {
+            display: flex;
+        }
+
+        .section__info .section__info-bottom .left .bottom-card-wrapper:first-child {
+            margin-bottom: 10px;
+        }
+
+        .section__info .section__info-bottom .left .bottom-card-wrapper .bottom-card {
+            box-shadow: 0 0 11px 2px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+            margin-right: 20px;
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        .section__info-bottom .left .bottom-card-wrapper .bottom-card {
+            width: 50%;
+            box-shadow: 0 0 11px 2px rgba(0, 0, 0, 0.04);
+            border-radius: 8px;
+        }
+
+        .section__info-bottom .bottom-card-wrapper .bottom-card .bottom-card-header {
+            display: inline-block;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            border-radius: 8px;
+            box-shadow: 0 0 11px 2px rgba(0, 0, 0, 0.04);
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .bottom-card h6 {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .section__info .section__info-bottom .right {
+            box-sizing: border-box;
+            box-shadow: 0 0 11px 2px rgba(0, 0, 0, 0.04);
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .section__info-bottom .right h4 {
+            margin-bottom: 30px;
+        }
+
+        .section__info-bottom .right .right-card-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .section__info-bottom .right .right-card-wrapper .right-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-right: 10px;
+            box-shadow: 0 0 11px 2px rgba(0, 0, 0, 0.04);
+            border-radius: 8px;
+            padding: 10px 20px;
+            width: 100%;
+            height: 60px;
+        }
+
+        .section__info-bottom .right .right-card-wrapper .right-card svg {
+            width: 30px;
+        }
+
+        .section__info-bottom .right .right-card-wrapper .right-card p {
+            margin-left: 10px;
+            margin-bottom: 0;
+        }
+
+        .headphone-img {
+            background-color: #fdfdfd;
+            border-radius: 8px;
+            text-align: center;
+            padding-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .headphone-img svg {
+            height: 220px;
+            object-fit: cover;
+        }
+
+        #video_info {
+            width: 500px;
+            height: 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            animation-name: anim;
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+            transition: all .5s linear;
+        }
+
+        .right-card-wrapper a {
+            color: #000;
+            width: 50%;
+
+        }
+
+        .right-card-wrapper a:hover {
+            color: #ffe600;
+            text-decoration: none;
+        }
+
+        @keyframes anim {
+            0% {
+                box-shadow: 0px 0px 15px #ff7b0094;
+
+            }
+            100% {
+                box-shadow: 0px 0px 15px #ffe60093;
+
+            }
+        }
+
+        #video_info iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 575px) {
+            .bottom-card-wrapper {
+                margin-bottom: 25px;
+            }
+
+        }
+
+
+    </style>
+    <div class="container-fluid">
+        <div class="section__info">
+            <div class="row section__info-top">
+                <div class="col-md-6 col-12 left">
+                    <div class="section__info-left">
+                        <h4>Info</h4>
+                        <p>
+                            Talabalaringiz ularga yaxshi tuzilgan, amaliyotda qo'llangan va
+                            foydali kurs taqdim etayotganingizga ishonch hosil qilishi eng
+                            muhim omildir. Bizning muvaffaqiyatli-spikerlarimiz.asosiy
+                            vaqtlarini kurslarni to'g'ri rejalashtirish uchun sarflaydi.
+                            Chunki to'g'ri rejalashtirilgan kurs talabalarni qo'ygan
+                            maqsadlariga tezroq yetishishlariga yordam beradi.
+                        </p>
+                        <div class="section__info-card">
+                            <strong
+                            >1-qadam: Kurs mavzusini tanlang.
+                            </strong>
+                            <br/>
+                            O'zingiz tajribaga ega va yoqtirgan biror-bir mavzu tanlang. EduOn’da siz tanlagan mavzu
+                            bo'yicha talab va raqobatni tushunishga yordam beradigan bir nechta foydali vositalar
+                            mavjud.
+                        </div>
+                        <div class="section__info-card">
+                            <strong>2-qadam: Kurs maqsadingizni va maqsad qilinayotgan auditoriyangizni aniqlab
+                                oling.</strong> <br/>
+                            Kursingizni yaratishni boshlashdan oldin, siz kimga dars berayotganingizni va kurs
+                            tugaguniga qadar o'quvchilaringizni qayerga olib borishni xohlayotganingizni aniqlab
+                            olishingiz kerak.
+                        </div>
+                        <div class="section__info-card">
+                            <strong
+                            >3-qadam: Talabalar siz o'rgatayotgan bilimlarni qanday amaliyotda qo'llashlarini aniqlab
+                                oling.</strong
+                            >
+                            <br/>
+                            EduOn o'quvchilari o'zlarining bilimlarini amaliy mashg'ulotlarda qo'llashni yaxshi
+                            ko'radilar. Siz kiritishingiz mumkin bo'lgan turli xil amaliyot turlari mavjud, shuning
+                            uchun siz o'zingizning mavzuingiz uchun eng yaxshisini tanlab olishingiz kerak.
+                        </div>
+                        <div class="section__info-card">
+                            <strong>4-qadam: Kursingizning rejasini yarating. </strong>
+                            <br/>
+                            Kursingizning rejasi sizning kursingiz uchun asosdir. Kurslar ketma-ketligini rejalashtirib
+                            olsangiz, video tayyorlash jarayonida qiyinchiliklarga duch kelmaysiz.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 right">
+                    <div class="video" id="video_info">
+                        <iframe width="500" height="300" src="https://www.youtube.com/embed/aOQ_JsX-Mjg"
+                                frameborder="0"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="section__info-bottom">
+                <div class="row">
+                    <div class="col-md-6 col-12 left">
+                        <div class="bottom-card-wrapper">
+                            <div class="bottom-card">
+                                <div class="bottom-card-header">
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="77.74"
+                                            height="71.327"
+                                            viewBox="0 0 77.74 71.327"
+                                    >
+                                        <g
+                                                id="forge-icon_1_"
+                                                data-name="forge-icon (1)"
+                                                transform="translate(1 1)"
+                                        >
+                                            <path
+                                                    id="Path_11546"
+                                                    data-name="Path 11546"
+                                                    d="M78.28,28.227V63.076a2.936,2.936,0,0,1-2.936,2.936H12.5A2.936,2.936,0,0,1,9.56,63.076V19.046A2.936,2.936,0,0,1,12.5,16.11h43.49"
+                                                    transform="translate(-9.56 -8.263)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <line
+                                                    id="Line_67"
+                                                    data-name="Line 67"
+                                                    x2="68.72"
+                                                    transform="translate(0 46.798)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <path
+                                                    id="Path_11547"
+                                                    data-name="Path 11547"
+                                                    d="M22.23,57.257A9.653,9.653,0,0,0,27.293,45.68"
+                                                    transform="translate(-0.848 12.07)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <path
+                                                    id="Path_11548"
+                                                    data-name="Path 11548"
+                                                    d="M40.649,57.257A9.67,9.67,0,0,1,35.5,45.68"
+                                                    transform="translate(7.988 12.07)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <line
+                                                    id="Line_68"
+                                                    data-name="Line 68"
+                                                    x2="42.089"
+                                                    transform="translate(13.315 69.327)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-linecap="round"
+                                                    stroke-width="2"
+                                            />
+                                            <circle
+                                                    id="Ellipse_183"
+                                                    data-name="Ellipse 183"
+                                                    cx="5.957"
+                                                    cy="5.957"
+                                                    r="5.957"
+                                                    transform="translate(15.256 17.247)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <path
+                                                    id="Path_11549"
+                                                    data-name="Path 11549"
+                                                    d="M39.1,44.1A12.066,12.066,0,0,0,27.033,32.05h0A12.05,12.05,0,0,0,15,44.1Z"
+                                                    transform="translate(-5.819 2.698)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <path
+                                                    id="Path_11550"
+                                                    data-name="Path 11550"
+                                                    d="M64.933,31.425H50.757l-8.573,6.059a.152.152,0,0,1-.236-.118v-5.94H38.521a1.468,1.468,0,0,1-1.451-1.451V12.911a1.451,1.451,0,0,1,1.451-1.451H64.933a1.451,1.451,0,0,1,1.451,1.451V29.973A1.468,1.468,0,0,1,64.933,31.425Z"
+                                                    transform="translate(9.356 -11.46)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <h6>
+                                    Video bilan ishlash.</b>
+                                </h6>
+                                <p class="text-center">
+                                    Videodarslarni joylashtirish orqali bilim ulashish
+                                </p>
+                            </div>
+                            <div class="bottom-card">
+                                <div class="bottom-card-header">
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="77.036"
+                                            height="78.693"
+                                            viewBox="0 0 77.036 78.693"
+                                    >
+                                        <g id="success" transform="translate(-0.297 0)">
+                                            <path
+                                                    id="Path_11567"
+                                                    data-name="Path 11567"
+                                                    d="M.3,73.464l1.02,2.3L37.922,60.582l6.377.765,2.3,7.015L43.534,71.3a3.676,3.676,0,0,0-.892,4.209l1.275,3.189L65.088,70.4l-1.148-3.061a3.606,3.606,0,0,0-3.571-2.423H56.16l-2.3-5.485,5.612-2.806a3.833,3.833,0,0,0,1.913-4.719L54.12,32.4a3.929,3.929,0,0,0-4.975-2.3.125.125,0,0,0-.127.128l-5.357,2.3L42.9,30.609l2.934-3.443A15.009,15.009,0,0,0,49.528,19l3.7-4.464A6.7,6.7,0,0,0,52.334,5.1a10.676,10.676,0,0,0-1.53-1.02A6.338,6.338,0,0,0,46.468,3.7L46.085,2.55a3.688,3.688,0,0,0-4.846-2.3L14.327,9.948a3.733,3.733,0,0,0-2.3,4.846v.128l.638,1.658a7.067,7.067,0,0,0-3.7,8.673,7.254,7.254,0,0,0,5.867,4.719l5.995.638a16.61,16.61,0,0,0,8.29,3.189l4.209.383.765,1.913a3.8,3.8,0,0,0-1.785,2.551l-.893,4.336L.3,55.608l.893,2.423,17.856-7.142L23.382,63.9ZM61.39,68.107l.255.765-16.326,6.5-.382-.765a1.768,1.768,0,0,1,.255-1.4l4.336-4.082,5.484-1.785h5.1a1.28,1.28,0,0,1,1.275.765Zm-8.035-3.062-4.592,1.531L47.105,61.73a2.835,2.835,0,0,0,2.04-.383l2.168-1.02ZM49.911,32.14a1.266,1.266,0,0,1,1.658.638l1.02,2.679L46.34,37.5l.765,2.423,6.249-2.041,1.53,4.082L48.891,44l.765,2.424,6.122-2.041,1.531,4.081-5.867,1.913.765,2.424L58.2,50.761l.638,1.658A1.126,1.126,0,0,1,58.2,53.95L48.125,58.924a1.617,1.617,0,0,1-.765.128l-8.673-1.021L33.968,43.874l.893-4.719a1.349,1.349,0,0,1,.765-.893ZM49.783,6.376a4.225,4.225,0,0,1,2.168,5.485,4.469,4.469,0,0,1-.638,1.02l-1.531,1.913a19.061,19.061,0,0,0-.765-3.7L47.36,6.121a5.1,5.1,0,0,1,2.423.255ZM11.52,24.615a4.394,4.394,0,0,1,2.168-5.485l1.785,4.337A18.478,18.478,0,0,0,18.025,27.8l-2.679-.255a4.266,4.266,0,0,1-3.826-2.933Zm18.111,6.759a13.938,13.938,0,0,1-11.734-8.8l-3.316-8.418A1.265,1.265,0,0,1,15.22,12.5L42.131,2.805a1.408,1.408,0,0,1,1.021,0,1.307,1.307,0,0,1,.638.765l2.806,8.418a14.019,14.019,0,0,1-2.678,13.519L39.963,30.1l1.148,3.061-4.592,1.913-1.275-3.189ZM21.469,49.868,24.4,48.721l3.189,9.693,2.423-.765L26.7,47.7l5.1-2.041,4.336,12.882L25.805,62.878Zm0,0"
+                                                    transform="translate(0 0)"
+                                            />
+                                            <path
+                                                    id="Path_11568"
+                                                    data-name="Path 11568"
+                                                    d="M361.873,52.573v1.275h2.551V52.573A6.315,6.315,0,0,1,370.8,46.2V43.645a6.315,6.315,0,0,1-6.377-6.377V35.992h-2.551v1.275a6.315,6.315,0,0,1-6.377,6.377V46.2A6.315,6.315,0,0,1,361.873,52.573Zm1.275-10.713a8.79,8.79,0,0,0,3.061,3.061,8.8,8.8,0,0,0-3.061,3.062,8.8,8.8,0,0,0-3.061-3.062A8.789,8.789,0,0,0,363.148,41.859Zm0,0"
+                                                    transform="translate(-298.57 -30.254)"
+                                            />
+                                            <path
+                                                    id="Path_11569"
+                                                    data-name="Path 11569"
+                                                    d="M9.873,212.573v1.275h2.551v-1.275A6.315,6.315,0,0,1,18.8,206.2v-2.551a6.315,6.315,0,0,1-6.377-6.377v-1.275H9.873v1.275A6.315,6.315,0,0,1,3.5,203.645V206.2A6.315,6.315,0,0,1,9.873,212.573Zm1.275-10.713a8.79,8.79,0,0,0,3.061,3.061,8.8,8.8,0,0,0-3.061,3.062,8.8,8.8,0,0,0-3.061-3.062,8.79,8.79,0,0,0,3.061-3.061Zm0,0"
+                                                    transform="translate(-2.689 -164.745)"
+                                            />
+                                            <path
+                                                    id="Path_11570"
+                                                    data-name="Path 11570"
+                                                    d="M396.424,197.267v-1.275h-2.551v1.275a6.315,6.315,0,0,1-6.377,6.377V206.2a6.315,6.315,0,0,1,6.377,6.377v1.275h2.551v-1.275A6.315,6.315,0,0,1,402.8,206.2v-2.551A6.315,6.315,0,0,1,396.424,197.267Zm-1.275,10.714a8.8,8.8,0,0,0-3.061-3.062,8.79,8.79,0,0,0,3.061-3.061,8.79,8.79,0,0,0,3.061,3.061A8.8,8.8,0,0,0,395.149,207.981Zm0,0"
+                                                    transform="translate(-325.469 -164.745)"
+                                            />
+                                            <path
+                                                    id="Path_11571"
+                                                    data-name="Path 11571"
+                                                    d="M236.552,56.318l1.785,1.785c7.015-7.015.51-17.728.128-18.111L236.3,41.4c.128,0,5.867,9.311.255,14.923Zm0,0"
+                                                    transform="translate(-198.375 -33.616)"
+                                            />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <h6>Muvaffaqiyat.</h6>
+                                <p class="text-center">
+                                    EduOn bilan birgaliklda katta marralarni zabt etish
+                                </p>
+                            </div>
+                        </div>
+                        <div class="bottom-card-wrapper">
+                            <div class="bottom-card">
+                                <div class="bottom-card-header">
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="63.933"
+                                            height="64.06"
+                                            viewBox="0 0 63.933 64.06"
+                                    >
+                                        <g id="forge-icon" transform="translate(-6.14 -6.086)">
+                                            <circle
+                                                    id="Ellipse_184"
+                                                    data-name="Ellipse 184"
+                                                    cx="30.966"
+                                                    cy="30.966"
+                                                    r="30.966"
+                                                    transform="translate(7.14 7.214)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <path
+                                                    id="Path_11551"
+                                                    data-name="Path 11551"
+                                                    d="M32,6.84A42.463,42.463,0,0,1,46.524,38.566c0,20.167-9.068,26.158-14.524,30.194"
+                                                    transform="translate(6.106 0)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <path
+                                                    id="Path_11552"
+                                                    data-name="Path 11552"
+                                                    d="M34.871,6.84A42.463,42.463,0,0,0,20.31,38.566c0,20.167,9.068,26.158,14.524,30.194"
+                                                    transform="translate(3.235 0)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <line
+                                                    id="Line_69"
+                                                    data-name="Line 69"
+                                                    x2="54.035"
+                                                    transform="translate(11.163 22.921)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <line
+                                                    id="Line_70"
+                                                    data-name="Line 70"
+                                                    y2="61.92"
+                                                    transform="translate(38.106 6.84)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <line
+                                                    id="Line_71"
+                                                    data-name="Line 71"
+                                                    x2="52.229"
+                                                    transform="translate(12.01 54.784)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                            <line
+                                                    id="Line_72"
+                                                    data-name="Line 72"
+                                                    y1="0.772"
+                                                    x2="61.933"
+                                                    transform="translate(7.14 37.794)"
+                                                    fill="none"
+                                                    stroke="#000"
+                                                    stroke-width="2"
+                                            />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <h6>
+                                    Auditoriyani shakillantirish.
+                                </h6>
+                                <p class="text-center">
+                                    O`z auditoriyangizga ega bo`lish imkoniyati
+                                </p>
+                            </div>
+                            <div class="bottom-card">
+                                <div class="bottom-card-header">
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="64.024"
+                                            height="80.894"
+                                            viewBox="0 0 64.024 80.894"
+                                    >
+                                        <g id="graduated" transform="translate(-53.387 0)">
+                                            <path
+                                                    id="Path_11576"
+                                                    data-name="Path 11576"
+                                                    d="M108.751,52.849,104,51.455,93.675,44.709V43.163A13.748,13.748,0,0,0,99.1,33.507a3.157,3.157,0,0,0,2.649-3.111V26.145c0-.016,0-.033,0-.049V20.711a2.336,2.336,0,0,0,.977-1.907V13.876l7.128-1.214a2.527,2.527,0,0,0,.342-4.9L86.163.119a2.514,2.514,0,0,0-1.532,0L60.6,7.763a2.536,2.536,0,0,0-.787,4.412v6.444h-.059A2.457,2.457,0,0,0,57.3,21.073v3.2l-1.584,9.3a2.638,2.638,0,0,0,2.6,3.08h5.364a2.638,2.638,0,0,0,2.6-3.08l-1.584-9.3v-3.2a2.457,2.457,0,0,0-2.454-2.454h-.059V12.874l5.892,1V18.8a2.338,2.338,0,0,0,.972,1.9l0,5.438V30.4A3.156,3.156,0,0,0,71.7,33.507a13.749,13.749,0,0,0,5.421,9.652v1.553L66.792,51.458,62.048,52.85a12.049,12.049,0,0,0-8.661,11.568V67.95a1.185,1.185,0,1,0,2.37,0V64.418a9.739,9.739,0,0,1,6.958-9.294l4.42-1.3L84.794,64.32a1.2,1.2,0,0,0,1.211,0l17.66-10.494,4.42,1.3a9.739,9.739,0,0,1,6.958,9.294V75.862a2.665,2.665,0,0,1-2.662,2.662h-5.223V73.417a1.185,1.185,0,1,0-2.37,0v5.108H66.007V73.417a1.185,1.185,0,0,0-2.37,0v5.108H58.419a2.665,2.665,0,0,1-2.662-2.662V73.489a1.185,1.185,0,1,0-2.37,0v2.373a5.038,5.038,0,0,0,5.032,5.032h53.96a5.038,5.038,0,0,0,5.032-5.032V64.417a12.05,12.05,0,0,0-8.66-11.568ZM63.679,34.28H58.315a.267.267,0,0,1-.264-.313l1.433-8.411H62.51l1.433,8.411A.267.267,0,0,1,63.679,34.28ZM62.325,21.073v2.114H59.669V21.073a.084.084,0,0,1,.084-.084h2.487A.084.084,0,0,1,62.325,21.073ZM81.161,58.96l.472.725L69.535,52.5l7.679-5.016A24.891,24.891,0,0,0,81.161,58.96Zm-.008-5.115a30.47,30.47,0,0,0,8.492,0,22.632,22.632,0,0,1-1.995,3.823L85.4,61.128l-2.252-3.461a22.632,22.632,0,0,1-1.995-3.823Zm8.484,5.115A24.889,24.889,0,0,0,93.584,47.48l7.679,5.015-12.1,7.189Zm6.931-37.807h2.809V24.96H97.983a1.416,1.416,0,0,1-1.415-1.415V21.152ZM61.318,10.021,85.349,2.377a.156.156,0,0,1,.1,0l24.031,7.644a.132.132,0,0,1,.109.161c-.009.123-.079.135-.131.144l-7.945,1.353-2.983-.369a1.185,1.185,0,0,0-.291,2.352l2.119.262v4.858H70.444V13.924l12.262-1.517a21.95,21.95,0,0,1,5.381,0l4.641.574a1.185,1.185,0,0,0,.291-2.352l-4.641-.574a24.309,24.309,0,0,0-5.963,0L69.287,11.68l-7.948-1.354c-.052-.009-.122-.021-.131-.144a.132.132,0,0,1,.109-.161Zm10.1,14.938,0-3.807H74.23v2.393a1.416,1.416,0,0,1-1.415,1.415h-1.4ZM74.026,32.9A1.836,1.836,0,0,0,72.2,31.177a.783.783,0,0,1-.782-.782V27.33h1.4A3.789,3.789,0,0,0,76.6,23.545V21.152H94.2v2.393a3.789,3.789,0,0,0,3.784,3.784h1.4V30.4a.783.783,0,0,1-.782.782A1.836,1.836,0,0,0,96.772,32.9a11.4,11.4,0,0,1-22.746,0ZM85.4,45.938A13.677,13.677,0,0,0,91.3,44.6v.751a22.584,22.584,0,0,1-.8,5.952,27.98,27.98,0,0,1-10.212,0,22.582,22.582,0,0,1-.8-5.952c0-.025,0-.05-.005-.074,0,0,0-.01,0-.015V44.6A13.679,13.679,0,0,0,85.4,45.938Z"
+                                                    transform="translate(0 0)"
+                                            />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <h6>
+                                    Bilimlarni bo`lishish.
+                                </h6>
+                                <p class="text-center">
+                                    O`z bilimlaringizni bo`lishish orqali daromad topish
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12 right">
+                        <h4>
+                            <b>Xizmatlar</b>
+                        </h4>
+                        <div class="right-card-wrapper ">
+                            <a href="https://eduon.uz/">
+                                <div class="right-card">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="43.713" height="43.713"
+                                         viewBox="0 0 43.713 43.713">
+                                        <g id="Group_2834" data-name="Group 2834" transform="translate(0.5 0.5)">
+                                            <path id="Path_11579" data-name="Path 11579"
+                                                  d="M10.011,16.935h-3.3a14.686,14.686,0,0,1,28.418-4.009,1.669,1.669,0,1,0,3.13-1.158A18.021,18.021,0,0,0,3.339,17.832,6.676,6.676,0,0,0,0,23.609v5.673a6.682,6.682,0,0,0,6.674,6.674h3.337a1.668,1.668,0,0,0,1.668-1.668V18.6A1.668,1.668,0,0,0,10.011,16.935ZM8.342,32.619H6.674a3.341,3.341,0,0,1-3.337-3.337V23.609a3.341,3.341,0,0,1,3.337-3.337H8.342Z"
+                                                  fill="#ffd634" stroke="#fff" stroke-width="1"/>
+                                            <path id="Path_11580" data-name="Path 11580"
+                                                  d="M234.02,203h-3.337a1.668,1.668,0,0,0-1.668,1.668V222.1a1.67,1.67,0,0,1-1.669,1.668h-5.089v.053a3.337,3.337,0,1,0,0,3.231v.053h5.089a5.011,5.011,0,0,0,5.005-5.005v-.083h1.668a6.682,6.682,0,0,0,6.674-6.674v-5.673A6.682,6.682,0,0,0,234.02,203Zm3.337,12.347a3.341,3.341,0,0,1-3.337,3.337h-1.668V206.337h1.668a3.341,3.341,0,0,1,3.337,3.337Z"
+                                                  transform="translate(-197.98 -186.065)" fill="#ffd634" stroke="#fff"
+                                                  stroke-width="1"/>
+                                        </g>
+                                    </svg>
+                                    <p>Admin bilan bog'lanish</p>
+                                </div>
+                            </a>
+                            <!-- <div class="right-card">
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="37.866"
+                                        height="39.463"
+                                        viewBox="0 0 37.866 39.463"
+                                >
+                                    <g id="discount" transform="translate(-10.359 0.002)">
+                                        <g
+                                                id="Group_2846"
+                                                data-name="Group 2846"
+                                                transform="translate(10.359 -0.002)"
+                                        >
+                                            <g
+                                                    id="Group_2845"
+                                                    data-name="Group 2845"
+                                                    transform="translate(0 0)"
+                                            >
+                                                <path
+                                                        id="Path_11584"
+                                                        data-name="Path 11584"
+                                                        d="M46.4,20.241a1.156,1.156,0,0,1,0-1.022l1.472-3.011a3.426,3.426,0,0,0-1.478-4.549l-2.96-1.571a1.156,1.156,0,0,1-.6-.827l-.579-3.3a3.426,3.426,0,0,0-3.87-2.812l-3.318.469a1.156,1.156,0,0,1-.972-.316L31.684.971a3.426,3.426,0,0,0-4.783,0L24.492,3.3a1.157,1.157,0,0,1-.972.316L20.2,3.148a3.425,3.425,0,0,0-3.87,2.812l-.579,3.3a1.157,1.157,0,0,1-.6.827l-2.96,1.571a3.426,3.426,0,0,0-1.478,4.549l1.472,3.011a1.156,1.156,0,0,1,0,1.022l-1.472,3.011A3.426,3.426,0,0,0,12.191,27.8l2.96,1.571a1.156,1.156,0,0,1,.6.827l.579,3.3a3.424,3.424,0,0,0,3.377,2.846,3.519,3.519,0,0,0,.493-.035l3.318-.469a1.156,1.156,0,0,1,.972.316l2.409,2.33a3.426,3.426,0,0,0,4.783,0l2.409-2.33a1.158,1.158,0,0,1,.972-.316l3.318.469a3.425,3.425,0,0,0,3.87-2.812l.579-3.3a1.157,1.157,0,0,1,.6-.827l2.96-1.571a3.426,3.426,0,0,0,1.478-4.549Zm-1.073,5.55-2.96,1.571a3.418,3.418,0,0,0-1.776,2.444l-.579,3.3a1.159,1.159,0,0,1-1.309.951l-3.318-.469a3.417,3.417,0,0,0-2.873.934L30.1,36.852a1.159,1.159,0,0,1-1.618,0l-2.409-2.33a3.415,3.415,0,0,0-2.384-.968,3.493,3.493,0,0,0-.49.035l-3.318.469a1.159,1.159,0,0,1-1.309-.951l-.579-3.3a3.418,3.418,0,0,0-1.776-2.444l-2.96-1.571a1.159,1.159,0,0,1-.5-1.539l1.472-3.011a3.418,3.418,0,0,0,0-3.021l-1.472-3.011a1.159,1.159,0,0,1,.5-1.539l2.96-1.571a3.418,3.418,0,0,0,1.776-2.444l.579-3.3A1.159,1.159,0,0,1,19.882,5.4l3.318.469a3.418,3.418,0,0,0,2.873-.934l2.409-2.33a1.159,1.159,0,0,1,1.618,0l2.409,2.33a3.418,3.418,0,0,0,2.873.934L38.7,5.4a1.159,1.159,0,0,1,1.309.951l.579,3.3A3.418,3.418,0,0,0,42.366,12.1l2.96,1.571a1.159,1.159,0,0,1,.5,1.539l-1.472,3.011a3.418,3.418,0,0,0,0,3.021l1.472,3.011A1.159,1.159,0,0,1,45.326,25.79Z"
+                                                        transform="translate(-10.359 0.002)"
+                                                        fill="#ffd634"
+                                                />
+                                            </g>
+                                        </g>
+                                        <g
+                                                id="Group_2848"
+                                                data-name="Group 2848"
+                                                transform="translate(20.643 11.081)"
+                                        >
+                                            <g
+                                                    id="Group_2847"
+                                                    data-name="Group 2847"
+                                                    transform="translate(0)"
+                                            >
+                                                <path
+                                                        id="Path_11585"
+                                                        data-name="Path 11585"
+                                                        d="M160.755,144.125a1.138,1.138,0,0,0-1.609,0l-15.021,15.021a1.138,1.138,0,1,0,1.609,1.609l15.021-15.021A1.138,1.138,0,0,0,160.755,144.125Z"
+                                                        transform="translate(-143.792 -143.792)"
+                                                        fill="#ffd634"
+                                                />
+                                            </g>
+                                        </g>
+                                        <g
+                                                id="Group_2850"
+                                                data-name="Group 2850"
+                                                transform="translate(20.567 9.487)"
+                                        >
+                                            <g id="Group_2849" data-name="Group 2849">
+                                                <path
+                                                        id="Path_11586"
+                                                        data-name="Path 11586"
+                                                        d="M146.975,123.116a4.173,4.173,0,1,0,4.173,4.173A4.178,4.178,0,0,0,146.975,123.116Zm0,6.069a1.9,1.9,0,1,1,1.9-1.9A1.9,1.9,0,0,1,146.975,129.185Z"
+                                                        transform="translate(-142.802 -123.116)"
+                                                        fill="#ffd634"
+                                                />
+                                            </g>
+                                        </g>
+                                        <g
+                                                id="Group_2852"
+                                                data-name="Group 2852"
+                                                transform="translate(29.671 21.626)"
+                                        >
+                                            <g id="Group_2851" data-name="Group 2851">
+                                                <path
+                                                        id="Path_11587"
+                                                        data-name="Path 11587"
+                                                        d="M265.095,280.61a4.173,4.173,0,1,0,4.173,4.173A4.177,4.177,0,0,0,265.095,280.61Zm0,6.069a1.9,1.9,0,1,1,1.9-1.9A1.9,1.9,0,0,1,265.095,286.679Z"
+                                                        transform="translate(-260.922 -280.61)"
+                                                        fill="#ffd634"
+                                                />
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <p >Studiya band qilish</p>
+                            </div> -->
+                        </div>
+                        <div class="right-card-wrapper">
+                            <a href="https://eduon.uz/terms">
+                                <div class="right-card">
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="42.218"
+                                            height="34.364"
+                                            viewBox="0 0 42.218 34.364"
+                                    >
+                                        <g id="megaphone" transform="translate(0 -45.195)">
+                                            <g
+                                                    id="Group_2838"
+                                                    data-name="Group 2838"
+                                                    transform="translate(0 45.195)"
+                                            >
+                                                <path
+                                                        id="Path_11581"
+                                                        data-name="Path 11581"
+                                                        d="M36.5,54.306V46.135a.953.953,0,0,0-.454-.772,1.135,1.135,0,0,0-.863-.136L17.16,52.4h-8.9a4.631,4.631,0,0,0-3.995,2.451l-.817.318A5.13,5.13,0,0,0,0,60.026a5.039,5.039,0,0,0,3.45,4.812l.545.227a4.676,4.676,0,0,0,2.27,2.5l2.406,8.716a4.449,4.449,0,0,0,7.854,1.5,4.676,4.676,0,0,0,.726-3.949l-1.634-5.992H17.16l18.022,7.309.318.091a1.09,1.09,0,0,0,.545-.136.862.862,0,0,0,.454-.726V65.746a5.72,5.72,0,0,0,0-11.44ZM3.813,63.022a3.307,3.307,0,0,1,0-5.992ZM15.072,76.641a2.587,2.587,0,0,1-2.134,1.044,2.724,2.724,0,0,1-2.542-2L8.262,67.834h5.493L15.48,74.28A2.724,2.724,0,0,1,15.072,76.641Zm1.453-10.623H8.262a2.5,2.5,0,0,1-2.63-2.356q-.005-.093,0-.186V57.03a2.724,2.724,0,0,1,2.63-2.814h8.265Zm18.158,6.991L18.34,66.472V54.034L34.683,47.5ZM36.5,63.93V56.122a3.9,3.9,0,0,1,0,7.808Z"
+                                                        transform="translate(0 -45.195)"
+                                                        fill="#ffd634"
+                                                />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    <p>Foydalanish shartlari</p>
+                                </div>
+                            </a>
+                            <!-- <div class="right-card">
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="41.953"
+                                        height="41.952"
+                                        viewBox="0 0 41.953 41.952"
+                                >
+                                    <g
+                                            id="Group_2857"
+                                            data-name="Group 2857"
+                                            transform="translate(-15.996 -16)"
+                                    >
+                                        <path
+                                                id="Path_11582"
+                                                data-name="Path 11582"
+                                                d="M57.9,30.424l-1.4-3.5a.7.7,0,0,0-.909-.39L52.7,27.7a2.994,2.994,0,0,0-1.335-1.173,3.066,3.066,0,0,0-.406-.147V24.39h2.8a.7.7,0,0,0,.582-.311L56.925,20.2h.325a.7.7,0,0,0,.7-.7V16.7a.7.7,0,0,0-.7-.7H16.7a.7.7,0,0,0-.7.7v2.8a.7.7,0,0,0,.7.7h.325l2.589,3.884a.7.7,0,0,0,.582.311h2.8v1.985a3.075,3.075,0,0,0-.406.147A2.994,2.994,0,0,0,21.248,27.7l-2.894-1.158a.7.7,0,0,0-.909.39l-1.4,3.5a.7.7,0,0,0,.39.909L19.3,32.477a3.316,3.316,0,0,0,.894,2.281V53.648L16.267,56.7a.7.7,0,0,0,.429,1.251H57.25a.7.7,0,0,0,.429-1.251l-3.925-3.053V34.878h-.12a3.3,3.3,0,0,0,1.014-2.4l2.862-1.145A.7.7,0,0,0,57.9,30.424Zm-6.2-1.6a.715.715,0,0,0,.032.074l1.379,2.759A1.949,1.949,0,0,1,52.1,34.229l-.053.024-2.148,1.074L46.978,28.91l2.167-1.084a2.135,2.135,0,0,1,1.647-.027,1.724,1.724,0,0,1,.906,1.026ZM24.479,22.992H21.5l1.49-2.236ZM24.3,20.2h2.98l-1.49,2.236Zm4.287.561,1.49,2.236h-2.98Zm1.306-.561h2.98l-1.49,2.236Zm4.287.561,1.49,2.236h-2.98Zm1.306-.561h2.98l-1.49,2.236Zm4.287.561,1.49,2.236H38.28Zm1.306-.561h2.98l-1.49,2.236Zm4.287.561,1.49,2.236h-2.98ZM46.67,20.2h2.98l-1.49,2.236Zm4.287.561,1.49,2.236h-2.98Zm2.8,1.674L52.263,20.2h2.98ZM17.4,17.4H56.55v1.4H17.4ZM18.7,20.2h2.98l-1.49,2.236Zm30.857,4.2v1.892a4.063,4.063,0,0,0-.959.255l-.053.024-2.8,1.4a.7.7,0,0,0-.324.915l3.5,7.691a.7.7,0,0,0,.637.41V50.315A2.933,2.933,0,0,0,50.52,52.9l.008.006,1.267.986-3.189,2.657H25.34L22.15,53.9l1.267-.986.008-.006a2.933,2.933,0,0,0,.961-2.589V36.976a.7.7,0,0,0,.637-.41l3.5-7.691a.7.7,0,0,0-.323-.915l-2.8-1.4-.053-.024a4.063,4.063,0,0,0-.959-.255V24.39Zm2.8,30.859v1.3H50.791Zm-29.2,1.3H21.59v-1.3Zm-.907-27.729a1.723,1.723,0,0,1,.906-1.026,2.135,2.135,0,0,1,1.647.027l2.167,1.084-2.917,6.417L21.9,34.253l-.053-.024a1.949,1.949,0,0,1-1.014-2.572L22.216,28.9A.713.713,0,0,0,22.247,28.825ZM18.484,28.1l2.141.857L19.567,31.07l0,.007L17.6,30.294ZM21.59,35.66l1.4.7V50.315c0,.873-.06,1.194-.433,1.495l-.965.751Zm-1.4,19.759v1.134H18.734Zm35.02,1.134H53.754V55.42ZM51.39,51.81c-.373-.3-.433-.622-.433-1.495V36.359l1.4-.7v16.9Zm2.992-20.732,0-.007L53.32,28.953l2.141-.857.879,2.2Z"
+                                                fill="#ffd634"
+                                        />
+                                        <path
+                                                id="Path_11583"
+                                                data-name="Path 11583"
+                                                d="M129.4,291.5v2.633a2.093,2.093,0,0,0-.7,1.562v3.5a.7.7,0,0,0,0,1.4h20.976a.7.7,0,1,0,0-1.4v-3.5a2.093,2.093,0,0,0-.7-1.562V291.5a3.5,3.5,0,0,0-3.5-3.5H132.894A3.5,3.5,0,0,0,129.4,291.5Zm.7,7.691v-3.5a.7.7,0,0,1,.7-.7h.7v1.4a.7.7,0,0,0,.7.7h13.984a.7.7,0,0,0,.7-.7v-1.4h.7a.7.7,0,0,1,.7.7v3.5Zm.7-7.691a2.1,2.1,0,0,1,2.1-2.1H145.48a2.1,2.1,0,0,1,2.1,2.1v2.1h-1.4a.7.7,0,0,0-.7.7v1.4H132.894v-1.4a.7.7,0,0,0-.7-.7h-1.4Z"
+                                                transform="translate(-102.214 -248.227)"
+                                                fill="#ffd634"
+                                        />
+                                    </g>
+                                </svg>
+                                <p>Aksiya va yangiliklar</p>
+                            </div> -->
+                        </div>
+                        <div class="headphone-img">
+                            <svg id="undraw_Process_re_gws7" xmlns="http://www.w3.org/2000/svg" width="409.825"
+                                 height="429.172" viewBox="0 0 409.825 429.172">
+                                <rect id="Rectangle_525" data-name="Rectangle 525" width="1.139" height="74.387"
+                                      transform="translate(285.077 53.179) rotate(-46.407)" fill="#e6e6e6"/>
+                                <path id="Path_11588" data-name="Path 11588"
+                                      d="M495.84,143.982l-1.138.069.343,5.6-5.615-.067-.012,1.139,6.838.081Z"
+                                      transform="translate(-156.015 -45.898)" fill="#e6e6e6"/>
+                                <path id="Path_11589" data-name="Path 11589"
+                                      d="M424.582,76.288l-.012,1.139-5.614-.067.343,5.6-1.138.069-.416-6.826Z"
+                                      transform="translate(-133.167 -24.293)" fill="#e6e6e6"/>
+                                <circle id="Ellipse_185" data-name="Ellipse 185" cx="6.262" cy="6.262" r="6.262"
+                                        transform="translate(306.147 72.15)" fill="#e6e6e6"/>
+                                <rect id="Rectangle_526" data-name="Rectangle 526" width="74.387" height="1.139"
+                                      transform="translate(71.223 103.647) rotate(-43.593)" fill="#e6e6e6"/>
+                                <path id="Path_11590" data-name="Path 11590"
+                                      d="M103.815,150.807l6.838-.081-.013-1.139-5.614.067.343-5.6-1.138-.069Z"
+                                      transform="translate(-33.094 -45.898)" fill="#e6e6e6"/>
+                                <path id="Path_11591" data-name="Path 11591"
+                                      d="M182.327,76.206l-.416,6.826-1.138-.069.343-5.6-5.614.067-.012-1.139Z"
+                                      transform="translate(-55.942 -24.293)" fill="#e6e6e6"/>
+                                <circle id="Ellipse_186" data-name="Ellipse 186" cx="6.262" cy="6.262" r="6.262"
+                                        transform="translate(92.292 72.15)" fill="#e6e6e6"/>
+                                <path id="Path_11592" data-name="Path 11592"
+                                      d="M622.743,264.8H528.238a5.13,5.13,0,0,1-5.124-5.124V140.124A5.13,5.13,0,0,1,528.238,135h94.505a5.13,5.13,0,0,1,5.124,5.124V259.679a5.13,5.13,0,0,1-5.124,5.124ZM528.238,136.138a3.99,3.99,0,0,0-3.985,3.985V259.678a3.99,3.99,0,0,0,3.985,3.985h94.5a3.99,3.99,0,0,0,3.985-3.985V140.123a3.99,3.99,0,0,0-3.985-3.985Z"
+                                      transform="translate(-370.578 -135)" fill="#3f3d56"/>
+                                <path id="Path_11593" data-name="Path 11593"
+                                      d="M577.527,205.473h-20.8a2.565,2.565,0,0,1-2.562-2.562V178.363a2.565,2.565,0,0,1,2.562-2.562h20.8a2.565,2.565,0,0,1,2.562,2.562v24.548A2.565,2.565,0,0,1,577.527,205.473Z"
+                                      transform="translate(-380.476 -148.006)" fill="#ffd634"/>
+                                <path id="Path_11594" data-name="Path 11594"
+                                      d="M636.863,222.188h-20.8a2.565,2.565,0,0,1-2.562-2.562V195.077a2.565,2.565,0,0,1,2.562-2.562h20.8a2.565,2.565,0,0,1,2.562,2.562v24.549A2.565,2.565,0,0,1,636.863,222.188Z"
+                                      transform="translate(-399.391 -153.334)" fill="#ccc"/>
+                                <path id="Path_11595" data-name="Path 11595"
+                                      d="M589.227,273.166h-20.8a2.565,2.565,0,0,1-2.562-2.562V246.056a2.565,2.565,0,0,1,2.562-2.562h20.8a2.565,2.565,0,0,1,2.562,2.562V270.6A2.565,2.565,0,0,1,589.227,273.166Z"
+                                      transform="translate(-384.205 -169.585)" fill="#4b4b4b"/>
+                                <path id="Path_11596" data-name="Path 11596"
+                                      d="M846.658,445.26H752.152a5.13,5.13,0,0,1-5.124-5.124V320.581a5.13,5.13,0,0,1,5.124-5.124h94.505a5.13,5.13,0,0,1,5.124,5.124V440.136a5.13,5.13,0,0,1-5.124,5.124ZM752.152,316.6a3.99,3.99,0,0,0-3.985,3.985V440.136a3.99,3.99,0,0,0,3.985,3.985h94.505a3.99,3.99,0,0,0,3.985-3.985V320.581a3.99,3.99,0,0,0-3.985-3.985Z"
+                                      transform="translate(-441.957 -192.525)" fill="#3f3d56"/>
+                                <path id="Path_11597" data-name="Path 11597"
+                                      d="M831.481,352.187H799.03a2.277,2.277,0,1,1,0-4.554h32.451a2.277,2.277,0,1,1,0,4.554Z"
+                                      transform="translate(-457.808 -202.782)" fill="#ffd634"/>
+                                <path id="Path_11598" data-name="Path 11598"
+                                      d="M839.963,383.944H775.63a2.277,2.277,0,0,1,0-4.554h64.332a2.277,2.277,0,0,1,0,4.554Z"
+                                      transform="translate(-450.348 -212.905)" fill="#ccc"/>
+                                <path id="Path_11599" data-name="Path 11599"
+                                      d="M839.963,401.494H775.63a2.277,2.277,0,0,1,0-4.555h64.332a2.277,2.277,0,0,1,0,4.554Z"
+                                      transform="translate(-450.348 -218.5)" fill="#ccc"/>
+                                <path id="Path_11600" data-name="Path 11600"
+                                      d="M839.963,419.044H775.63a2.277,2.277,0,0,1,0-4.555h64.332a2.277,2.277,0,0,1,0,4.555Z"
+                                      transform="translate(-450.348 -224.094)" fill="#ccc"/>
+                                <path id="Path_11601" data-name="Path 11601"
+                                      d="M839.963,436.594H775.63a2.277,2.277,0,0,1,0-4.554h64.332a2.277,2.277,0,0,1,0,4.554Z"
+                                      transform="translate(-450.348 -229.689)" fill="#ccc"/>
+                                <path id="Path_11602" data-name="Path 11602"
+                                      d="M839.963,454.144H775.63a2.277,2.277,0,0,1,0-4.555h64.332a2.277,2.277,0,0,1,0,4.554Z"
+                                      transform="translate(-450.348 -235.283)" fill="#ccc"/>
+                                <path id="Path_11603" data-name="Path 11603"
+                                      d="M839.963,471.694H775.63a2.277,2.277,0,0,1,0-4.554h64.332a2.277,2.277,0,0,1,0,4.554Z"
+                                      transform="translate(-450.348 -240.878)" fill="#ccc"/>
+                                <path id="Path_11604" data-name="Path 11604"
+                                      d="M398.829,445.26H304.323a5.13,5.13,0,0,1-5.124-5.124V320.581a5.13,5.13,0,0,1,5.124-5.124h94.505a5.13,5.13,0,0,1,5.124,5.124V440.136A5.13,5.13,0,0,1,398.829,445.26ZM304.323,316.6a3.99,3.99,0,0,0-3.985,3.985V440.136a3.99,3.99,0,0,0,3.985,3.985h94.506a3.99,3.99,0,0,0,3.985-3.985V320.581a3.99,3.99,0,0,0-3.985-3.985Z"
+                                      transform="translate(-299.2 -192.525)" fill="#3f3d56"/>
+                                <path id="Path_11605" data-name="Path 11605"
+                                      d="M409.062,354.762H380.6a2.277,2.277,0,1,1,0-4.554h28.465a2.277,2.277,0,0,1,0,4.555Z"
+                                      transform="translate(-324.422 -203.603)" fill="#3f3d56"/>
+                                <path id="Path_11606" data-name="Path 11606"
+                                      d="M409.062,372.312H380.6a2.277,2.277,0,1,1,0-4.554h28.465a2.277,2.277,0,0,1,0,4.555Z"
+                                      transform="translate(-324.422 -209.197)" fill="#3f3d56"/>
+                                <path id="Path_11607" data-name="Path 11607"
+                                      d="M349.289,370.551h-20.8a2.565,2.565,0,0,1-2.562-2.562V343.44a2.565,2.565,0,0,1,2.562-2.562h20.8a2.565,2.565,0,0,1,2.562,2.562v24.548A2.565,2.565,0,0,1,349.289,370.551Z"
+                                      transform="translate(-307.719 -200.629)" fill="#ffd634"/>
+                                <path id="Path_11608" data-name="Path 11608"
+                                      d="M391.99,408.247H327.657a2.277,2.277,0,1,1,0-4.555H391.99a2.277,2.277,0,1,1,0,4.554Z"
+                                      transform="translate(-307.546 -220.652)" fill="#ccc"/>
+                                <path id="Path_11609" data-name="Path 11609"
+                                      d="M391.99,425.8H327.657a2.277,2.277,0,1,1,0-4.555H391.99a2.277,2.277,0,1,1,0,4.554Z"
+                                      transform="translate(-307.546 -226.247)" fill="#ccc"/>
+                                <path id="Path_11610" data-name="Path 11610"
+                                      d="M391.99,443.347H327.657a2.277,2.277,0,1,1,0-4.554H391.99a2.277,2.277,0,1,1,0,4.554Z"
+                                      transform="translate(-307.546 -231.841)" fill="#ccc"/>
+                                <path id="Path_11611" data-name="Path 11611"
+                                      d="M391.99,460.9H327.657a2.277,2.277,0,1,1,0-4.554H391.99a2.277,2.277,0,1,1,0,4.554Z"
+                                      transform="translate(-307.546 -237.436)" fill="#ccc"/>
+                                <path id="Path_11612" data-name="Path 11612"
+                                      d="M391.99,478.447H327.657a2.277,2.277,0,1,1,0-4.554H391.99a2.277,2.277,0,1,1,0,4.554Z"
+                                      transform="translate(-307.546 -243.03)" fill="#ccc"/>
+                                <path id="Path_11613" data-name="Path 11613"
+                                      d="M497.895,595.033V570.484a2.565,2.565,0,0,1,2.562-2.562h20.8a2.565,2.565,0,0,1,2.562,2.562v24.548a2.565,2.565,0,0,1-2.562,2.562h-20.8a2.565,2.565,0,0,1-2.562-2.562Z"
+                                      transform="translate(-362.539 -273.005)" fill="#e6e6e6"/>
+                                <path id="Path_11614" data-name="Path 11614"
+                                      d="M508.9,583.033V558.484a2.565,2.565,0,0,1,2.562-2.562h20.8a2.565,2.565,0,0,1,2.562,2.562v24.548a2.565,2.565,0,0,1-2.562,2.562h-20.8A2.565,2.565,0,0,1,508.9,583.033Z"
+                                      transform="translate(-366.046 -269.18)" fill="#ffd634"/>
+                                <path id="Path_11615" data-name="Path 11615"
+                                      d="M642,557.762a6.184,6.184,0,0,1-1.634-9.341l-6.448-47.133,13.432.659,2.109,45.973A6.217,6.217,0,0,1,642,557.762Z"
+                                      transform="translate(-405.901 -251.764)" fill="#ffd9bf"/>
+                                <path id="Path_11616" data-name="Path 11616"
+                                      d="M643.274,487.27a2.524,2.524,0,0,1-1.025.725L630.177,492.6a2.536,2.536,0,0,1-3.221-1.338l-10.693-24.03a10.041,10.041,0,0,1-.491-7.106,9.767,9.767,0,0,1,7.433-6.664,9.314,9.314,0,0,1,4.012.057,9.728,9.728,0,0,1,6.991,6.078l9.507,25.13A2.541,2.541,0,0,1,643.274,487.27Z"
+                                      transform="translate(-399.978 -236.457)" fill="#ccc"/>
+                                <path id="Path_11617" data-name="Path 11617"
+                                      d="M259.482,602.915H251.13L248.1,570.549l11.381.153Z"
+                                      transform="translate(-79.089 -181.877)" fill="#ffd9bf"/>
+                                <path id="Path_11618" data-name="Path 11618"
+                                      d="M239.044,614.557h16.107V624.7H228.9A10.141,10.141,0,0,1,239.044,614.557Z"
+                                      transform="translate(-72.969 -195.906)" fill="#2f2e41"/>
+                                <path id="Path_11619" data-name="Path 11619"
+                                      d="M316.04,602.986h-8.352l-3.973-32.214h12.326Z"
+                                      transform="translate(-96.817 -181.948)" fill="#ffd9bf"/>
+                                <path id="Path_11620" data-name="Path 11620"
+                                      d="M296.044,614.557h16.107V624.7H285.9A10.141,10.141,0,0,1,296.044,614.557Z"
+                                      transform="translate(-91.139 -195.906)" fill="#2f2e41"/>
+                                <path id="Path_11621" data-name="Path 11621"
+                                      d="M597.41,680.187l-13.117-.971a3.069,3.069,0,0,1-2.836-2.909l-2.925-60.446a2.384,2.384,0,0,0-4.717-.363l-12.2,59.544a3.069,3.069,0,0,1-3.247,2.44l-11.857-.949a3.065,3.065,0,0,1-2.806-3.36l11-110a3.065,3.065,0,0,1,3.7-2.69l41.831,9.093a3.073,3.073,0,0,1,2.414,3.053L600.7,677.187a3.067,3.067,0,0,1-3.058,3.008C597.566,680.2,597.488,680.192,597.41,680.187Z"
+                                      transform="translate(-377.137 -270.61)" fill="#2f2e41"/>
+                                <circle id="Ellipse_187" data-name="Ellipse 187" cx="16.732" cy="16.732" r="16.732"
+                                        transform="translate(192.066 167.123)" fill="#ffd9bf"/>
+                                <path id="Path_11622" data-name="Path 11622"
+                                      d="M565.269,532.372a14.961,14.961,0,0,1-4.969-11.49c0-24.048,20.815-77.774,21.468-79.451.064-.4.613-.578,3.494-2.525s7.04-2.247,12.357-.889a3.051,3.051,0,0,1,2.214,2.261l.989,1.429a2.379,2.379,0,0,0,1.382,1.639c4.287,1.806,17.915,10.135,13.271,41.481-4.314,29.118-6.064,46.242-6.617,52.253a3.059,3.059,0,0,1-2.774,2.769c-2.1.188-5.71.438-10.007.438C586.119,540.288,572.457,538.945,565.269,532.372Z"
+                                      transform="translate(-382.431 -231.328)" fill="#ccc"/>
+                                <path id="Path_11623" data-name="Path 11623"
+                                      d="M537.952,539.786a6.184,6.184,0,0,1,3.848-8.666l20.909-42.73,10.786,8.032-23.866,39.349a6.217,6.217,0,0,1-11.677,4.015Z"
+                                      transform="translate(-375.107 -247.652)" fill="#ffd9bf"/>
+                                <path id="Path_11624" data-name="Path 11624"
+                                      d="M584.756,483.73a2.523,2.523,0,0,1-1.255.031l-12.591-2.9a2.536,2.536,0,0,1-1.929-2.906l4.511-25.912a10.041,10.041,0,0,1,3.552-6.174,9.767,9.767,0,0,1,9.886-1.391,9.315,9.315,0,0,1,3.3,2.283,9.728,9.728,0,0,1,2.419,8.942l-6.109,26.165a2.541,2.541,0,0,1-1.784,1.864Z"
+                                      transform="translate(-385.187 -233.412)" fill="#ccc"/>
+                                <path id="Path_11625" data-name="Path 11625"
+                                      d="M592.062,410.192a7.21,7.21,0,0,1-1.934-6.394c.583-3.052.926-5.048.991-5.775h0c.222-2.485-2.29-4.5-4.775-4.817-.1-.013-.177-.021-.244-.026.063.062.131.126.191.182.472.443,1.06,1,.92,1.565-.084.343-.4.586-.958.743-3.887,1.088-6.881.089-9.422-3.145a7.51,7.51,0,0,1-1.434-3.132c-.91-4.465,1.515-8.272,3.71-10.678,1.81-1.984,4.744-4.393,8.443-4.6,2.877-.161,6.3,1.495,7.322,4.479a5.559,5.559,0,0,1,4.333-2.443,9.989,9.989,0,0,1,5.558,1.546,18.534,18.534,0,0,1-6.562,34.511,7.075,7.075,0,0,1-1.182.1A6.891,6.891,0,0,1,592.062,410.192Z"
+                                      transform="translate(-387.182 -211.221)" fill="#2f2e41"/>
+                                <path id="Path_11626" data-name="Path 11626"
+                                      d="M484.46,764.362H617.3a.681.681,0,1,0,0-1.362H484.46a.681.681,0,1,0,0,1.362Z"
+                                      transform="translate(-358.039 -335.191)" fill="#3f3d56"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

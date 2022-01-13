@@ -1,0 +1,710 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .widget-color-icon i {
+            color: #f5d505;
+            background: #f5d500;
+        }
+
+        .widget-box {
+            padding: 20px 10px;
+            border-radius: 10px;
+            position: relative;
+            color: #b1b1b1;
+            border: 1px solid rgba(0, 0, 0, .125);
+        }
+
+        .widget-box .widget-color-icon i {
+            font-size: 50px;
+            padding: 14px;
+            background-color: rgba(245, 213, 5, 0.2);
+            color: #f5d500;
+            border-radius: 5px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .col-5 p {
+            color: black;
+            font-weight: 600;
+            font-size: 17px;
+        }
+
+        .page-head h3 {
+            font-weight: bold;
+        }
+
+        #course_img {
+            border-radius: 6px;
+        }
+
+        .popup {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* The actual popup */
+        .popup .popuptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 25px;
+            left: 50%;
+            margin-left: -100px;
+        }
+
+        /* Popup arrow */
+        .popup .popuptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        /* Toggle this class - hide and show the popup */
+        .popup .show {
+            visibility: visible;
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s;
+        }
+
+        /* Add animation (fade in the popup) */
+        @-webkit-keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+    <div class="container-fluid" xmlns="http://www.w3.org/1999/html">
+        <div class="page-head"></div>
+        <div class="row">
+            <div class="col-lg-12 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6 m-b-30">
+                        <a data-toggle="modal" data-target="#exampleModalform2">
+                            <div class="widget-box bg-white">
+                                <div class="row d-flex align-items-center text-center">
+                                    <div class="col-5">
+                                        <div class="text-center widget-color-icon"><i class="fa fa-file-movie-o"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-5">
+                                        <p>Video yuklash</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-sm-6 m-b-30">
+                        <a data-toggle="modal" data-target="#exampleModalform">
+                            <div class="widget-box bg-white">
+                                <div class="row d-flex align-items-center text-center">
+                                    <div class="col-5">
+                                        <div class="text-center widget-color-icon"><i class="fa fa-file-movie-o"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-5">
+                                        <p>Yangi kurs qo'shish</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div><!--end row-->
+            </div>
+        </div><!--end row-->
+        <div class="page-head">
+            <h3>Mening kurslarim</h3>
+        </div>
+        <div class="row">
+            {% for course in courses %}
+                <div class="col-lg-3 col-sm-12 bg-transparent">
+                    <div class="card mb-5" style="box-shadow: 2px 1px 14px 1px rgba(0,0,0,0.20); border-radius: 6px">
+                        <div class="card-header bg-white border-0" style="border-radius: 6px!important;">
+                            <img src="{{ course.image }}" id="course_img" alt="" class="img-fluid">
+                        </div>
+
+                        <div class="card-body widget-blog">
+                            <div class="card-title font-weight-bold">
+                                <a href="{% url 'videolar' %}?course={{ course.id }}">{{ course.name }}</a>
+                            </div>
+                            <div class="text-muted mb-2">
+                                <span style="color: #f5d500;font-weight: bold">{{ course.rank }}</span>
+                                {% for i in course.rankmass %}
+                                    <i class="fa fa-star" {% if course.rank >= i %} style="color: #f5d500" {% endif %}
+                                    ></i>
+                                {% endfor %}
+                                <img {% if course.logo is not None %}src="{{ course.logo.url }}"
+                                     style="width: 30px;height: 25px;float: right;"
+                                     {% else %} style="display: none;"{% endif %}>
+                                <img src="{% static 'mf.png' %}"
+                                     style="width: 30px;height: 25px;float: right;margin-right: 8px">
+                            </div>
+                            <div class="text-muted mb-2">
+                                <span>{{ course.views }} ko'rishlar soni - bugun</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-0" style="border-radius: 6px!important;">
+                            <span style="float: left;color: #f5d500;font-weight: bold;font-size: 16px">{{ course.price }} So'm</span>
+                            <span style="float: right;font-weight: bold;font-size: 16px">{{ course.count }} video</span>
+                        </div>
+                        <div class="card-footer bg-white border-0" style="border-radius: 6px!important;">
+                            <button class="btn btn-secondary padding-left btn-sm change-course"
+                                    data-toggle="modal"
+                                    onclick="get_course({{ course.id }})">
+                                Edit
+                            </button>
+                            <button class="btn btn-danger padding-left btn-sm"
+                                    data-href="{% url 'delete-course' course.id %}" data-toggle="modal"
+                                    data-target="#confirm-delete">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div><!--end row-->
+    </div>
+    <div class="modal fade" id="exampleModalform" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Yangi kurs qo'shish</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'add-course' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">Kurs nomi</label>
+                                    <input type="text" class="form-control" id="field-1" placeholder="Kurs nomi"
+                                           name="name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Turi</label>
+                                    <select name="turi" style="width: 100%; padding: 7px; border-radius: 4px" id="turi"
+                                            onchange="TuriChange()">
+                                        <option value="Pullik">Pullik</option>
+                                        <option value="Bepul">Bepul</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Kategoriyasi</label>
+                                    <select name="category" style="width: 100%; padding: 7px; border-radius: 4px">
+                                        {% for cat in categories %}
+                                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="price_d">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">Kurs narxi</label>
+                                    <input type="number" class="form-control" id="field-1"
+                                           placeholder="Kurs narxi so'mda" name="price" value="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <input type="file" name="image" id="input-file-kurs" class="dropify" required
+                                               style="display: none"/>
+                                        <button type="button" class="btn btn-success kurs-img">Rasm yuklash</button>
+                                        <div class="popup">
+                                            <span class="popuptext" class="myPopup"></span>
+                                        </div>
+                                        <img src="" class="kursImage"
+                                             style="display: none;width: 80px;height: 60px;float: right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!-- ------------------------------------------------------------------------------------------------------ -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    
+                                    <label for="upload_or_url_id" class="control-label">Kursda videolarni youtube orqali yuklamoqchimisiz yoki video yuklamoqchimisiz?</label>
+                                    <select  style="width: 100%; padding: 7px; border-radius: 4px" name="upload_or_url" id="upload_or_url_id">
+                                        <option selected>Youtube</option>
+                                        <option>Video</option>
+                                    </select>
+
+                                    <div class="popup">
+                                        <span class="popuptext" class="myPopup"></span>
+                                    </div>
+                                    <img src="" class="kursImage"
+                                        style="display: none;width: 80px;height: 60px;float: right">
+                                </div>
+                            </div>
+                        </div>
+<!-- ------------------------------------------------------------------------------------------------------ -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-7" class="control-label">Tarif</label>
+                                    <textarea class="form-control" id="field-7" name="desc"
+                                              placeholder="Kurs haqida malumot"
+                                              style="margin-top: 0px; margin-bottom: 0px; height: 137px;"
+                                              required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+                        <input type="submit" class="btn btn-primary" value="Qo'shish"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalform2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Video yuklash</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formVideo" action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">Title</label>
+                                    <input type="text" class="form-control" id="field-1" placeholder="Title"
+                                           name="title"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Kursni tanlash</label>
+                                    <select name="kurs" style="width: 100%; padding: 7px; border-radius: 4px" id="course_id">
+                                        <option disabled selected>Kursni tanlang</option>
+                                        {% for cat in courses %}
+                                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Video rasmi</label><br>
+                                        <input type="file" name="image" class="dropify" required
+                                               style="display: none;" id="videoImageFile"/>
+                                        <button type="button" class="btn btn-success " id="video-img-btn">Rasm yuklash
+                                        </button>
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupImage"></span>
+                                        </div>
+                                        <img src="" id="imagevideo"
+                                             style="display: none;width: 80px;height: 60px;float: right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30" id="cardid_id">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Video</label><br>
+                                        <input type="file" name="video" class="dropify" required
+                                            style="display: none;" id="video"/>
+                                        <button type="button" class="btn btn-info video-btn">Video yuklash</button>
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupVideo"></span>
+                                        </div>
+                                        <span style="float: right;font-size: 14px;display: none" id="videname"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="formid_id">
+                                    <label for="field-0" class="control-label">URL</label>
+                                    <input type="text" class="form-control" id="field-0" placeholder="URL"
+                                        required name="url">
+                                </div>
+
+                            </div>
+                        </div>
+
+<!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-7" class="control-label">Tarif</label>
+                                    <textarea class="form-control" id="field-7" name="desc"
+                                              placeholder="video haqida malumot"
+                                              style="margin-top: 0px; margin-bottom: 0px; height: 137px;"
+                                              required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+                        <input type="submit" class="btn btn-primary" value="Qo'shish"/>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalform3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Video yuklanmoqda</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress my-3" style="height: 14px;">
+                        <div class="progress-bar bg-info" id="progbar" role="progressbar" style="width: 45%;"
+                             aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalform4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Kursni o'zgartirish</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-get-name" class="control-label">Kurs nomi</label>
+                                    <input type="text" class="form-control" id="field-get-name" placeholder="Kurs nomi"
+                                           name="name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-get-turi" class="control-label">Turi</label>
+                                    <select name="turi" style="width: 100%; padding: 7px; border-radius: 4px" id="field-get-turi"
+                                            onchange="TuriChange()">
+                                        <option value="Pullik">Pullik</option>
+                                        <option value="Bepul">Bepul</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-get-category" class="control-label">Kategoriyasi</label>
+                                    <select name="category" style="width: 100%; padding: 7px; border-radius: 4px" id="field-get-category">
+                                        {% for cat in categories %}
+                                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="price_d">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-get-price" class="control-label">Kurs narxi</label>
+                                    <input type="number" class="form-control" id="field-get-price"
+                                           placeholder="Kurs narxi so'mda" name="price" value="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <input type="file" name="image" id="input-file-kurs" class="dropify" required
+                                               style="display: none"/>
+                                        <button type="button" class="btn btn-success kurs-img">Rasm yuklash</button>
+                                        <div class="popup">
+                                            <span class="popuptext" class="myPopup"></span>
+                                        </div>
+                                        <img src="" class="kursImage"
+                                             style="display: none;width: 80px;height: 60px;float: right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    
+                                    <label for="upload_or_url_id" class="control-label">Kursda videolarni youtube orqali yuklamoqchimisiz yoki video yuklamoqchimisiz?</label>
+                                    <select  style="width: 100%; padding: 7px; border-radius: 4px" name="upload_or_url" id="upload_or_url_id">
+                                        <option selected>Youtube</option>
+                                        <option>Video</option>
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-get-description" class="control-label">Tarif</label>
+                                    <textarea class="form-control" id="field-get-description" name="desc"
+                                              placeholder="Kurs haqida malumot"
+                                              style="margin-top: 0px; margin-bottom: 0px; height: 137px;"
+                                              required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+                        <input type="submit" class="btn btn-primary" value="O'zgartirish"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Kursni o'chirishni tasdiqlash</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Kursingizni o'chirmoqchimisiz?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}
+{% block js %}
+    <script>
+        function get_course(id) {
+            $.ajax({
+                url: '{% url 'get-course' %}',
+                type: 'POST',
+                data: {
+                    'id': id,
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                },
+                success: function (data) {
+                    console.log(data.description);
+                    $('#exampleModalform4').modal('show');
+                    document.getElementById("field-get-name").setAttribute('value', data.name);
+                    document.getElementById("field-get-turi").setAttribute('value', data.turi);
+                    document.getElementById("field-get-category").setAttribute('value', data.category);
+                    document.getElementById("field-get-price").setAttribute('value', data.price);
+                    document.getElementById("field-get-description").setAttribute('value', data.description);
+                    {#$('#myTextarea').val('');#}
+                }
+            });
+        }
+
+        $('.change-course').click(function (e) {
+            id = $(this).attr("data-catid");
+            formData = '';
+            $.ajax({
+                url: '{% url 'change-course' %}',
+                type: 'POST',
+                data: {
+                    'id': formData,
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                },
+                success: function (data) {
+                    console.log(data);
+                    window.location.reload();
+                }
+            });
+        });
+
+        $('.kurs-img').click(function () {
+            var popup = document.getElementsByClassName("myPopup");
+            popup.classList.toggle("show", false);
+            $("#input-file-kurs").trigger('click');
+        })
+        $("#input-file-kurs").change(function (e) {
+            var file = e.target.files[0]
+            var turi = file.type.split('/')[0]
+            if (turi !== 'image') {
+                var popup = document.getElementsByClassName("myPopup");
+                popup.classList.toggle("show");
+                $(".popuptext").text("Rasm yuklanmadi!")
+                $("#input-file-kurs").val('');
+            } else {
+                $(".kursImage").attr("src", URL.createObjectURL(file));
+                $(".kursImage").css('display', 'unset');
+            }
+        })
+        $('#videoImageFile').click(function () {
+            var popup = document.getElementById("PopupImage");
+            console.log('click')
+            popup.classList.toggle("show", false);
+            $("#videoImageFile").trigger('click');
+        })
+        $("#videoImageFile").change(function (e) {
+            var file = e.target.files[0]
+            var turi = file.type.split('/')[0]
+            if (turi !== 'image') {
+                var popup = document.getElementById("PopupImage");
+                popup.classList.toggle("show");
+                $("#PopupImage").text("Rasm yuklanmadi!")
+                $("#videoImageFile").val('');
+            } else {
+                $("#imagevideo").attr("src", URL.createObjectURL(file));
+                $("#imagevideo").css('display', 'unset');
+            }
+        })
+        $('.video-btn').click(function () {
+            $("#video").trigger('click');
+            var popup = document.getElementById("PopupVideo");
+            popup.classList.toggle("show", false);
+        })
+        $("#video").change(function (e) { 
+            var file = e.target.files[0]
+            var turi = file.type.split('/')[0]
+            if (turi !== 'video') {
+                var popup = document.getElementById("PopupVideo");
+                popup.classList.toggle("show");
+                $("#PopupVideo").text("Video yuklanmadi!")
+                $("#video").val('');
+            } else {
+                $("#videname").css('display', 'unset');
+                $("#videname").text(file.name);
+            }
+        })
+        $(document).ready(function () {
+            $('#formVideo').on('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData($('#formVideo')[0]);
+                //if ($("#video").val().localeCompare("") == -1) {
+                $('#exampleModalform3').modal('show');
+                //}
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var percent = Math.round((e.loaded / e.total) * 100);
+                                $('#progbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                                if (percent === 100) {
+                                    $('#exampleModalform3').modal('hide');
+                                    {#$("#exampleModalform2").modal('hide');#}
+                                }
+                            }
+                        });
+                        return xhr
+                    },
+                    type: 'POST',
+                    url: '{% url 'video-upload-add' %}',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        window.location.reload();
+                    }
+                });
+            }
+            });
+        });
+
+        $('#confirm-delete').on('show.bs.modal', function (e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+
+            $('.debug-url').html('Delete URL: <strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+        });
+    </script>
+    <script>
+        function TuriChange() {
+            var turi = document.getElementById('turi').value
+            if (turi === 'Pullik') {
+                $('#price_d').css('display', 'flex');
+            } else {
+                $('#price_d').css('display', 'none');
+            }
+        }
+    </script>
+{% endblock js %}

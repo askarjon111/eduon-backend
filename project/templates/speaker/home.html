@@ -1,0 +1,146 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .counter {
+            color: black;
+        }
+
+        .widget-color-icon i {
+            color: #f5d505;
+            background: #f5d500;
+        }
+
+        .widget-box {
+            padding: 20px 10px;
+            border-radius: 4px;
+            position: relative;
+            color: #b1b1b1;
+            border: 1px solid rgba(0, 0, 0, .125);
+        }
+
+        .widget-box .widget-color-icon i {
+            font-size: 50px;
+            padding: 14px;
+            background-color: rgba(245, 213, 5, 0.1);
+            color: #f5d500;
+            border-radius: 5px;
+            width: 80px;
+            height: 80px;
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="page-head">
+            <h4 class="mt-2 mb-2">Dashboard</h4>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-sm-6 m-b-30">
+                <div class="widget-box bg-white" style="height: 135px;">
+                    <div class="row d-flex align-items-center text-center">
+                        <div class="col-5">
+                            <div class="text-center widget-color-icon "><i class="fa fa-list"></i></div>
+                        </div>
+
+                        <div class="col-5 flex flex-column justify-content-between h-100">
+                            <h2 class="m-0 counter">{{ course_count }}</h2>
+                            <p>Kurslar soni</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 m-b-30">
+                <div class="widget-box bg-white" style="height: 135px;">
+                    <div class="row d-flex align-items-center text-center">
+                        <div class="col-5">
+                            <div class="text-center widget-color-icon"><i class="fa fa-shopping-cart"></i></div>
+                        </div>
+
+                        <div class="col-5 flex flex-column justify-content-between h-100">
+                            <h2 class="m-0 counter">{{ sells }}</h2>
+                            <p>Sotilgan kurslar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 m-b-30">
+                <div class="widget-box bg-white" style="height: 135px;">
+                    <div class="row d-flex align-items-center text-center">
+                        <div class="col-5">
+                            <div class="text-center widget-color-icon"><i class="fa fa-star"></i></div>
+                        </div>
+
+                        <div class="col-5 flex flex-column justify-content-between h-100">
+                            <h2 class="m-0 counter">{{ rank }}</h2>
+                            <p>Reyting</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 m-b-30">
+                <div class="widget-box bg-white" style="height: 135px;">
+                    <div class="row d-flex align-items-center text-center">
+                        <div class="col-5">
+                            <div class="text-center widget-color-icon"><i class="fa fa-graduation-cap"></i></div>
+                        </div>
+
+                        <div class="col-5 flex flex-column justify-content-between h-100">
+                            <h2 class="m-0 counter">{{ sells }}</h2>
+                            <p>O'quvchilar soni</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--end row-->
+        <div class="row">
+            <div class="col-lg-12 col-sm-12">
+                <div class="card m-b-30">
+                    <div class="card-body">
+                        <h5 class="header-title pb-3">Statistika</h5>
+                        <div id="morris-line-chart" style="height: 360px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-sm-12">
+                <div class="card m-b-30">
+                    <div class="card-body">
+                        <p class="header-title pb-3" style="">Kurs sotib olganlar</p>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table class="table table-hover m-b-0">
+                                        <thead>
+                                        <tr>
+                                            <th>Ism-familya</th>
+                                            <th>Hudud</th>
+                                            <th>Kurs nomi</th>
+                                            <th>Sotib olingan sana</th>
+                                            <th>Kurs narxi</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for order in orders %}
+                                            <tr>
+                                                <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+                                                <td>{{ order.user.region }}</td>
+                                                <td>{{ order.course.name }}</td>
+                                                <td>{{ order.date }}</td>
+                                                <td>{{ order.course.price }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div><!--end container-->
+{% endblock content %}
+{% block js %}
+{% endblock js %}

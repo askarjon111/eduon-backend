@@ -1,0 +1,176 @@
+{% extends 'base/baseBackoffice.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'back/plugins/c3/c3.min.css' %}">
+<div class="page-content-wrapper dashborad-v">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-title-box">
+                    <div class="btn-group float-right">
+                        <ol class="breadcrumb hide-phone p-0 m-0">
+                            <li class="breadcrumb-item"><a href="#">EduOn</a></li>
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">Dashboard</h4>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <!-- end page title end breadcrumb -->
+        <div class="row">
+            <!-- Column -->
+            <div class="col-sm-12 col-md-6 col-xl-3">
+                <div class="card bg-danger m-b-30">
+                    <div class="card-body">
+                        <div class="d-flex row">
+                            <div class="col-3 align-self-center">
+                                <div class="round">
+                                    <i class="mdi mdi-account"></i>
+                                </div>
+                            </div>
+                            <div class="col-8 ml-auto align-self-center text-center">
+                                <div class="m-l-10 text-white float-right">
+                                    <h5 class="mt-0 round-inner">{{ speaker_count }}</h5>
+                                    <p class="mb-0 ">Speakerlar</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                <div class="card bg-info m-b-30">
+                    <div class="card-body">
+                        <div class="d-flex row">
+                            <div class="col-3 align-self-center">
+                                <div class="round">
+                                    <i class="mdi mdi-account-multiple-plus"></i>
+                                </div>
+                            </div>
+                            <div class="col-8 text-center ml-auto align-self-center">
+                                <div class="m-l-10 text-white float-right">
+                                    <h5 class="mt-0 round-inner">{{ user_count }}</h5>
+                                    <p class="mb-0 ">Foydalanuvchilar</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                <div class="card bg-success m-b-30">
+                    <div class="card-body">
+                        <div class="d-flex row">
+                            <div class="col-3 align-self-center">
+                                <div class="round ">
+                                    <i class="fa fa-video-camera"></i>
+                                </div>
+                            </div>
+                            <div class="col-8 ml-auto align-self-center text-center">
+                                <div class="m-l-10 text-white float-right">
+                                    <h5 class="mt-0 round-inner">{{ course_count }}</h5>
+                                    <p class="mb-0 ">Kurslar</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                <div class="card bg-primary m-b-30">
+                    <div class="card-body">
+                        <div class="d-flex row">
+                            <div class="col-3 align-self-center">
+                                <div class="round">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                            <div class="col-8 ml-auto align-self-center text-center">
+                                <div class="m-l-10 text-white float-right">
+                                    <h5 class="mt-0 round-inner">{{ order_count }}</h5>
+                                    <p class="mb-0">Sotilgan kurslar</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xl-4">
+                <div class="card m-b-30">
+                    <div class="card-body">
+                        <h4 class="mt-0 header-title">Kurslar</h4>
+                        <p class="text-muted  font-14"></p>
+                        <div id="pie-chart"></div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+            <div class="col-md-12 col-lg-12 col-xl-8">
+                <div class="card m-b-30">
+                    <div class="card-body">
+                        <h4 class="mt-0 header-title">Eduon malumotlar grafigi</h4>
+                        <p class="text-muted  font-14"></p>
+                        <div id="combine-chart"></div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xl-6">
+                <div class="card m-b-30">
+                    <div class="card-body">
+
+                        <h4 class="mt-0 header-title">Kategorya Foizi</h4>
+                        <p class="text-muted font-14"></p>
+                        <div id="donut-chart2"></div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+            <div class="col-md-12 col-lg-12 col-xl-6">
+                <div class="card m-b-30">
+                    <div class="card-body">
+
+                        <h4 class="mt-0 header-title">Foydalanuvchilar yosh toifasi</h4>
+                        <p class="text-muted font-14"></p>
+                        <div id="donut-chart"></div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xl-12">
+                <div class="card m-b-30">
+                    <div class="card-body">
+                        <h4 class="mt-0 header-title">Hudud boyicha grafik</h4>
+                        <p class="text-muted  font-14"></p>
+                        <div id="chart"></div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+
+    </div>
+    <!-- container -->
+
+</div>
+{% endblock content %}
+{% block js %}
+    <script src="{% static 'back/plugins/d3/d3.min.js' %}"></script>
+    <script src="{% static 'back/plugins/c3/c3.min.js' %}"></script>
+    <script src="{% static 'back/pages/c3-chart-init.js' %}"></script>
+{% endblock js %}

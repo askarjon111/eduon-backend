@@ -1,0 +1,90 @@
+{% extends 'base/baseBackoffice.html' %}
+{% load static %}
+{% block content %}
+    <!-- DataTables -->
+        <link href="{% static 'back/plugins/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'back/plugins/datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Responsive datatable examples -->
+        <link href="{% static 'back/plugins/datatables/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+    <div class="page-content-wrapper ">
+
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-title-box">
+                        <div class="btn-group float-right">
+                            <ol class="breadcrumb hide-phone p-0 m-0">
+                                <li class="breadcrumb-item"><a href="#">Urora</a></li>
+                                <li class="breadcrumb-item"><a href="#">Tables</a></li>
+                                <li class="breadcrumb-item active">Datatable</li>
+                            </ol>
+                        </div>
+                        <h4 class="page-title">Kurslar</h4>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12 col-sm-12">
+                    <div class="card m-b-30">
+                        <div class="card-body table-responsive">
+                            <h5 class="header-title">Speaker kurslari</h5>
+                            <div class="">
+                                <table id="datatable2" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Kurs nomi</th>
+                                        <th>Speaker</th>
+                                        <th>Turi</th>
+                                        <th>Narxi</th>
+                                        <th>Sotildi</th>
+                                        <th>videolar soni</th>
+                                        <th>Sanasi</th>
+                                    </tr>
+                                    </thead>
+
+
+                                    <tbody>
+                                    {% for course in courses %}
+                                    <tr>
+                                        <td>{{ course.name }}</td>
+                                        <td>{{ course.author.speaker.first_name }} {{ course.author.speaker.last_name }}</td>
+                                        <td>{{ course.turi }}</td>
+                                        <td>{{ course.price }}</td>
+                                        <td>{{ course.sells }}</td>
+                                        <td>{{ course.videos }}</td>
+                                        <td>{{ course.date }}</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--end row-->
+
+        </div><!-- container -->
+
+    </div> <!-- Page content Wrapper -->
+{% endblock content %}
+{% block js %}
+<!-- Required datatable js -->
+        <script src="{% static 'back/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'back/plugins/datatables/dataTables.bootstrap4.min.js' %}"></script>
+        <!-- Buttons examples -->
+        <script src="{% static 'back/plugins/datatables/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'back/plugins/datatables/buttons.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'back/plugins/datatables/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'back/plugins/datatables/buttons.print.min.js' %}"></script>
+        <script src="{% static 'back/plugins/datatables/buttons.colVis.min.js' %}"></script>
+        <!-- Responsive examples -->
+        <script src="{% static 'back/plugins/datatables/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'back/plugins/datatables/responsive.bootstrap4.min.js' %}"></script>
+
+        <!-- Datatable init js -->
+        <script src="{% static 'back/pages/datatables.init.js' %}"></script>
+{% endblock js %}

@@ -1,0 +1,53 @@
+{% extends 'base/baseBackoffice.html' %}
+{% load static %}
+{% block content %}
+    <style>
+    .card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+}
+
+.title {
+  color: grey;
+  font-size: 18px;
+}
+#part_name{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+    </style>
+    <div class="page-content-wrapper  bg-white " style="height: 100%">
+    <div class="container-fluid">
+            <div class="row" style="padding-top: 25px">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img {% if object.image != '' %} src="{{ object.image.url }}" {% else %}src="{% static 'back/images/users/avatar-5.jpg' %}"{% endif %} style="width:100%">
+                        <h1>{{ object.speaker.first_name }}</h1>
+                        <p class="title">{{ object.speaker.last_name }}</p>
+                        <p class="title">Kurslar soni : {{ course_count }}</p>
+                        <p class="title">Sotilgan kurslar : {{sell_count }}</p>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <p><span id="part_name">FIO : </span>{{ object.speaker.first_name }} {{ object.speaker.last_name }}</p>
+                    <p><span id="part_name">Telefon raqam : </span>{{ object.phone }}</p>
+                    <p><span id="part_name">Kompaniya : </span>{{ object.compony }}</p>
+                    <p><span id="part_name">Mamlakat : </span>{{ object.country }}</p>
+                    <p><span id="part_name">Shahar : </span>{{ object.city }}</p>
+                    <p><span id="part_name">Tug'ilan sana : </span>{{ object.both_date }}</p>
+                    <p><span id="part_name">Balans : </span>{{ object.cash }}</p>
+                    <p><span id="part_name">Plastik egasi nomi : </span>{{ object.card_name }}</p>
+                    <p><span id="part_name">Plastik raqami : </span>{{ object.card_number }}</p>
+                    <p><span id="part_name">Plastik yaroq muddati : </span>{{ object.card_date }}</p>
+                    <p><span id="part_name">Tarif : </span>{{ object.description }}</p>
+
+                    <p><span id="part_name">Eduonda : </span>{{ object.speaker.date_joined }} dan beri</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,111 @@
+{% extends 'base/baseBackoffice.html' %}
+{% load static %}
+{% block content %}
+    <!-- DataTables -->
+        <link href="{% static 'back/plugins/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'back/plugins/datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Responsive datatable examples -->
+        <link href="{% static 'back/plugins/datatables/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+    <div class="page-content-wrapper ">
+
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-title-box">
+                        <div class="btn-group float-right">
+                        </div>
+                        <h4 class="page-title">To'lovlar</h4>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12 col-sm-12">
+                    <div class="card m-b-30">
+                        <div class="card-body table-responsive">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="header-title">To'lovlar</h5>
+                            </div>
+                            <div class="col-md-6">
+{#                                <form action="" method="get">#}
+{#                                    <div class="inline-group">#}
+{#                                        <input type="text" class="form-control" name="q" placeholder="Qidirish ...">#}
+{#                                    </div>#}
+{#                                    <input type="submit" style="display: none">#}
+{#                                </form>#}
+                            </div>
+                        </div>
+                            <div class="">
+                            <table class="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Ism familya</th>
+                                            <th>Hisobi</th>
+                                            <th>Telefon</th>
+                                            <th>Plastik egasi</th>
+                                            <th>Plastik raqami</th>
+                                            <th>Pastik yaroq muddati</th>
+                                            <th>So'rov sana</th>
+                                            <th>Tasdiqlash</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for bil in billings %}
+                                            <tr>
+                                                <td>{{ bil.speaker.speaker.first_name }} {{ bil.speaker.speaker.last_name }}</td>
+                                                <td >{{ bil.speaker.cash }}</td>
+                                                <td>{{ bil.speaker.phone }}</td>
+                                                <td>{{ bil.speaker.card_name }}</td>
+                                                <td>{{ bil.speaker.card_number }}</td>
+                                                <td>{{ bil.speaker.card_date }}</td>
+                                                <td>{{ bil.date_req}}</td>
+                                                <td>
+                                                    <div class="row">
+                                                        <div class="col-xl-6">
+                                                            <a style="padding: 8px" href="{% url 'accept-billing' %}?id={{ bil.id }}" class="bt btn-success">
+                                                                <span class="fa fa-check"></span></a>
+                                                        </div>
+                                                        <div class="col-xl-6">
+                                                          <a style="padding: 8px"  href="{% url 'cancel-billing' %}?id={{ bil.id }}" class="bt btn-danger">
+                                                              <span class="fa fa-trash"></span>
+                                                          </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- container -->
+
+    </div> <!-- Page content Wrapper -->
+{% endblock content %}
+{% block js %}
+<script>
+function accept_billing(id) {
+    $.ajax({
+        method:'get',
+        url:'{% url 'accept-billing' %}',
+        data:{id:id},
+        success:function (data) {
+            $("#cashTable"+String(id)).text(data['cash']);
+            $("#pay"+String(id)).val('0');
+
+
+        },
+        error:function (error) {
+            console.log(error.message)
+        }
+    })
+}
+</script>
+
+{% endblock js %}

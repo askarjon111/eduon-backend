@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mannat Themes">
+    <meta name="keyword" content="">
+
+    <title>Eduon speaker system</title>
+
+    <!-- Theme icon -->
+    <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
+
+    <!-- Theme Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/slidebars.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/menu.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'vanilla/css/intlTelInput.min.css' %}" rel="stylesheet">
+    <style>
+        .iti {
+            display: block;
+        }
+
+        .iti-flag {
+            background-image: url("{% static 'vanilla/img/flags@2x.png' %}");
+        }
+
+        @media (-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi) {
+            .iti-flag {
+                background-image: url("{% static 'vanilla/img/flags@2x.png' %}");
+            }
+        }
+    </style>
+</head>
+
+<body class="sticky-header">
+<section class="bg-login">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-sm-12">
+                <div class="wrapper-page">
+                    <div class="account-pages">
+                        <div class="account-box">
+                            <div class="card">
+                                <div class="card-header border-0 bg-white" style="text-align: center">
+                                    <img src="{% static 'back/img/logo.png' %}" style="width: 200px; height: 55px; text-align: center">
+                                </div>
+                                <div class="card-body">
+                                    <div class="card-title text-center">
+                                        <h4 style="font-weight: bold;"><b>SPIKERLAR KIRISHI</b></h4>
+                                        {% if messages %}
+                                            {% for mes in messages %}
+                                                <p class="alert-danger" style="text-align: center">{{ mes }}</p>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <form class="form mt-5 contact-form" action="{% url 'login' %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group ">
+                                            <div class="col-sm-12">
+                                                <input class="form-control form-control-line" type="tel" id="phone"
+                                                       name="username" required="required" value="998">
+                                            </div>
+                                        </div>
+                                        <div class="form-group ">
+                                            <div class="col-sm-12">
+                                                <input class="form-control form-control-line" type="password"
+                                                       placeholder="Password" name="password" required="required"
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-12 mt-4">
+                                                <button class="btn btn-default btn-block"
+                                                          style="color: black;font-weight: bold; background: #f5d505"
+                                                        type="submit">Kirish</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-z mt-4 text-center">
+                                                <a href="{% url 'singup' %}"><i class="fa fa-sign-in m-r-5"></i>
+                                                    Ro'yxatdan o'tish</a>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-z mt-2 text-right">
+                                                <a href="{% url 'resset-password' %}" style="color: #f5d505">
+                                                    Parolni unitdingizmi?</a>
+                                            </div>
+                                        </div>
+                                        {#                                                <div class="form-group">#}
+                                        {#                                                    <div class="col-sm-12 mt-4 text-center">#}
+                                        {#                                                        <a href=""><i class="fa fa-lock m-r-5"></i> Parolni unitdingizmi?</a>#}
+                                        {#                                                    </div>#}
+                                        {#                                                </div>#}
+
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="//code-eu1.jivosite.com/widget/TU3lwKcxLC" async></script>
+<!-- jQuery -->
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery-migrate.js' %}"></script>
+<script src="{% static 'assets/js/modernizr.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'assets/js/slidebars.min.js' %}"></script>
+<script src="{% static 'vanilla/js/intlTelInput.min.js' %}"></script>
+<script>
+    var input = document.querySelector("#phone");
+    var iti = window.intlTelInput(input, {
+        initialCountry: 'uz',
+        nationalMode: true,
+        utilsScript: "{% static 'vanilla/js/utils.js' %}"
+    });
+
+    input.addEventListener('countrychange', function () {
+        var code = iti.getSelectedCountryData().dialCode;
+        console.log(code)
+        input.value = code
+    });
+</script>
+<!--app js-->
+<script src="{% static 'assets/js/jquery.app.js' %}"></script>
+</body>
+</html>

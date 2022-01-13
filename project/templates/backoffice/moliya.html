@@ -1,0 +1,173 @@
+{% extends 'base/baseBackoffice.html' %}
+{% load static %}
+{% block content %}
+    <div class="page-content-wrapper dashborad-v">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-title-box">
+                        <div class="btn-group float-right">
+                            <ol class="breadcrumb hide-phone p-0 m-0">
+                                <li class="breadcrumb-item"><a href="#">EduOn</a></li>
+                                <li class="breadcrumb-item active">Moliya</li>
+                            </ol>
+                        </div>
+                        <h4 class="page-title">Moliya</h4>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <!-- end page title end breadcrumb -->
+            <div class="row">
+                <!-- Column -->
+                <div class="col-sm-12 col-md-6 col-xl-4">
+                    <div class="card bg-primary m-b-30">
+                        <div class="card-body">
+                            <div class="d-flex row">
+                                <div class="col-3 align-self-center">
+                                    <div class="round">
+                                        <i class="mdi mdi-cards"></i>
+                                    </div>
+                                </div>
+                                <div class="col-8 ml-auto align-self-center text-center">
+                                    <div class="m-l-10 text-white float-right">
+                                        <h5 class="mt-0 round-inner">{{ click_summa }}</h5>
+                                        <p class="mb-0 ">Click</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <!-- Column -->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                    <div class="card bg-info m-b-30">
+                        <div class="card-body">
+                            <div class="d-flex row">
+                                <div class="col-3 align-self-center">
+                                    <div class="round">
+                                        <i class="mdi mdi-cards-outline"></i>
+                                    </div>
+                                </div>
+                                <div class="col-8 text-center ml-auto align-self-center">
+                                    <div class="m-l-10 text-white float-right">
+                                        <h5 class="mt-0 round-inner">{{ payme_summa }}</h5>
+                                        <p class="mb-0 ">PayMe</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <!-- Column -->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                    <div class="card bg-success m-b-30">
+                        <div class="card-body">
+                            <div class="d-flex row">
+                                <div class="col-3 align-self-center">
+                                    <div class="round ">
+                                        <i class="fa fa-credit-card"></i>
+                                    </div>
+                                </div>
+                                <div class="col-8 ml-auto align-self-center text-center">
+                                    <div class="m-l-10 text-white float-right">
+                                        <h5 class="mt-0 round-inner">{{ jami_summa }}</h5>
+                                        <p class="mb-0 ">Jami</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+            </div>
+            <form action="" method="get">
+                <div class="row">
+
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                        <input type="date" class="form-control" name="sana_start">
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                        <input type="date" class="form-control" name="sana_end">
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                        <button type="submit" class="btn btn-default text-white bg-info">Saralash</button>
+                    </div>
+
+                </div>
+            </form>
+            <div class="row" style="padding-top: 5px">
+                <div class="col-md-12 col-lg-12 col-xl-12">
+                    <div class="card m-b-30">
+                        <div class="card-body">
+                            <h5 class="header-title">Foydalanuvchilar balans to'ldirish tarixi </h5>
+                            <div class="table-responsive-sm">
+                                <table class="table mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Foydalanuvchi</th>
+                                        <th scope="col">To'lov vositasi</th>
+                                        <th scope="col">To'lov miqdori</th>
+                                        <th scope="col">To'lov Vaqti</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for payment in payments %}
+                                        <tr class="">
+                                            <th scope="row">{{ forloop.counter0|add:payments.number }}</th>
+                                            <td>{{ payment.user.first_name }} {{ payment.user.last_name }}</td>
+                                            <td>{{ payment.type }}</td>
+                                            <td>{{ payment.amount }}</td>
+                                            <td>{{ payment.date }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--end row-->
+            <div class="row">
+                {% if payments.paginator.num_pages > 1 %}
+                    <nav aria-label="...">
+                        <ul class="pagination pagination-lg">
+                            {% if payments.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ payments.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for num in payments.paginator.page_range %}
+                                {% if num == payments.number %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" tabindex="-1">{{ num }}</a>
+                                    </li>
+                                {% elif num > payments.number|add:'-3' and num < payments.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if payments.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ payments.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

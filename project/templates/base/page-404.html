@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+        <title>EduOn</title>
+        <meta content="EduOn" name="description" />
+        <meta content="Mannatthemes" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <link rel="shortcut icon" href="{% static 'back/img/favicon.png'%}">
+
+        <link href="{% static 'back/plugins/animate/animate.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'back/css/bootstrap-material-design.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'back/css/icons.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'back/css/style.css' %}" rel="stylesheet" type="text/css">
+
+    </head>
+
+
+    <body class="fixed-left">
+
+        <!-- Begin page -->
+         <style>
+            .text-primary {
+                color: #ffd634 !important;
+            }
+        </style>
+        <div class="wrapper-page">
+            <div class="display-table">
+                <div class="display-table-cell">
+                    <diV class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card" style="border: 7px solid #ffd634">
+                                    <div class="card-block">
+
+                                        <div class="ex-page-content text-center">
+                                            <h1 class="">404!</h1>
+                                            <h3 class="text-primary">Sahifa topilmadi!</h3><br>
+
+                                            <a class="btn btn-raised btn-primary mb-5 waves-effect waves-light" href="{% url 'speaker-home' %}">Bosh sahifa</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </diV>
+                </div>
+            </div>
+        </div>
+
+        <!-- jQuery  -->
+        <script src="{% static 'back/js/jquery.min.js' %}"></script>
+        <script src="{% static 'back/js/popper.min.js' %}"></script>
+        <script src="{% static 'back/js/bootstrap-material-design.js' %}"></script>
+        <script src="{% static 'back/js/modernizr.min.js' %}"></script>
+        <script src="{% static 'back/js/detect.js' %}"></script>
+        <script src="{% static 'back/js/fastclick.js' %}"></script>
+        <script src="{% static 'back/js/jquery.slimscroll.js' %}"></script>
+        <script src="{% static 'back/js/jquery.blockUI.js' %}"></script>
+        <script src="{% static 'back/js/waves.js' %}"></script>
+        <script src="{% static 'back/js/jquery.nicescroll.js' %}"></script>
+        <script src="{% static 'back/js/jquery.scrollTo.min.js' %}"></script>
+
+        <!-- App js -->
+        <script src="{% static 'back/js/app.js' %}"></script>
+
+    </body>
+</html>

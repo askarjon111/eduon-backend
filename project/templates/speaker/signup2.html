@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>EduOn</title>
+    <meta content="Eduon" name="description"/>
+    <meta content="Mannatthemes" name="author"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
+
+    <link href="{% static 'back/plugins/animate/animate.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'back/css/bootstrap-material-design.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'back/css/icons.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'back/css/style.css' %}" rel="stylesheet" type="text/css">
+
+</head>
+<style>
+    .form-costum-group {
+        display: block;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .form-costum-control {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    }
+
+    .custom-label {
+        font-weight: 400;
+        color: #a7a7a7;
+        line-height: 24px;
+        font-size: .85rem;
+    }
+
+    textarea:focus {
+        border: 1px solid #ffd634;
+    }
+
+    textarea {
+        height: 100px !important;
+    }
+
+    input:focus {
+        border: 1px solid #ffd634;
+    }
+
+    .button-custom {
+        border-radius: 3px;
+        font-size: 15px;
+        padding: .375rem .75rem;
+        text-transform: none;
+        transition: box-shadow .2s cubic-bezier(.4, 0, 1, 1), background-color .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1);
+        will-change: box-shadow, transform;
+        display: inline-block;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        user-select: none;
+        border:none;
+        color: white;
+    }
+    .bt-yellow{
+        background:#ffd634;
+    }
+    .bt-danger{
+
+        background:red;
+    }
+</style>
+
+<body class="fixed-left">
+
+<!-- Loader -->
+<div id="preloader">
+    <div id="status">
+        <div class="spinner"></div>
+    </div>
+</div>
+
+<!-- Begin page -->
+<div id="wrapper">
+    <div class="content">
+
+        <div class="page-content-wrapper ">
+
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- end page title end breadcrumb -->
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8 col-xl-8">
+                        <div class="card m-b-30" style="border-radius: 10px;">
+                            <div class="card-body">
+                                <h4 class="text-center"
+                                    style="font-weight: bold; color: #ffd634; text-transform: uppercase">To'liq
+                                    ro'yxatdan o'tish</h4>
+                                {% if messages %}
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <p class="text-muted font-14"></p>
+                                <div class="general-label">
+                                    <form class="mb-0" action="{% url 'regfull' %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-costum-group">
+                                            <label class="custom-label" for="exampleInputEmail1">Ism</label>
+                                            <input type="text" class="form-costum-control" name="first_name" required>
+                                            <span class="bmd-help">Ism maydoni to'ldirilmadi</span>
+                                        </div>
+                                        <div class="form-costum-group">
+                                            <label class="custom-label" for="exampleInputEmail1">Familya</label>
+                                            <input type="text" class="form-costum-control" name="last_name" required
+                                            >
+                                            <span class="bmd-help">Familya maydoni to'ldirilmadi</span>
+                                        </div>
+                                        <div class="form-costum-group">
+                                            <label class="custom-label" for="exampleInputPassword1">Kasbi</label>
+                                            <input type="text" class="form-costum-control" name="job" required
+                                            >
+                                        </div>
+                                        <input type="hidden" name="id" value="{{ id }}">
+                                        <div class="form-costum-group">
+                                            <label class="custom-label" for="exampleInputPassword1">Parol</label>
+                                            <input type="text" class="form-costum-control" name="password" required
+                                            >
+                                        </div>
+                                        <div class="form-costum-group">
+                                            <label class="custom-label" for="exampleTextarea">Speaker haqida
+                                                qo'shimcha ma'lumot</label>
+                                            <textarea class="form-costum-control" name="description"
+                                                      id="exampleTextarea"
+                                                      required rows="3"></textarea>
+                                        </div>
+                                        <div class="form-costum-group">
+                                            <label class="custom-label" for="exampleTextarea">Tashkil qilmoqchi
+                                                bo'lgan kursingiz haqida ma'lumot</label>
+                                            <textarea class="form-costum-control" name="message" id="exampleTextarea"
+                                                      required
+                                                      rows="3"></textarea>
+                                        </div>
+                                        <div class="form-check form-costum-group">
+                                            <input type="checkbox" name="has_course" class="form-check-input" id="exampleCheck1">
+                                            <label class="form-check-label custom-label"
+                                                   for="exampleCheck1">Online video kursingiz bormi?</label>
+                                        </div>
+                                        <button type="submit" class="button-custom bt-yellow">Ro'yxatdan
+                                            o'tish
+                                        </button>
+                                        <a href="{% url 'logout' %}" class="button-custom bt-danger">Bekor
+                                            qilish</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-md-2"></div>
+                </div>
+
+
+            </div><!-- container -->
+
+        </div> <!-- Page content Wrapper -->
+
+    </div>
+
+</div>
+<!-- END wrapper -->
+
+<script src="//code-eu1.jivosite.com/widget/TU3lwKcxLC" async></script>
+<!-- jQuery  -->
+<script src="{% static 'back/js/jquery.min.js' %}"></script>
+<script src="{% static 'back/js/popper.min.js' %}"></script>
+<script src="{% static 'back/js/bootstrap-material-design.js' %}"></script>
+<script src="{% static 'back/js/modernizr.min.js' %}"></script>
+<script src="{% static 'back/js/detect.js' %}"></script>
+<script src="{% static 'back/js/fastclick.js' %}"></script>
+<script src="{% static 'back/js/jquery.slimscroll.js' %}"></script>
+<script src="{% static 'back/js/jquery.blockUI.js' %}"></script>
+<script src="{% static 'back/js/waves.js' %}"></script>
+<script src="{% static 'back/js/jquery.nicescroll.js' %}"></script>
+<script src="{% static 'back/js/jquery.scrollTo.min.js' %}"></script>
+
+<!-- Parsley js -->
+<script src="{% static 'back/plugins/parsleyjs/parsley.min.js' %}"></script>
+<script src="{% static 'back/pages/validation-init.js' %}"></script>
+
+<!-- App js -->
+<script src="{% static 'back/js/app.js' %}"></script>
+
+</body>
+</html>

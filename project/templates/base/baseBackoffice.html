@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+        <title>Backoffice EduOn</title>
+        <meta content="Eduon Backoffice" name="description" />
+        <meta content="Algorithmgateway" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <link rel="shortcut icon" href="{%static 'back/img/favicon.png'%}">
+
+        <!--Morris Chart CSS -->
+        <link rel="stylesheet" href="{%static 'back/plugins/fullcalendar/vanillaCalendar.css'%}"/>
+        <link rel="stylesheet" href="{%static 'back/plugins/jvectormap/jquery-jvectormap-2.0.2.css'%}">
+        <link rel="stylesheet" href="{%static 'back/plugins/chartist/css/chartist.min.css'%}">
+        <link rel="stylesheet" href="{%static 'back/plugins/morris/morris.css'%}">
+        <link rel="stylesheet" href="{%static 'back/plugins/metro/MetroJs.min.css'%}">
+
+        <link rel="stylesheet" href="{%static 'back/plugins/carousel/owl.carousel.min.css'%}">
+        <link rel="stylesheet" href="{%static 'back/plugins/carousel/owl.theme.default.min.css'%}">
+
+        <link rel="stylesheet" href="{%static 'back/plugins/animate/animate.css'%}" type="text/css">
+        <link rel="stylesheet" href="{%static 'back/css/bootstrap-material-design.min.css'%}" type="text/css">
+        <link rel="stylesheet" href="{%static 'back/css/icons.css'%}" type="text/css">
+        <link rel="stylesheet" href="{%static 'back/css/style.css'%}" type="text/css">
+
+    </head>
+
+
+    <body class="fixed-left">
+
+        <!-- Loader -->
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Begin page -->
+        <div id="wrapper">
+
+            <!-- ========== Left Sidebar Start ========== -->
+            <div class="left side-menu">
+                <button type="button" class="button-menu-mobile button-menu-mobile-topbar open-left waves-effect">
+                    <i class="mdi mdi-close"></i>
+                </button>
+
+                <!-- LOGO -->
+                <div class="topbar-left">
+                    <div class="text-center">
+                        <!--<a href="index.html" class="logo"><i class="mdi mdi-assistant"></i> Urora</a>-->
+                        <a href="" class="logo">
+                            <img src="{% static 'back/img/logo.png' %}" style="height:60% " alt="" class="logo-large">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="sidebar-inner slimscrollleft" id="sidebar-main">
+
+                    <div id="sidebar-menu">
+                        <ul>
+
+                            <li>
+                                <a href="{% url 'backoffice-home' %}" class="waves-effect">
+                                    <i class="mdi mdi-view-dashboard"></i>
+                                    <span> Dashboard
+{#                                        <span class="badge badge-pill badge-primary float-right">7</span>#}
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'backoffice-speaker' %}" class="waves-effect">
+                                    <i class="mdi mdi-account"></i>
+                                    <span> Speakerlar
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'backoffice-users' %}" class="waves-effect">
+                                    <i class="fa fa-users"></i>
+                                    <span> Foydalanuvchilar
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'backoffice-course' %}" class="waves-effect">
+                                    <i class="fa fa-video-camera"></i>
+                                    <span> Kurslar
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'moliya' %}" class="waves-effect">
+                                    <i class="fa fa-money"></i>
+                                    <span> Moliya
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'tasdiq' %}" class="waves-effect">
+                                    <i class="mdi mdi-check"></i>
+                                    <span> Tasdiq
+                                        <span class="badge badge-pill badge-primary float-right" id="offer-count">7</span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'backoffice-tolov' %}" class="waves-effect">
+                                    <i class="fa fa-money"></i>
+                                    <span> To'lov
+                                        <span class="badge badge-pill badge-primary float-right" id="bil_count">7</span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'sozlamalar' %}" class="waves-effect">
+                                    <i class="fa fa-cog"></i>
+                                    <span> Sozlamalar
+                                    </span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- end sidebarinner -->
+            </div>
+            <!-- Left Sidebar End -->
+
+            <!-- Start right Content here -->
+
+            <div class="content-page">
+                <!-- Start content -->
+                <div class="content">
+
+                    <!-- Top Bar Start -->
+                    <div class="topbar">
+
+                        <nav class="navbar-custom">
+                            <div class="dropdown notification-list nav-pro-img">
+
+
+                            </div>
+
+                            <ul class="list-inline float-right mb-0 mr-3">
+
+                                <li class="list-inline-item dropdown notification-list">
+                                    <a class="nav-link dropdown-toggle arrow-none waves-effect" href="{% url 'tasdiq' %}" role="button" aria-haspopup="false"
+                                        aria-expanded="false">
+                                        <i class="ti-bell noti-icon"></i>
+                                        <span class="badge badge-success a-animate-blink noti-icon-badge" id="offer-count2">3</span>
+                                    </a>
+                                </li>
+
+                                <li class="list-inline-item dropdown notification-list">
+                                    <a class="nav-link dropdown-toggle arrow-none waves-effect nav-user" data-toggle="dropdown" href="#" role="button" aria-haspopup="false"
+                                        aria-expanded="false">
+                                        <img src="{%  static 'back/images/users/avatar-1.jpg' %}" alt="user" class="rounded-circle img-thumbnail">
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                                        <!-- item-->
+                                        <div class="dropdown-item noti-title">
+                                            <h5>Profil</h5>
+                                        </div>
+                                        <a class="dropdown-item" href="{% url 'logout' %}">
+                                            <i class="mdi mdi-logout m-r-5 text-muted"></i> Chiqish</a>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="list-inline menu-left mb-0">
+                                <li class="float-left">
+                                    <button class="button-menu-mobile open-left waves-light waves-effect">
+                                        <i class="mdi mdi-menu"></i>
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="clearfix"></div>
+
+                        </nav>
+
+                    </div>
+                    <!-- Top Bar End -->
+                    {% block content %}
+
+                    {% endblock content %}
+                </div>
+                <!-- content -->
+
+                <footer class="footer">
+                    © 2020 Eduon
+                </footer>
+
+            </div>
+            <!-- End Right content here -->
+
+        </div>
+        <!-- END wrapper -->
+
+
+        <!-- jQuery  -->
+        <script src="{% static 'back/js/jquery.min.js' %}"></script>
+        <script src="{% static 'back/js/popper.min.js' %}"></script>
+        <script src="{% static 'back/js/bootstrap-material-design.js' %}"></script>
+        <script src="{% static 'back/js/modernizr.min.js' %}"></script>
+        <script src="{% static 'back/js/detect.js' %}"></script>
+        <script src="{% static 'back/js/fastclick.js' %}"></script>
+        <script src="{% static 'back/js/jquery.slimscroll.js' %}"></script>
+        <script src="{% static 'back/js/waves.js' %}"></script>
+        <script src="{% static 'back/js/jquery.nicescroll.js' %}"></script>
+        <script src="{% static 'back/js/jquery.scrollTo.min.js' %}"></script>
+
+
+        <script src="{% static 'back/plugins/carousel/owl.carousel.min.js' %}"></script>
+        <script src="{% static 'back/plugins/fullcalendar/vanillaCalendar.js' %}"></script>
+        <script src="{% static 'back/plugins/peity/jquery.peity.min.js' %}"></script>
+        <script src="{% static 'back/plugins/jvectormap/jquery-jvectormap-2.0.2.min.js' %}"></script>
+        <script src="{% static 'back/plugins/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+        <script src="{% static 'back/plugins/chartist/js/chartist.min.js' %}"></script>
+        <script src="{% static 'back/plugins/chartist/js/chartist-plugin-tooltip.min.js' %}"></script>
+        <script src="{% static 'back/plugins/metro/MetroJs.min.js' %}"></script>
+        <script src="{% static 'back/plugins/raphael/raphael.min.js' %}"></script>
+        <script src="{% static 'back/plugins/morris/morris.min.js' %}"></script>
+        <script src="{% static 'back/pages/dashborad.js' %}"></script>
+
+        <!-- App js -->
+        <script>
+            $(document).ready(function () {
+               $.ajax({
+                  type:'get',
+                  url:'{% url 'count-offer' %}',
+                  success:function (data) {
+                    var count = data['count'];
+                      $("#offer-count").text(count);
+                      $("#bil_count").text(data['bil_count']);
+                      $("#offer-count2").text(count);
+                  }
+               });
+            });
+        </script>
+        {% block js %}
+
+        {% endblock js %}
+        <script src="{% static 'back/js/app.js' %}"></script>
+    </body>
+
+</html>

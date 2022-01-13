@@ -1,0 +1,197 @@
+{% extends 'base/baseBackoffice.html' %}
+{% load static %}
+{% block content %}
+    <!-- DataTables -->
+    <link href="{% static 'back/plugins/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'back/plugins/datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet" type="text/css"/>
+    <!-- Responsive datatable examples -->
+    <link href="{% static 'back/plugins/datatables/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css"/>
+    <div class="page-content-wrapper ">
+
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-title-box">
+                        <div class="btn-group float-right">
+                        </div>
+                        <h4 class="page-title">Kurslar</h4>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12 col-sm-12">
+                    <div class="card m-b-30">
+                        <div class="card-body table-responsive">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="header-title">Speaker kurslari</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <form action="" method="get">
+                                        <div class="inline-group">
+                                            <input type="text" class="form-control" name="q" placeholder="Qidirish ...">
+                                        </div>
+                                        <input type="submit" style="display: none">
+                                    </form>
+                                </div>
+                            </div>
+
+
+                            <div class="">
+                                <table class="table mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th>Kurs nome</th>
+                                        <th>Speaker</th>
+                                        <th>Turi</th>
+                                        <th>Narxi</th>
+                                        <th>Sotildi</th>
+                                        <th>videolar soni</th>
+                                        <th>Sanasi</th>
+                                        <th>Top kurs</th>
+                                        <th>Eduon tavsiya</th>
+                                        <th>Chegirma</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for course in courses %}
+                                        <tr>
+                                            <td>{{ course.name }}</td>
+                                            <td>{{ course.author.speaker.first_name }} {{ course.author.speaker.last_name }}</td>
+                                            <td>{{ course.turi }}</td>
+                                            <td>{{ course.price }}</td>
+                                            <td>{{ course.sells }}</td>
+                                            <td>{{ course.videos }}</td>
+                                            <td>{{ course.date }}</td>
+                                            <td><input type="checkbox" {% if course.is_top == 1 %}checked{% endif %}
+                                                       onchange="ChangeStatus({{ course.id }})"
+                                                       id="istop{{ course.id }}" class="form-control-lg"></td>
+                                            <td><input type="checkbox" {% if course.is_tavsiya == 1 %}checked{% endif %}
+                                                       onchange="ChangeStatusTavsiya({{ course.id }})"
+                                                       id="istavsiya{{ course.id }}" class="form-control-lg"></td>
+                                            <td>
+                                                <div class="row">
+{#                                                    <div class="col-xl-8">#}
+{#                                                        <input type="number" id="discount{{ course.id }}" value="{{ course.discount }}"#}
+{#                                                               class="form-control">#}
+{#                                                    </div>#}
+                                                    <div class="col-xl-4">
+                                                        <button type="button" class="bt btn-warning"
+                                                                onclick="SetDiscount({{ course.id }})">
+                                                            <span class="fa fa-check"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--end row-->
+            <div class="row">
+                {% if courses.paginator.num_pages > 1 %}
+                    <nav aria-label="...">
+                        <ul class="pagination pagination-lg">
+                            {% if courses.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ courses.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for num in courses.paginator.page_range %}
+                                {% if num == courses.number %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" tabindex="-1">{{ num }}</a>
+                                    </li>
+                                {% elif num > courses.number|add:'-3' and num < courses.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if courses.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ courses.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+
+        </div><!-- container -->
+
+    </div> <!-- Page content Wrapper -->
+{% endblock content %}
+{% block js %}
+    <script>
+    function SetDiscount(id){
+        console.log(id)
+        var summa = document.getElementById("discount"+String(id)).value;
+        $.ajax({
+            type:'get',
+            url:"{% url 'set-discount' %}",
+            data:{ summa:summa, id:id},
+            success:function (data){
+
+            }
+        })
+    }
+        function ChangeStatus(id) {
+            var is_top = 0
+            if ($("#istop" + String(id)).is(":checked")) {
+                is_top = 1
+            } else {
+                is_top = 0
+            }
+            $.ajax({
+                method: 'GET',
+                url: '{% url 'change-course-status' %}',
+                data: {is_top: is_top, id: id},
+                success: function () {
+                    console.log('ok')
+                },
+                error: function (error) {
+                    console.log(error.message)
+                }
+            })
+        }
+
+        function ChangeStatusTavsiya(id) {
+            var is_tavsiya = 0
+            if ($("#istavsiya" + String(id)).is(":checked")) {
+                is_tavsiya = 1
+            } else {
+                is_tavsiya = 0
+            }
+            $.ajax({
+                method: 'GET',
+                url: '{% url 'change-course-status-tavsiya' %}',
+                data: {is_tavsiya: is_tavsiya, id: id},
+                success: function () {
+                    console.log('ok')
+                },
+                error: function (error) {
+                    console.log(error.message)
+                }
+            })
+        }
+    </script>
+{% endblock js %}

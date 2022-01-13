@@ -1,0 +1,175 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<style>
+    .block-overflow{
+        overflow: hidden;
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-head">
+        <h4 class="my-2">Video yuklash</h4>
+    </div>
+    <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+            <div class="card m-b-30">
+                <div class="card-body">
+
+                    <h4 class="mt-0 header-title">Video yuklash</h4>
+                    <form method="post" id="formVideo" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" class="form-control" name="title" required placeholder="Title"/>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 my-1 control-label">Kursi turi</label>
+                            <div class="col-md-10">
+                                <div class="form-check-inline my-1">
+                                    <label class="cr-styled" for="example-radio4">
+                                        <input type="radio" id="example-radio4" name="turi" value="Pullik">
+                                        <i class="fa"></i>
+                                        Pullik
+                                    </label>
+                                </div>
+                                <div class="form-check-inline my-1">
+                                    <label class="cr-styled" for="example-radio5">
+                                        <input type="radio" id="example-radio5" name="turi" value="Bepul" checked>
+                                        <i class="fa"></i>
+                                        Bepul
+                                    </label>
+                                </div>
+                            </div>
+                        </div> <!--end row-->
+
+                        <div class="form-group"  id="course_pullik" style="display: none">
+                            <label>Kurslar Pullik</label>
+                            <select class="form-control" name="course_pullik">
+                                {% for course in courses_pullik %}
+                                <option value="{{ course.id }}">{{ course.name }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                        <div class="form-group" id="course_bepul" >
+                            <label>Kurslar Bepul</label>
+                            <select class="form-control" name="course_bepul">
+                                {% for course in courses_bepul %}
+                                <option value="{{ course.id }}">{{ course.name }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Rasm</label>
+                            <div class="block-overflow">
+                                <input type="file" name="rasm" required/>
+                            </div>
+                        </div>
+                        <div class="form-group" id="video_form" style="display: none">
+                            <label>Video</label>
+                            <div class="block-overflow">
+                                <input type="file" name="video"/>
+                            </div>
+                        </div>
+                        <div class="form-group" id="url_form">
+                            <label>Url</label>
+                            <div>
+                                <input data-parsley-type="alphanum" name="url" type="text"
+                                       class="form-control"
+                                       placeholder="Bepul video manzili"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Ma'lumot</label>
+                            <div>
+                                <textarea required class="form-control" rows="5" name="desc"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <div>
+                                <input type="submit" class="btn btn-info waves-effect waves-light" value="Qo'shish">
+                                <button type="reset" class="btn btn-secondary waves-effect m-l-5">
+                                    Bekor qilish
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2"></div><!-- end col -->
+    </div> <!-- end row -->
+    <div class="row" id="brogress" style="display: none">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card bg-white m-b-30">
+                <div class="card-body">
+                    <h5 class="header-title pb-3">Yuklanmoqda</h5>
+                    <div class="">
+                        <div class="progress my-3" style="height: 14px;">
+                            <div class="progress-bar bg-info" id="progbar" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--end row-->
+
+    </div><!--end container-->
+
+{% endblock content %}
+{% block js %}
+    <script>
+    $(document).ready(function () {
+        $('#formVideo').on('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData($('#formVideo')[0]);
+            $.ajax({
+               xhr:function () {
+                   var xhr = new window.XMLHttpRequest();
+                   xhr.upload.addEventListener('progress',function (e) {
+                        if (e.lengthComputable){
+                            var percent = Math.round((e.loaded/e.total)*100);
+                            $('#brogress').css('display','flex')
+                            $('#progbar').attr('aria-valuenow',percent).css('width',percent+'%').text(percent+'%');
+                        }
+                   });
+                return xhr
+               },
+               type:'POST',
+               url:'{% url 'video-upload-add' %}',
+               data: formData,
+                processData:false,
+                contentType:false,
+                success:function () {
+                   alert('Video yuklandi!')
+                    $("#formVideo")[0].reset();
+                }
+            });
+        });
+    });
+    </script>
+    <script>
+    $('input[type=radio][name=turi]').change(function() {
+        if (this.value == 'Pullik') {
+            $('#course_pullik').css('display','unset');
+            $('#course_bepul').css('display','none');
+            $('#video_form').css('display','unset');
+            $('#url_form').css('display','none');
+        }
+        else if (this.value == 'Bepul') {
+            $('#course_pullik').css('display','none');
+            $('#course_bepul').css('display','unset');
+            $('#video_form').css('display','none');
+            $('#url_form').css('display','unset');
+        }
+    });
+    </script>
+    <script>
+    function ChangeCourse() {
+        var course = document.getElementById("course").value
+        console.log(course)
+    }
+    </script>
+{% endblock js %}

@@ -1,0 +1,80 @@
+{% extends 'base/baseBackoffice.html' %}
+
+
+{% block content %}
+    <div class="page-content-wrapper ">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <h4>Tasdiqlanmagan kurslar</h4>
+                </div>
+            </div>
+            <div class="row">
+
+                {% for course in not_confirmed_courses %}
+                    <div class="col-md-12 col-xl-4">
+                        <div class="card m-b-30">
+                            <h5 class="card-header">{{ course.name }}</h5>
+                            <div class="card-body">
+                                <h5 class="card-title">Shaxsiy ma'lumotlari</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="fa fa-user"></i> {{ course.author.speaker.first_name }} {{ course.author.speaker.last_name }}</li>
+                                    <li>
+                                        <i class="fa fa-dollar"></i> {{ course.turi }}
+                                        {% if course.turi == 'Pullik' %} ({{ course.price }} sum) {% endif %}
+                                    </li>
+
+                                    {% if course.has_course %}
+                                        <li><i class="fa fa-check"></i> Online  video kursi bori</li>
+                                    {% else %}
+                                        <li><i class="fa fa-window-close"></i> Online  video kursi yo'q</li>
+                                    {% endif %}
+                                 </ul>
+{#                                <h5 class="card-title">Qo'shimcha ma'lumot</h5>#}
+{#                                <p class="card-text pt-1">{{ course.description }}</p>#}
+{#                                <h5 class="card-title">Kurs haqida ma'lumot</h5>#}
+{#                                <p class="card-text pt-1">{{ course.message }}</p>#}
+                                <a href="{% url 'change-course-status' %}?id={{ course.id }}&confirm=true" class="btn btn-primary my-2">Tasdiqlash</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        {% comment %}
+        <div class="container-fluid">
+            <div class="row" style="padding-top: 25px">
+
+                {% for tasdiq in tasdiqs %}
+                    <div class="col-md-12 col-xl-4">
+                        <div class="card m-b-30">
+                            <h5 class="card-header">{{ tasdiq.speaker.first_name }} {{ tasdiq.speaker.last_name }}</h5>
+                            <div class="card-body">
+                                <h5 class="card-title">Shaxsiy ma'lumotlari</h5>
+                                <ul>
+                                    <li><i class="fa fa-user"></i> {{ tasdiq.speaker.first_name }} {{ tasdiq.speaker.last_name }}</li>
+                                    <li> <i class="fa fa-envelope"></i> {{ tasdiq.speaker.email }}</li>
+                                    <li><i  class="fa fa-phone"></i> {{ tasdiq.phone }}</li>
+                                    <li><i   class="fa fa-calendar"></i> {{ tasdiq.kasbi }}</li>
+                                    <li>{% if tasdiq.has_course %} <i class="fa fa-check"></i> Online  video kursi bori {% else %}
+                                         <i class="fa fa-window-close"></i> Online  video kursi yo'q
+                                    {% endif %}</li>
+                                 </ul>
+                                <h5 class="card-title">Qo'shimcha ma'lumot</h5>
+                                <p class="card-text pt-1">{{ tasdiq.description }}</p>
+                                <h5 class="card-title">Kurs haqida ma'lumot</h5>
+                                <p class="card-text pt-1">{{ tasdiq.message }}</p>
+                                <a href="{% url 'tasdiq-check' %}?accept={{ tasdiq.id }}" class="btn btn-primary my-2">Tasdiqlash</a>
+                                <a href="{% url 'tasdiq-check' %}?delete={{ tasdiq.id }}" class="btn btn-danger my-2">Bekor qilish</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+        {% endcomment %}
+    </div>
+{% endblock content %}

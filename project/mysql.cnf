@@ -1,0 +1,5 @@
+[client]
+database = backoffice
+user = javohir
+password = Mamirov.javohir97
+default-character-set = utf8mb4

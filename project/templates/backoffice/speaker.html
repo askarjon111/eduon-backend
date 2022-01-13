@@ -1,0 +1,135 @@
+{% extends 'base/baseBackoffice.html' %}
+{% load static %}
+{% block content %}
+    <link href="{% static 'back/plugins/bootstrap-rating/bootstrap-rating.css' %}" rel="stylesheet" type="text/css">
+    <div class="page-content-wrapper ">
+
+        <div class="container-fluid">
+
+            <div class="row">
+                 <div class="col-md-6"  style="padding-top: 25px">
+                    <form action="" method="get">
+                        <div class="inline-group">
+                            <input type="text" class="form-control" name="q" placeholder="Qidirish ...">
+                        </div>
+                        <input type="submit" style="display: none">
+                    </form>
+                </div>
+                <div class="col-md-6"  style="padding-top: 25px">
+                    <a href="{% url 'export-speaker' %}" class="btn btn-success">Export speaker</a>
+                </div>
+                <div class="col-sm-12">
+                    <div class="page-title-box">
+                        <div class="row">
+                            {% for speaker in speakers %}
+                            <div class="col-md-12 col-xl-3">
+                            <div class="card m-b-30 border-0">
+                                <div class="form-check" style="margin: 5px">
+                                  <input class="form-check-input" type="checkbox"{% if speaker.is_top == 1 %}checked {% endif %} id="is_top{{ speaker.id }}" onchange="ChangeStatus({{ speaker.id }})">
+                                  <label class="form-check-label" for="defaultCheck1">
+                                    Top speaker
+                                  </label>
+                                </div>
+                                <div class="card-body  text-center">
+                                    <img {% if speaker.image != '' %} src="{{ speaker.image.url }}" {% else %}src="{% static 'back/images/users/avatar-5.jpg' %}"{% endif %} alt="" class="rounded-circle mx-auto d-block">
+
+                                    <div class="text-center">
+                                        <h5><a href="{% url 'backoffice-speaker-detail' speaker.pk %}">{% if speaker.speaker.first_name != '' or speaker.speaker.last_name != '' %}{{ speaker.speaker.first_name }} {{ speaker.speaker.last_name }}
+                                        {% else %}{{ speaker.speaker.username }}{% endif %}</a></h5>
+                                    </div>
+                                    <div class="card m-b-30">
+                                            <div class="text-center">
+                                                <input type="hidden" class="rating" data-filled="mdi mdi-star font-32 text-primary" data-empty="mdi mdi-star-outline font-32 text-muted" data-readonly {% if speaker.rating is None or speaker.count == 0 %} value="0"
+                                                {% else %}value="{% widthratio speaker.rating speaker.count 1 %}"{% endif %}/>
+                                            </div>
+                                    </div>
+                                    <div class="row text-center profile-block">
+                                        <div class="col-6 align-self-center py-3 border-right">
+                                            <h3 class="profile-count">
+                                                <b class="font-22"> {{ speaker.course }}</b>
+                                            </h3>
+                                            <p class="mb-0"><a href="{% url 'backoffice-speaker-course' %}?speaker={{ speaker.id }}">Kurslar</a></p>
+                                        </div>
+                                        <div class="col-6 align-self-center py-3">
+                                            <h3 class="profile-count">
+                                                <b class="font-22">{{ speaker.sells }}</b>
+                                            </h3>
+                                            <p class="mb-0">Sotilgan kurslar</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <!-- end page title end breadcrumb -->
+        <div class="row">
+        {% if speakers.paginator.num_pages > 1 %}
+            <nav aria-label="...">
+                <ul class="pagination pagination-lg">
+                    {% if speakers.has_previous %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ speakers.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                      {% endif %}
+                      {% for num in speakers.paginator.page_range %}
+                      {% if num == speakers.number %}
+                      <li class="page-item">
+                        <a class="page-link" href="#" tabindex="-1">{{ num }}</a>
+                    </li>
+                      {% elif num > speakers.number|add:'-3' and num < speakers.number|add:'3' %}
+                      <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                      {% endif %}
+                      {% endfor %}
+                      {% if speakers.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ speakers.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                      {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        </div>
+
+
+        </div><!-- container -->
+
+    </div> <!-- Page content Wrapper -->
+{% endblock content %}
+{% block js %}
+<!-- Bootstrap rating js -->
+        <script src="{% static 'back/plugins/bootstrap-rating/bootstrap-rating.min.js' %}"></script>
+        <script src="{% static 'back/plugins/emotion-rating/emotion-ratings.js' %}"></script>
+        <script src="{% static 'back/pages/rating-init.js' %}"></script>
+    <script>
+function ChangeStatus(id) {
+    var is_top = 0
+    if($("#is_top"+String(id)).is(":checked")){
+        is_top = 1
+    }else{
+        is_top = 0
+    }
+    $.ajax({
+        method:'GET',
+        url:'{% url 'change-speaker-status' %}',
+        data:{is_top:is_top,id:id},
+        success:function () {
+            console.log('ok')
+        },
+        error:function (error) {
+            console.log(error.message)
+        }
+    })
+}
+</script>
+{% endblock js %}

@@ -1,0 +1,285 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .pagination {
+            display: inline-block;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .pagination a.active {
+            background-color: #ffc107;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+    </style>
+    <link href="{% static 'assets/plugins/sweet-alert/sweetalert2.min.css' %}" rel="stylesheet" type="text/css"/>
+    <div class="container-fluid mb-5">
+        <div class="page-head">
+            <h3>Balans</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-12 m-b-30">
+                <div class="card">
+                    <div class="card-body invoice">
+                        <div class="clearfix">
+                            <div class="pull-left">
+                                <button type="button" onclick="get_billing()" style="float: right;"
+                                        class="btn btn-success">Yechish
+                                </button>
+                            </div>
+                            <div class="pull-right">
+                                <h4>Balans :
+                                    <strong><span class="badge badge-warning"
+                                                  style="font-size: 20px !important;">{{ balans }}</span> so'm</strong>
+                                </h4>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <div class="pull-right mt-4">
+                                    {#                                    <address>#}
+                                    {#                                        <strong>Twitter, Inc.</strong><br>#}
+                                    {#                                        795 Folsom Ave, Suite 600<br>#}
+                                    {#                                        San Francisco, CA 94107<br>#}
+                                    {#                                        <abbr title="Phone">P:</abbr> (123) 456-7890#}
+                                    {#                                    </address>#}
+                                </div>
+                                <div class="pull-left mt-4">
+                                    <p><strong>Oxirgi so'rov sana : </strong> {{ bil_last.date_req }}</p>
+                                    <p><strong>So'rov holati : </strong> {% if bil_last.status == 0 %}
+                                        <span class="badge badge-warning">
+                                        Kutilmoqda</span>{% elif bil_last.status == 1 %}
+                                        <span class="badge badge-success">
+                                        To'landi</span>{% elif bil_last.status == 2 %}
+                                        <span class="badge badge-danger">
+                                        Qaytarildi</span>{% else %}{% endif %}
+                                    </p>
+                                    <p><strong>So'rov ID: </strong> {{ bil_last.id }}</p>
+                                </div>
+                            </div>
+                        </div><!--end row-->
+
+                        <div class="h-50"></div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table mt-4">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>So'rov sana</th>
+                                            <th>To'lov sana</th>
+                                            <th>Summa</th>
+                                            <th>Holati</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for bil in billings %}
+                                            <tr>
+                                                <td>{{ billings.start_index|add:forloop.counter0 }}</td>
+                                                <td>{{ bil.date_req }}</td>
+                                                <td>{% if bil.status == 1 or bil.status == 2 %}
+                                                    {{ bil.date_pay }}{% else %}{% endif %}</td>
+                                                <td>{{ bil.summa }}</td>
+                                                <td>{% if bil.status == 0 %}<span class="badge badge-warning">
+                                        Kutilmoqda</span>{% elif bil.status == 1 %}<span class="badge badge-success">
+                                        To'landi</span>{% else %}<span class="badge badge-danger">
+                                        Qaytarildi</span>{% endif %}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="paination-table">
+                                    {% if billings.paginator.num_pages > 1 %}
+                                        <div class="pagination">
+                                            {% if billings.has_previous %}
+                                                <a href="?page={{ billings.previous_page_number }}">&laquo;</a>
+                                            {% endif %}
+                                            {% for num in billings.paginator.page_range %}
+                                                {% if num == billings.number %}
+                                                    <a class="active" href="#">{{ num }}</a>
+                                                {% elif num > billings.number|add:'-3' and num < billings.number|add:'3' %}
+                                                    <a href="?page={{ num }}">{{ num }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if billings.has_next %}
+                                                <a href="?page={{ billings.next_page_number }}">&raquo;</a>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div><!--end row-->
+                        <hr>
+                        <div class="row" style="border-radius: 0px;">
+                            <div class="col-md-9">
+                                <p><strong>Qoidalar : </strong></p>
+                                <ul>
+                                    <li><small>Pul yechish mumkin bo'lgan minimal summa 50000 so'm. </small></li>
+                                    <li><small>Bir oyda bir marta pul yechish imkoni mavjud.</small></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-right">Umumiy yechilgan summa</h4>
+                                <hr>
+                                <h4 class="text-right">{{ summa }} so'm</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 m-b-30">
+                <div class="card">
+                    <div class="card-body invoice">
+                        <div class="clearfix">
+                            <div class="pull-left">
+                                <h4>Kurslardan tushgan pul tarixi </h4>
+                            </div>
+                            <div class="pull-right">
+                                <h4>Umumiy summa :
+                                    <strong><span class="badge badge-warning"
+                                                  style="font-size: 20px !important;">{{ sp_summa }}</span>
+                                        so'm</strong>
+                                </h4>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="clearfix">
+                            <form action="" method="get">
+                                <div class="row">
+
+                                    <div class="col-md-5">
+                                        <select class="form-control" name="course">
+                                            <option value="0">Kurslarim</option>
+                                            {% for course in courses %}
+                                                <option value="{{ course.id }}">{{ course.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="month" class="form-control" name="date">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-primary">Saralash</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <hr>
+                        <div class="h-50"></div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table mt-4">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Kurs</th>
+                                            <th>Kurs summasi</th>
+                                            <th>Speaker summa</th>
+                                            <th>Summa</th>
+                                            <th>Vaucher</th>
+                                            <th>Chegirma</th>
+                                            <th>Sana</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for ord in orders %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ ord.course.name }}</td>
+                                                <td>{{ ord.summa|add:ord.bonus|add:ord.discount }}</td>
+                                                <td>{{ ord.sp_summa }}</td>
+                                                <td>{{ ord.summa }}</td>
+                                                <td>{{ ord.bonus }}</td>
+                                                <td>{{ ord.discount }}</td>
+                                                <td>{{ ord.date }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="paination-table">
+                                    {% if orders.paginator.num_pages > 1 %}
+                                        <div class="pagination">
+                                            {% if orders.has_previous %}
+                                                <a href="?page={{ orders.previous_page_number }}">&laquo;</a>
+                                            {% endif %}
+                                            {% for num in orders.paginator.page_range %}
+                                                {% if num == orders.number %}
+                                                    <a class="active" href="#">{{ num }}</a>
+                                                {% elif num > orders.number|add:'-3' and num < orders.number|add:'3' %}
+                                                    <a href="?page={{ num }}">{{ num }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if orders.has_next %}
+                                                <a href="?page={{ orders.next_page_number }}">&raquo;</a>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div><!--end row-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    <script src="{% static 'assets/plugins/sweet-alert/sweetalert2.min.js' %}"></script>
+    <script>
+        function get_billing() {
+            $.ajax({
+                type: 'get',
+                url: '/get_billing',
+                success: function (data) {
+                    if (data['status'] === 1) {
+                        swal(
+                            {
+                                title: "Pul yechish",
+                                text: "So'rovingiz qabul qilindi.",
+                                type: 'success',
+                                confirmButtonColor: '#4fa7f3'
+                            }
+                        ).then(
+                            function () {
+                                window.location.reload()
+                            }
+                        )
+
+                    } else if (data['status'] === 11) {
+                        swal('Oops...', "Hisobingizda yetarli mablag' mavjud emas!", 'error')
+                    } else {
+                        swal({
+                            title: 'Oops...',
+                            text: "Bir oyda bir marta pul yechish uchun so'rov berish imkoni mavjud!",
+                            type: 'error'
+                        })
+
+                    }
+                }
+
+            })
+        }
+    </script>
+{% endblock js %}

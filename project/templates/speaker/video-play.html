@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <style>
+    .responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+    .containerCUstom {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+}
+    </style>
+<div class="container-fluid" xmlns="http://www.w3.org/1999/html">
+
+        <div class="page-head">
+            <h4 class="mt-2 mb-2">{{ video.title }}</h4>
+        </div>
+        <div class="containerCUstom">
+
+            {% if video.url == '' %}
+            {% if video.course.upload_or_youtube == 'Youtube' %}
+                <iframe class="responsive-iframe" src="{{ video.link }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            {% else %}
+                <video class="responsive-iframe" controls>
+            <source src="{{ video.video.url }}" type="video/mp4">
+                </video>
+            {% endif %}
+
+            <h3>{{ video.title }}</h3>
+            <p>{{ video.description }}</p>
+
+            {% else %}
+                <iframe class="responsive-iframe" src="{{ video.url }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            {% endif %}
+        </div>
+</div>
+{% endblock content %}

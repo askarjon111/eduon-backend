@@ -1,0 +1,976 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .widget-color-icon i {
+            color: #f5d505;
+            background: #f5d500;
+        }
+
+        .widget-box {
+            padding: 20px 10px;
+            border-radius: 10px;
+            position: relative;
+            color: #b1b1b1;
+            border: 1px solid rgba(0, 0, 0, .125);
+        }
+
+        .widget-box .widget-color-icon i {
+            font-size: 50px;
+            padding: 14px;
+            background-color: rgba(245, 213, 5, 0.2);
+            color: #f5d500;
+            border-radius: 5px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .col-5 p {
+            color: black;
+            font-weight: 600;
+            font-size: 17px;
+        }
+
+        .page-head h3 {
+            font-weight: bold;
+        }
+
+        .popup {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* The actual popup */
+        .popup .popuptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 25px;
+            left: 50%;
+            margin-left: -100px;
+        }
+
+        /* Popup arrow */
+        .popup .popuptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        /* Toggle this class - hide and show the popup */
+        .popup .show {
+            visibility: visible;
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s;
+        }
+
+        /* Add animation (fade in the popup) */
+        @-webkit-keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+    <div class="container-fluid" xmlns="http://www.w3.org/1999/html">
+        <div class="page-head"></div>
+        <div class="row">
+            <div class="col-lg-12 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6 m-b-30">
+                        <a data-toggle="modal" data-target="#exampleModalform2">
+                            <div class="widget-box bg-white">
+                                <div class="row d-flex align-items-center text-center">
+                                    <div class="col-5">
+                                        <div class="text-center widget-color-icon"><i class="fa fa-file-movie-o"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-5">
+                                        <p>Video yuklash</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-sm-6 m-b-30">
+                        <a data-toggle="modal" data-target="#exampleModalformFile">
+                            <div class="widget-box bg-white">
+                                <div class="row d-flex align-items-center text-center">
+                                    <div class="col-5">
+                                        <div class="text-center widget-color-icon"><i class="fa fa-file"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-5">
+                                        <p>Dokument yuklash</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div><!--end row-->
+        <div class="page-head">
+            <h4 class="mt-2 mb-2">Mening Videolarim</h4>
+        </div>
+        <div class="row">
+            {% for video in videolar %}
+                <div class="col-lg-3 col-sm-12">
+                    <div class="card mb-5" style="box-shadow: 2px 1px 14px 1px rgba(0,0,0,0.20); border-radius: 6px">
+                        <div class="card-header bg-white border-0" style="border-radius: 6px!important;">
+                            <img src="{{ video.video.image.url }}" alt="" class="img-fluid">
+                        </div>
+
+                        <div class="card-body widget-blog">
+                            <div class="text-muted mb-2">
+                                {% if video.video.is_file == True %}
+                                    <span class="badge badge-warning" style="float: right">Dokument</span>
+                                {% endif %}
+                                <span><i class="fa fa-eye"></i>{{ video.views }}</span>
+
+                            </div>
+                            <div class="card-title mb-2">
+                                {% if video.video.is_file == True %}
+                                    <a href="{{ video.video.video.url }}" target="_blank">
+                                        <h5>{{ video.video.title }}</h5></a>
+                                {% else %}
+                                    <a href="{% url 'single-video' video.video.pk %}"><h5>{{ video.video.title }}</h5>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <p class="card-text">{{ video.video.description }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-0" style="border-radius: 6px!important;">
+                            <button type="button" class="btn btn-danger padding-left btn-sm"
+                                    onclick="openDeleteModal('{{ video.video.pk }}')">O'chirish
+                            </button>
+                            {% if video.video.is_file == True %}
+                                <button type="button" class="btn btn-warning padding-right btn-sm"
+                                        onclick="openEditModalDock('{{ video.video.pk }}')">Tahrirlash
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-warning padding-right btn-sm"
+                                        onclick="openEditModal('{{ video.video.pk }}')">Tahrirlash
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Kursni o'chirishni tasdiqlash</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Kursingizni o'chirmoqchimisiz?</p>
+                </div>
+                <form id="delete_video" action="{% url 'video-delete' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-footer">
+                        <input id="video_id" type="hidden" name="id" value="{{ course.id }}">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <input type="submit" class="btn btn-danger btn-ok" value="Delete"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalform2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Video yuklash</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formVideo" action="{% url 'video-upload-add' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">Title</label>
+                                    <input type="text" class="form-control" id="field-1" placeholder="Title"
+                                           name="title"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Kursni tanlash</label>
+
+                                    <select name="kurs" style="width: 100%; padding: 7px; border-radius: 4px"
+                                            id="course_id">
+                                        <option selected value="{{ course_obj.id }}">{{ course_obj.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Video rasmi</label><br>
+                                        <input type="file" name="image" class="dropify" required
+                                               id="videoImageFile"/>
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupImage"></span>
+                                        </div>
+                                        <img src="" id="imagevideo"
+                                             style="display: none;width: 80px;height: 60px;float: right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+                        {% if course_obj.status == '0' %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card m-b-30" style="display: none">
+                                        <div class="card-body">
+                                            <label for="input-file-now-custom-1">Video</label><br>
+                                            <input type="file" name="video" value="None">
+                                            <div class="popup">
+                                                <span class="popuptext" id="PopupVideo"></span>
+                                            </div>
+                                            <span style="float: right;font-size: 14px;display: none"
+                                                  id="videname"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-0" class="control-label">URL</label>
+                                        <input type="text" class="form-control" id="field-0" placeholder="URL"
+                                               name="url" required>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card m-b-30">
+                                        <div class="card-body">
+                                            <label for="input-file-now-custom-1">Video</label><br>
+                                            <input type="file" name="video" value="None">
+                                            <div class="popup">
+                                                <span class="popuptext" id="PopupVideo"></span>
+                                            </div>
+                                            <span style="float: right;font-size: 14px;display: none"
+                                                  id="videname"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: none">
+                                        <label for="field-0" class="control-label" style="display: none">URL</label>
+                                        <input type="text" class="form-control" id="field-0" placeholder="URL"
+                                               name="url">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Video tartib raqami</label>
+
+                                    <input type="number" class="form-control" name="place_number" value="0">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-7" class="control-label">Ta'rif</label>
+                                    <p class="lead emoji-picker-container">
+
+                                    <textarea class="form-control" id="field-7" name="desc"
+                                              placeholder="video haqida malumot"
+                                              style="margin-top: 0px; margin-bottom: 0px; height: 137px;"
+                                              row="5"
+                                              data-emojiable="true" data-emoji-input="unicode"
+                                              required></textarea>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+                        <input type="submit" class="btn btn-primary" value="Qo'shish"/>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalformEdit" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Videoni tahrirlash</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formVideoEdit" action="{% url 'video-upload-edit' %}" method="post"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">Title</label>
+                                    <input type="text" class="form-control" id="field-1" placeholder="Title"
+                                           name="title_edit"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Kursni tanlash</label>
+
+                                    <select name="kurs_edit" style="width: 100%; padding: 7px; border-radius: 4px"
+                                            id="course_id">
+                                        <option selected value="{{ course_obj.id }}">{{ course_obj.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="id" id="video_id">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Video rasmi</label><br>
+                                        <input type="file" name="image_edit" class="dropify"
+                                               id="videoImageFile"/>
+
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupImage"></span>
+                                        </div>
+                                        <img src="" id="imagevideo"
+                                             style="display: none;width: 80px;height: 60px;float: right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+                        {% if course_obj.status == '0' %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card m-b-30" style="display: none">
+                                        <div class="card-body">
+                                            <label for="input-file-now-custom-1">Video</label><br>
+                                            <input type="file" name="video_edit" value="None">
+                                            <div class="popup">
+                                                <span class="popuptext" id="PopupVideo"></span>
+                                            </div>
+                                            <span style="float: right;font-size: 14px;display: none"
+                                                  id="videname"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-0" class="control-label">URL</label>
+                                        <input type="text" class="form-control" id="field-0" placeholder="URL"
+                                               name="url_edit" required>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card m-b-30">
+                                        <div class="card-body">
+                                            <label for="input-file-now-custom-1">Video</label><br>
+                                            <input type="file" name="video_edit" value="None">
+                                            <div class="popup">
+                                                <span class="popuptext" id="PopupVideo"></span>
+                                            </div>
+                                            <span style="float: right;font-size: 14px;display: none"
+                                                  id="videname"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display: none">
+                                        <label for="field-0" class="control-label" style="display: none">URL</label>
+                                        <input type="text" class="form-control" id="field-0" placeholder="URL"
+                                               name="url_edit">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Video tartib raqami</label>
+
+                                    <input type="number" class="form-control" name="place_number_edit" value="0">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-7" class="control-label">Ta'rif</label>
+                                    <p class="lead emoji-picker-container">
+                                    <textarea class="form-control" name="desc_edit"
+                                              placeholder="video haqida malumot"
+                                              style="margin-top: 0px; margin-bottom: 0px; height: 137px;"
+                                              data-emojiable="true" data-emoji-input="unicode"
+                                              required id="edit_desc"></textarea>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+                        <input type="submit" class="btn btn-primary" value="Tahrirlash"/>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalformFile" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Dokument yuklash</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formDockument" action="{% url 'dockument-upload-add' %}" method="post"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">Title</label>
+                                    <input type="text" class="form-control" id="field-1" placeholder="Title"
+                                           name="title"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Kursni tanlash</label>
+
+                                    <select name="course" style="width: 100%; padding: 7px; border-radius: 4px"
+                                            id="course_id">
+                                        <option selected value="{{ course_obj.id }}">{{ course_obj.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Dokument</label><br>
+                                        <input type="file" name="dockument">
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupVideo"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Dockument rasmi</label><br>
+                                        <input type="file" name="rasm" class="dropify" required
+                                               id="videoImageFile"/>
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupImage"></span>
+                                        </div>
+                                        <img src="" id="imagevideo"
+                                             style="display: none;width: 80px;height: 60px;float: right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Dokument tartib raqami</label>
+
+                                    <input type="number" class="form-control" name="place_number" value="0">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-7" class="control-label">Ta'rif</label>
+                                    <p class="lead emoji-picker-container">
+                                    <textarea class="form-control" id="field-7" name="desc"
+                                              placeholder="video haqida malumot"
+                                              style="margin-top: 0px; margin-bottom: 0px; height: 137px;"
+                                               data-emojiable="true" data-emoji-input="unicode"
+                                              required></textarea>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+                        <input type="submit" class="btn btn-primary" value="Qo'shish"/>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalformFileEdit" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Dokument tahrirlash</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formDockumentEdit" action="{% url 'dockument-upload-edit' %}" method="post"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">Title</label>
+                                    <input type="text" class="form-control" id="field-1" placeholder="Title"
+                                           name="title_edit"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Kursni tanlash</label>
+
+                                    <select name="course" style="width: 100%; padding: 7px; border-radius: 4px"
+                                            id="course_id">
+                                        <option selected value="{{ course_obj.id }}">{{ course_obj.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="doc_id">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Dokument</label><br>
+                                        <input type="file" name="dockument">
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupVideo"></span>
+                                        </div>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <label for="input-file-now-custom-1">Dokument rasmi</label><br>
+                                        <input type="file" name="rasm" class="dropify"
+                                               id="videoImageFile"/>
+                                        <div class="popup">
+                                            <span class="popuptext" id="PopupImage"></span>
+                                        </div>
+                                        <img src="" id="imagevideo"
+                                             style="display: none;width: 80px;height: 60px;float: right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">Dokument tartib raqami</label>
+
+                                    <input type="number" class="form-control" name="place_number_edit" value="0">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ----------------------------------------------------------------------------------------------------------------------------------------- -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="field-7" class="control-label">Ta'rif</label>
+                                    <p class="lead emoji-picker-container">
+                                    <textarea class="form-control" name="desc"
+                                              placeholder="video haqida malumot"
+                                              style="margin-top: 0px; margin-bottom: 0px; height: 137px;"
+                                               data-emojiable="true" data-emoji-input="unicode"
+                                              required id="dock_desc"></textarea>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+                        <input type="submit" class="btn btn-primary" value="Tahrirlash"/>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalform3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelform"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Video yuklanmoqda</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress my-3" style="height: 14px;">
+                        <div class="progress-bar bg-info" id="progbar" role="progressbar" style="width: 45%;"
+                             aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock content %}
+{% block js %}
+    <script>
+        function openDeleteModal(id) {
+            console.log(id)
+            document.getElementById("video_id").value = id;
+            $('#confirm-delete').modal('show');
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#delete_video').on('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData($('#delete_video')[0]);
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'video-delete' %}",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        window.location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        function openEditModal(id) {
+            console.log(id)
+            $("#video_id").attr('value', id)
+            $("#exampleModalformEdit").modal("show");
+            $.ajax({
+                type: 'get',
+                url: "{% url 'get_video' %}",
+                data: {id: id},
+                success: function (data) {
+                    console.log(data)
+                    $("#formVideoEdit").find('input[name="title_edit"]').val(data['name'])
+                    $("#formVideoEdit").find('input[name="id"]').val(data['id'])
+                    $("#formVideoEdit").find('input[name="url_edit"]').val(data['url'])
+                    $("#formVideoEdit").find('input[name="place_number_edit"]').val(data['place_number'])
+                    $("#edit_desc").text(data['desc'])
+                }
+            })
+        }
+
+        function openEditModalDock(id) {
+            console.log(id)
+            $("#exampleModalformFileEdit").modal("show");
+            $.ajax({
+                type: 'get',
+                url: "{% url 'get_video' %}",
+                data: {id: id},
+                success: function (data) {
+                    $("#formDockumentEdit").find('input[name="title_edit"]').val(data['name'])
+                    $("#formDockumentEdit").find('input[name="doc_id"]').val(data['id'])
+                    $("#formDockumentEdit").find('input[name="place_number_edit"]').val(data['place_number'])
+                    $("#dock_desc").text(data['desc'])
+                }
+            })
+        }
+    </script>
+    <script>
+
+        $('.kurs-img').click(function () {
+            var popup = document.getElementsByClassName("myPopup");
+            popup.classList.toggle("show", false);
+            $("#input-file-kurs").trigger('click');
+        })
+        $("#input-file-kurs").change(function (e) {
+            var file = e.target.files[0]
+            var turi = file.type.split('/')[0]
+            if (turi !== 'image') {
+                var popup = document.getElementsByClassName("myPopup");
+                popup.classList.toggle("show");
+                $(".popuptext").text("Rasm yuklanmadi!")
+                $("#input-file-kurs").val('');
+            } else {
+                $(".kursImage").attr("src", URL.createObjectURL(file));
+                $(".kursImage").css('display', 'unset');
+            }
+        })
+        $('#video-img-btn').click(function () {
+            var popup = document.getElementById("PopupImage");
+            console.log('click')
+            popup.classList.toggle("show", false);
+            $("#videoImageFile").trigger('click');
+        })
+        $("#videoImageFile").change(function (e) {
+            var file = e.target.files[0]
+            var turi = file.type.split('/')[0]
+            if (turi !== 'image') {
+                var popup = document.getElementById("PopupImage");
+                popup.classList.toggle("show");
+                $("#PopupImage").text("Rasm yuklanmadi!")
+                $("#videoImageFile").val('');
+            } else {
+                $("#imagevideo").attr("src", URL.createObjectURL(file));
+                $("#imagevideo").css('display', 'unset');
+            }
+        })
+        $('.video-btn').click(function () {
+            $("#video").trigger('click');
+            var popup = document.getElementById("PopupVideo");
+            popup.classList.toggle("show", false);
+        })
+        $("#video").change(function (e) {
+            var file = e.target.files[0]
+            var turi = file.type.split('/')[0]
+            if (turi !== 'video') {
+                var popup = document.getElementById("PopupVideo");
+                popup.classList.toggle("show");
+                $("#PopupVideo").text("Video yuklanmadi!")
+                $("#video").val('');
+            } else {
+                $("#videname").css('display', 'unset');
+                $("#videname").text(file.name);
+            }
+        })
+
+        $(document).ready(function () {
+            $('#formVideo').on('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData($('#formVideo')[0]);
+                $('#exampleModalform3').modal('show');
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var percent = Math.round((e.loaded / e.total) * 100);
+                                $('#progbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                                if (percent === 100) {
+                                    $('#exampleModalform3').modal('hide');
+                                    {#$("#exampleModalform2").modal('hide');#}
+                                }
+                            }
+                        });
+                        return xhr
+                    },
+                    type: 'POST',
+                    url: "{% url 'video-upload-add' %}",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        window.location.reload();
+                    }
+                });
+            });
+            $('#formDockumentEdit').on('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData($('#formDockumentEdit')[0]);
+                console.log(formData)
+                $('#exampleModalform3').modal('show');
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var percent = Math.round((e.loaded / e.total) * 100);
+                                $('#progbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                                if (percent === 100) {
+                                    $('#exampleModalform3').modal('hide');
+                                    {#$("#exampleModalform2").modal('hide');#}
+                                }
+                            }
+                        });
+                        return xhr
+                    },
+                    type: 'POST',
+                    url: "{% url 'dockument-upload-edit' %}",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        window.location.reload();
+                    }
+                });
+            });
+            $('#formVideoEdit').on('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData($('#formVideoEdit')[0]);
+                console.log(formData)
+                $('#exampleModalform3').modal('show');
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var percent = Math.round((e.loaded / e.total) * 100);
+                                $('#progbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                                if (percent === 100) {
+                                    $('#exampleModalform3').modal('hide');
+                                    {#$("#exampleModalform2").modal('hide');#}
+                                }
+                            }
+                        });
+                        return xhr
+                    },
+                    type: 'POST',
+                    url: "{% url 'video-upload-edit' %}",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        window.location.reload();
+                    }
+                });
+            });
+            $('#formDockument').on('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData($('#formDockument')[0]);
+                $('#exampleModalform3').modal('show');
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var percent = Math.round((e.loaded / e.total) * 100);
+                                $('#progbar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                                if (percent === 100) {
+                                    $('#exampleModalform3').modal('hide');
+                                    {#$("#exampleModalform2").modal('hide');#}
+                                }
+                            }
+                        });
+                        return xhr
+                    },
+                    type: 'POST',
+                    url: "{% url 'dockument-upload-add' %}",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        window.location.reload();
+                    }
+                });
+            });
+        });
+
+
+        $('#confirm-delete').on('show.bs.modal', function (e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+
+            $('.debug-url').html('Delete URL: <strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+        });
+    </script>
+    <script>
+        function TuriChange() {
+            var turi = document.getElementById('turi').value
+            if (turi === 'Pullik') {
+                $('#price_d').css('display', 'flex');
+            } else {
+                $('#price_d').css('display', 'none');
+            }
+        }
+    </script>
+{% endblock js %}

@@ -1,0 +1,336 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="Mannat Themes">
+        <meta name="keyword" content="">
+
+        <title>EduOn Speaker system</title>
+
+        <!-- Theme icon -->
+        <link rel="shortcut icon" href="{% static 'assets/img/favicon.png'%}">
+
+        <link href="{% static 'assets/plugins/morris-chart/morris.css' %}" rel="stylesheet">
+        <!-- Theme Css -->
+        <link href="{%static 'assets/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{%static 'assets/css/slidebars.min.css' %}" rel="stylesheet">
+        <link href="{%static 'assets/css/icons.css' %}" rel="stylesheet">
+        <link href="{%static 'assets/css/menu.css' %}" rel="stylesheet" type="text/css">
+        <link href="{%static 'assets/css/style.css' %}" rel="stylesheet">
+        <link href="{% static 'assets/plugins/sweet-alert/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body class="sticky-header">
+        <section>
+            <div class="sidebar-left">
+                <div class="sidebar-left-info">
+
+                    <div class="user-box">
+                        <div class="d-flex justify-content-center">
+                            <img src="{% static 'assets/images/users/avatar-1.jpg' %}" id="speaker-img" alt="" class="img-fluid rounded-circle">
+                        </div>
+                        <div class="text-center text-white mt-2">
+                            <h6><a href="{% url 'profile' %}" style="color: white;text-transform: uppercase;font-weight: bold"><span  id='speaker_name'> First Name</span> <span class="fa fa-pencil"></span></a></h6>
+                            <p class="text-muted m-0">Speaker</p>
+                        </div>
+                    </div>
+
+                    <!--sidebar nav start-->
+                    <ul class="side-navigation">
+                        <li class="{{ inf }}">
+                            <a href="{% url 'info' %}"><i class="mdi mdi-information"></i> <span>Info</span></a>
+                        </li>
+                        <li class="{{ hm }}">
+                            <a href="{% url 'speaker-home' %}"><i class="mdi mdi-home"></i> <span>Dashboard</span></a>
+                        </li>
+                        <li class="{{ cr }}">
+                            <a href="{% url 'speaker-courses' %}"><i class="mdi mdi-upload"></i> <span>Video yuklash</span></a>
+                        </li>
+{#                        <li class="{{ hv }}">#}
+{#                            <a href=""><i class="mdi mdi-file-chart"></i> <span>Hisob varaqasi</span></a>#}
+{#                        </li>#}
+
+                    </ul><!--sidebar nav end-->
+                </div>
+    </div><!-- sidebar left end-->
+            <div class="body-content">
+                <!-- header section start-->
+                <div class="header-section">
+                    <!--logo and logo icon start-->
+                    <div class="logo">
+                        <a href="{% url 'speaker-home' %}">
+                            <span class="logo-img">
+                                <img src="{% static 'assets/img/logo.png' %}" alt="" style="height: 60px">
+                            </span>
+                        </a>
+                    </div>
+
+                    <!--toggle button start-->
+                    <a class="toggle-btn"><i class="ti ti-menu"></i></a>
+                    <!--toggle button end-->
+
+                    <!--mega menu start-->
+                    <div id="navbar-collapse-1" class="navbar-collapse collapse mega-menu">
+                        <ul class="nav navbar-nav">
+                            <!-- Classic dropdown -->
+{#                            <li class="dropdown">#}
+{#                                <a href="javascript:;" data-toggle="dropdown" class=""> Uzbek <i class="mdi mdi-chevron-down"></i> </a>#}
+{#                                <ul role="menu" class="dropdown-menu language-switch">#}
+{#                                    <li>#}
+{#                                        <a tabindex="-1" href="javascript:;"> Russian </a>#}
+{#                                    </li>#}
+{#                                </ul>#}
+{#                            </li>#}
+                             <!-- Classic list -->
+
+                        </ul>
+                    </div>
+                    <!--mega menu end-->
+
+                    <div class="notification-wrap">
+                        <!--right notification start-->
+                        <div class="right-notification">
+                            <ul class="notification-menu">
+{#                                <li>#}
+{#                                    <a href="javascript:;" class="notification" data-toggle="dropdown">#}
+{#                                        <i class="mdi mdi-email-outline"></i>#}
+{#                                        <span class="badge badge-danger">9</span>#}
+{#                                    </a>#}
+{#                                    <ul class="dropdown-menu mailbox dropdown-menu-right">#}
+{#                                        <li>#}
+{#                                            <div class="drop-title">New Messages 5</div>#}
+{#                                        </li>#}
+{#                                        <li class="notification-scroll">#}
+{#                                            <div class="message-center">#}
+{#                                                <a href="#">#}
+{#                                                    <div class="user-img">#}
+{#                                                         <img src="{% static 'assets/images/users/avatar-2.jpg' %}" alt="user" class="rounded-circle">#}
+{#                                                         <span class="profile-status online pull-right"></span>#}
+{#                                                    </div>#}
+{#                                                    <div class="mail-contnet">#}
+{#                                                        <h6>Cassie T. Bishop</h6>#}
+{#                                                        <span class="mail-desc">Just see the my admin!</span>#}
+{#                                                        <span class="time">9:30 AM</span>#}
+{#                                                    </div>#}
+{#                                                </a>#}
+{#                                                <a href="#">#}
+{#                                                    <div class="user-img">#}
+{#                                                        <img src="{% static 'assets/images/users/avatar-3.jpg' %}" alt="user" class="rounded-circle">#}
+{#                                                        <span class="profile-status busy pull-right"></span>#}
+{#                                                    </div>#}
+{#                                                    <div class="mail-contnet">#}
+{#                                                        <h6>Rudy A. Scott</h6>#}
+{#                                                        <span class="mail-desc">I've sung a song! See you at</span> <span class="time">9:10 AM</span>#}
+{#                                                    </div>#}
+{#                                                </a>#}
+{#                                                <a href="#">#}
+{#                                                    <div class="user-img">#}
+{#                                                        <img src="{% static 'assets/images/users/avatar-4.jpg' %}" alt="user" class="rounded-circle">#}
+{#                                                        <span class="profile-status away pull-right"></span>#}
+{#                                                    </div>#}
+{#                                                    <div class="mail-contnet">#}
+{#                                                        <h6>Kevin D. Jernigan</h6>#}
+{#                                                        <span class="mail-desc">I am a singer!</span>#}
+{#                                                        <span class="time">9:08 AM</span>#}
+{#                                                    </div>#}
+{#                                                </a>#}
+{#                                                <a href="#">#}
+{#                                                    <div class="user-img">#}
+{#                                                        <img src="{% static 'assets/images/users/avatar-5.jpg' %}" alt="user" class="rounded-circle">#}
+{#                                                        <span class="profile-status offline pull-right"></span>#}
+{#                                                    </div>#}
+{#                                                    <div class="mail-contnet">#}
+{#                                                        <h6>Jane A. Seward</h6>#}
+{#                                                        <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span>#}
+{#                                                    </div>#}
+{#                                                </a>#}
+{#                                            </div>#}
+{#                                        </li>#}
+{#                                        <li>#}
+{#                                            <a class="text-center bg-light" href="javascript:void(0);"> <strong>See all notifications</strong> </a>#}
+{#                                        </li>#}
+{#                                    </ul>#}
+{#                                </li>#}
+
+                                <li>
+                                    <a href="javascript:;" data-toggle="dropdown">
+                                        <img src="{% static 'assets/images/users/avatar-1.jpg' %}" id="speaker-img2" alt="">
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right profile-menu">
+                                        <a class="dropdown-item" href="{% url 'profile' %}"><i class="mdi mdi-account-circle m-r-5 text-muted"></i> Profilni sozlash</a>
+                                        <a class="dropdown-item" href="{% url 'logout' %}"><i class="mdi mdi-logout m-r-5 text-muted"></i> Chiqish</a>
+                                    </div>
+
+                                </li>
+                            </ul>
+                        </div><!--right notification end-->
+                    </div>
+                </div>
+                <!-- header section end-->
+        {% block content %}
+        {% endblock content %}
+            <!--footer section start-->
+{#                <footer class="footer">#}
+{#                    2020 &copy; EduOn.#}
+{#                </footer>#}
+{#                <!--footer section end-->#}
+            </div>
+        </section>
+
+        <!-- jQuery -->
+        <script src="{%static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+        <script src="{%static 'assets/js/popper.min.js' %}"></script>
+        <script src="{%static 'assets/js/bootstrap.min.js' %}"></script>
+        <script src="{%static 'assets/js/jquery-migrate.js' %}"></script>
+        <script src="{%static 'assets/js/modernizr.min.js' %}"></script>
+        <script src="{%static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+        <script src="{%static 'assets/js/slidebars.min.js' %}"></script>
+
+        <!--plugins js-->
+        <script src="{%static 'assets/plugins/counter/jquery.counterup.min.js' %}"></script>
+        <script src="{%static 'assets/plugins/waypoints/jquery.waypoints.min.js' %}"></script>
+        <script src="{%static 'assets/plugins/sparkline-chart/jquery.sparkline.min.js' %}"></script>
+        <script src="{%static 'assets/pages/jquery.sparkline.init.js' %}"></script>
+
+        <script src="{%static 'assets/plugins/chart-js/Chart.bundle.js' %}"></script>
+        <script src="{%static 'assets/plugins/morris-chart/raphael-min.js' %}"></script>
+        <script src="{%static 'assets/plugins/morris-chart/morris.js' %}"></script>
+        <script src="{%static 'assets/pages/dashboard-init.js' %}"></script>
+
+        {% block js %}
+        {% endblock js %}
+        <!--app js-->
+        <script src="{%static 'assets/js/jquery.app.js' %}"></script>
+        <script>
+	    $(document).ready(function () {
+                $("#cardid_id").css('display', 'none');
+                $("#formid_id").css('display', 'none');
+                $('.counter').counterUp({
+                delay: 100,
+                time: 1200
+                });
+                
+                $.ajax({
+                    type: 'get',
+                    url : "{% url 'speaker-json' %}",
+                    success: function (data) {
+                        var rasm = data['rasm']
+                        var name = data['name']
+                        console.log(rasm)
+                        if (name !== ''){
+                            $("#speaker_name").empty()
+                            $("#speaker_name").append(' '+name)
+
+                        }
+                        if (rasm !== null) {
+                            $("#speaker-img").attr('src',rasm)
+                            $("#speaker-img2").attr('src',rasm)
+                        }
+                    }
+                })
+                
+            });
+        </script>
+        <script>
+            $("#videoImageFile").change(function (e) {
+                console.log('555');
+                var file = e.target.files[0]
+                var turi = file.type.split('/')[0]
+                if (turi !== 'image') {
+                    var popup = document.getElementById("PopupImage");
+                    popup.classList.toggle("show");
+                    $("#PopupImage").text("Rasm yuklanmadi!")
+                    $("#videoImageFile").val('');
+                } else {
+                    $("#imagevideo").attr("src", URL.createObjectURL(file));
+                    $("#imagevideo").css('display', 'unset');
+                }
+            })
+            $("#course_id").change(function(){
+                console.log('ok')
+            var val = $("#course_id").val()
+            $.ajax({
+                type:"get",
+                url:"{% url 'chack-kourse' %}",
+                data:{id:val},
+                success:function(data){
+                    if(data['status'] === '1'){
+                        $("#cardid_id").css('display', 'none');
+                        $("#formid_id").css('display', 'block');
+                        $("#field-0").prop("required", true);
+                        $("#video").prop("required", false);
+                        $("#video").val("");
+                   }else{
+                        $("#cardid_id").css('display', 'block');
+                        $("#formid_id").css('display', 'none');
+                        $("#video").prop("required", true);
+                        $("#field-0").prop("required", false);
+                        $("#field-0").val("");
+                    }
+                }
+            })
+            // var d = '{{ courses_json}}'
+            // var data = JSON.parse(d)
+            // console.log(data)
+            // var index = 0;
+            // for (var i = 0; i < data.length; i++){
+            //     if (data[i].pk == val){
+            //         index = i
+            //     }
+            // }
+            // console.log(data[index].fields.upload_or_youtube)
+            // console.log(data[index].fields.upload_or_youtube.localeCompare('Youtube'))
+            // if (data[index].fields.upload_or_youtube.localeCompare('Youtube') == 0){
+            //     $("#cardid_id").css('display', 'none');
+            //     $("#formid_id").css('display', 'block');
+            //     $("#field-0").prop("required", true);
+            //     $("#video").prop("required", false);
+            //     $("#video").val("");
+            // }
+            // else {
+            //     $("#cardid_id").css('display', 'block');
+            //     $("#formid_id").css('display', 'none');
+            //     $("#video").prop("required", true);
+            //     $("#field-0").prop("required", false);
+            //     $("#field-0").val("");
+            // }
+    })
+             jQuery(document).ready(function($) {
+                 $('.counter').counterUp({
+                 delay: 100,
+                 time: 1200
+                 });
+                 $("#course_id").change(function() {
+                     var val = $("#course_id").val()
+                     var d = '{{ courses_json|safe }}'
+                     var data = JSON.parse(d)
+                     var index = 0;
+                     for (var i = 0; i < data.length; i++){
+                         if (data[i].pk == val){
+                             index = i
+                         }
+                     }
+                     console.log(data[index].fields.upload_or_youtube)
+                     console.log(data[index].fields.upload_or_youtube.localeCompare('Youtube'))
+                     if (data[index].fields.upload_or_youtube.localeCompare('Youtube') == 0){
+                         $("#cardid_id").css('display', 'none');
+                         $("#formid_id").css('display', 'block');
+                         $("#field-0").prop("required", true);
+                         $("#video").prop("required", false);
+                         $("#video").val("");
+                     }
+                     else {
+                         $("#cardid_id").css('display', 'block');
+                         $("#formid_id").css('display', 'none');
+                         $("#video").prop("required", true);
+                         $("#field-0").prop("required", false);
+                         $("#field-0").val("");
+                     }
+                 });
+             });
+        </script>
+    </body>
+</html>
