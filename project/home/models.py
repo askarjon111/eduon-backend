@@ -5,12 +5,11 @@ from os.path import splitext
 from django.contrib.auth.hashers import make_password
 from django_resized import ResizedImageField
 from django.contrib.auth.models import User
-from django.db import models, connection
+from django.db import models
 
 from transliterate.utils import _, slugify
 
 from uniredpay.uniredpay_conf import wallet_api
-from . import managers
 
 
 def generate_ref():
@@ -83,6 +82,10 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Davlat"
+        verbose_name_plural = "Davlatlar"
+
 
 class InfoWidget(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
@@ -127,6 +130,10 @@ class Region(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = "Tuman"
+        verbose_name_plural = "Tumanlar"
 
 
 class RegBonus(models.Model):
@@ -198,6 +205,10 @@ class Speaker(models.Model):
             self.save()
 
         return self.cash
+    
+    class Meta:
+        verbose_name = "Spiker"
+        verbose_name_plural = "Spikerlar"
 
 
 class Users(models.Model):
@@ -297,6 +308,10 @@ class Users(models.Model):
             self.save()
 
         return self.cash
+    
+    class Meta:
+        verbose_name = "Foydalanuvchi"
+        verbose_name_plural = "Foydalanuvchilar"
 
 
 class PaymentHistory(models.Model):
@@ -309,6 +324,10 @@ class PaymentHistory(models.Model):
 
     def __str__(self):
         return str(self.summa)
+    
+    class Meta:
+        verbose_name = "To'lov tarixi"
+        verbose_name_plural = "To'lovlar tarixi"
 
 
 class CategoryVideo(models.Model):
@@ -324,6 +343,10 @@ class Language(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = "Til"
+        verbose_name_plural = "Tillar"
 
 
 class Course(models.Model):
@@ -368,6 +391,10 @@ class Course(models.Model):
             'for_whom': self.for_whom,
             'about_course': self.about_course
         }
+    
+    class Meta:
+        verbose_name = "Kurs"
+        verbose_name_plural = "Kurslar"
 
 
 class Comment(models.Model):
@@ -378,6 +405,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.user.phone
+    
+    class Meta:
+        verbose_name = "Fikr"
+        verbose_name_plural = "Fikrlar"
 
 
 class VideoCourse(models.Model):
@@ -405,6 +436,10 @@ class VideoCourse(models.Model):
             txt = None
         self.link = txt
         super(VideoCourse, self).save(*args, **kwargs)
+    
+    class Meta:
+        verbose_name = "Video"
+        verbose_name_plural = "Videolar"
 
 
 class CommentCourse(models.Model):
