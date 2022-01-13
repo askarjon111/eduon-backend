@@ -14,13 +14,15 @@ SECRET_KEY = '(@s5no*3@a7s-h5rb+*sy0e(#zwdhliu96zo@22qmn)utsc9y8'
 from corsheaders.defaults import default_methods
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'adminlte3',
+    'adminlte3_theme',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -244,8 +246,7 @@ CORS_PREFLIGHT_MAX_AGE = 86400
 #    "http://142.93.60.60/"
 # )
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
