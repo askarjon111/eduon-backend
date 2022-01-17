@@ -35,11 +35,11 @@ class DjangoUserSerializers(serializers.ModelSerializer):
 
 
 class SpeakerSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     speaker = UserSerializers(read_only=True)
     speaker_rank = serializers.SerializerMethodField()
 
     def get_speaker_rank(self, obj):
-        print(f'test')
         cr = RankCourse.objects.filter(course__author=obj.id)
         count = cr.filter(speaker_value__gt=0).count()
         value = cr.aggregate(value=Sum('speaker_value')).get('value')
@@ -207,13 +207,16 @@ class UsersSerializerEdit(serializers.ModelSerializer):
 class UserEditModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['id', 'first_name', 'last_name', 'email', 'age', 'job', 'country', 'region']
+        fields = ['id', 'first_name', 'last_name',
+                  'email', 'age', 'job', 'country', 'region']
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
     class Meta:
         model = CategoryVideo
-        fields = '__all__'
+        fields = ['id', 'name', 'image', 'parent']
 
 
 class LikeOrDislikeSerializer(serializers.ModelSerializer):
@@ -236,15 +239,65 @@ class VideoViewsSerialzier(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CourseTrailerSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = CourseTrailer
+        fields = ['id', 'title', 'is_file', 'video', 'url']
+
+
+class LanguageSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = Language
+        fields = ['id', 'name']
+
+
+class CourseTagsSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = CourseTag
+        fields = ['id', 'title']
+
+
+class WhatYouLearnSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = WhatYouLearn
+        fields = ['id', 'title', 'course']
+
+
+class RequirementsCourse(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = RequirementsCourse
+        fields = ['id', 'title', 'course']
+
+
+class ForWhomCourseSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = ForWhomCourse
+        fields = ['id', 'title', 'course']
+
+
 class CourseSerializer(serializers.ModelSerializer):
-    author = SpeakerSerializer(read_only=True)
+    author = SpeakerSerializer(many=False, required=True)
     sell_count = serializers.SerializerMethodField()
     view = serializers.SerializerMethodField()
     course_rank = serializers.SerializerMethodField()
+    trailer = CourseTrailerSerializer(many=False, required=False)
+    categories = CategorySerializer(many=True, required=False)
+    language = LanguageSerializer(many=False, required=False)
+    course_tags = CourseTagsSerializer(many=True, required=False)
+    whatyoulearn = WhatYouLearnSerializer(many=True, required=False)
+    requirementscourse = RequirementsCourse(many=True, required=False)
+    forwhomcourse = ForWhomCourseSerializer(many=True, required=False)
 
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = ['id', 'author', 'name', 'description', 'language', 'level', 'categories', 'upload_or_youtube', 'image', 'trailer', 'course_tags', 'price', 'has_certificate',
+                  'logo', 'turi', 'date', 'like', 'dislike', 'discount', 'view', 'course_rank', 'sell_count', 'is_top', 'is_tavsiya', 'is_confirmed', 'whatyoulearn', 'requirementscourse', 'forwhomcourse']
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -271,47 +324,61 @@ class CourseSerializer(serializers.ModelSerializer):
             views = 0
         return views
 
+    def create(self, validated_data):
+        language_data = validated_data.pop('language', None)
+        categories_data = validated_data.pop('categories', None)
+        trailer_data = validated_data.pop('course_trailer', None)
+        tags_data = validated_data.pop('course_tags', None)
+        whatyoulearns_data = validated_data.pop('whatyoulearn', None)
+        requirementscourse_data = validated_data.pop(
+            'courserequirements', None)
+        forwhoms_data = validated_data.pop(
+            'forwhom', None)
+        author_id = validated_data.pop('author').get('id')
+        author = Speaker.objects.get(id=author_id)
+        course, _ = Course.objects.get_or_create(
+            author=author, **validated_data)
 
-class DjangoCourseSerializer(serializers.ModelSerializer):
-    author = SpeakerSerializer(read_only=True)
-    sell_count = serializers.SerializerMethodField()
-    view = serializers.SerializerMethodField()
-    course_rank = serializers.SerializerMethodField()
-    comments_count = serializers.SerializerMethodField()
+        if language_data:
+            new_language, _ = Language.objects.get_or_create(name=language_data.get('name'))
+            course.language = new_language
 
-    class Meta:
-        model = Course
-        fields = '__all__'
+        if categories_data:
+            for category in categories_data:
+                new_category, _ = CategoryVideo.objects.get_or_create(name=category.get('name'), defaults={'image': category.get('image'), 'parent': category.get('parent')})
+                course.categories.add(new_category.id)
 
-    def get_course_rank(self, obj):
-        cr = RankCourse.objects.filter(course_id=obj.id)
-        value = cr.aggregate(value=Sum('course_value')).get('value')
-        count = cr.filter(course_value__gt=0).count()
-        if value is None:
-            value = 0
-        if count > 0:
-            return {"rank": round(value / count, 2), "count": count}
-        else:
-            return {"rank": 0, "count": 0}
+        if trailer_data:
+            new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
+                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'), url=trailer_data.get('url'))
+            course.trailer = new_trailer
 
-    def get_sell_count(self, obj):
-        try:
-            sells = Order.objects.filter(course_id=obj.id)
-            return sells.count()
-        except:
-            return 0
+        if tags_data:
+            for tag in tags_data:
+                new_tag, _ = CourseTag.objects.get_or_create(
+                    title=tag.get('title'))
+                course.course_tags.add(new_tag.id)
 
-    def get_view(self, obj):
-        videos = VideoCourse.objects.filter(course_id=obj.id)
-        views = videos.aggregate(total=Sum('views_count')).get('total')
-        if views is None:
-            views = 0
-        return views
+        if whatyoulearns_data:
+            for whatyoulearn in whatyoulearns_data:
+                new_whatyoulearn, _ = WhatYouLearn.objects.get_or_create(defaults={'title': whatyoulearn.get('title')}, **whatyoulearn)
+                course.whatyoulearn.add(new_whatyoulearn)
 
-    def get_comment_count(self, obj):
-        comments = Comment.objects.filter(course_id=obj.id)
-        return comments.count()
+        if requirementscourse_data:
+            for requirementscourse in requirementscourse_data:
+                new_requirementscourse, _ = RequirementsCourse.get_or_create(
+                    title=requirementscourse.get('title'), **requirementscourse)
+                course.requirementscourse.add(new_requirementscourse)
 
+        if forwhoms_data:
+            for forwhom in forwhoms_data:
+                new_forwhom, _ = ForWhomCourse.objects.get_or_create(
+                    title=forwhom.get('title'))
+                course.forwhomcourse.add(new_forwhom)
+
+        course.save()
+        return course
+        
 
 class TopCourseSerializer(serializers.ModelSerializer):
     course = CourseSerializer(read_only=True)

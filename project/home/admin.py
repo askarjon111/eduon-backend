@@ -112,7 +112,7 @@ class RankAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('author', 'name', 'category', 'turi', 'date')
+    list_display = ('author', 'name', 'turi', 'date')
     list_max_show_all = 50
     search_fields = ('name',)
     date_hierarchy = ('date')
