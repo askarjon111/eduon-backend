@@ -10,6 +10,11 @@ class PaymentHistoryAdmin(admin.ModelAdmin):
 admin.site.register(ContractWithSpeaker)
 admin.site.register(Billing)
 admin.site.register(CommentCourse)
+admin.site.register(CourseTag)
+admin.site.register(CourseTrailer)
+admin.site.register(WhatYouLearn)
+admin.site.register(RequirementsCourse)
+admin.site.register(ForWhomCourse)
 
 
 @admin.register(VideoCourse)

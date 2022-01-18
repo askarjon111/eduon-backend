@@ -334,8 +334,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'courserequirements', None)
         forwhoms_data = validated_data.pop(
             'forwhom', None)
-        author_id = validated_data.pop('author').get('id')
-        author = Speaker.objects.get(id=author_id)
+        author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
         course, _ = Course.objects.get_or_create(
             author=author, **validated_data)
 
@@ -350,7 +349,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
         if trailer_data:
             new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
-                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'), url=trailer_data.get('url'))
+                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'), **trailer_data)
             course.trailer = new_trailer
 
         if tags_data:
@@ -361,19 +360,19 @@ class CourseSerializer(serializers.ModelSerializer):
 
         if whatyoulearns_data:
             for whatyoulearn in whatyoulearns_data:
-                new_whatyoulearn, _ = WhatYouLearn.objects.get_or_create(defaults={'title': whatyoulearn.get('title')}, **whatyoulearn)
+                new_whatyoulearn, _ = WhatYouLearn.objects.get_or_create(defaults={'title': whatyoulearn.get('title'), 'course': course}, **whatyoulearn)
                 course.whatyoulearn.add(new_whatyoulearn)
 
         if requirementscourse_data:
             for requirementscourse in requirementscourse_data:
                 new_requirementscourse, _ = RequirementsCourse.get_or_create(
-                    title=requirementscourse.get('title'), **requirementscourse)
+                    title=requirementscourse.get('title'), course=course)
                 course.requirementscourse.add(new_requirementscourse)
 
         if forwhoms_data:
             for forwhom in forwhoms_data:
                 new_forwhom, _ = ForWhomCourse.objects.get_or_create(
-                    title=forwhom.get('title'))
+                    title=forwhom.get('title'), course=course)
                 course.forwhomcourse.add(new_forwhom)
 
         course.save()
