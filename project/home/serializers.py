@@ -267,7 +267,7 @@ class WhatYouLearnSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'course']
 
 
-class RequirementsCourse(serializers.ModelSerializer):
+class RequirementsCourseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     class Meta:
         model = RequirementsCourse
@@ -291,13 +291,13 @@ class CourseSerializer(serializers.ModelSerializer):
     language = LanguageSerializer(many=False, required=False)
     course_tags = CourseTagsSerializer(many=True, required=False)
     whatyoulearn = WhatYouLearnSerializer(many=True, required=False)
-    requirementscourse = RequirementsCourse(many=True, required=False)
-    forwhomcourse = ForWhomCourseSerializer(many=True, required=False)
+    courserequirements = RequirementsCourseSerializer(many=True, required=False)
+    forwhom = ForWhomCourseSerializer(many=True, required=False)
 
     class Meta:
         model = Course
         fields = ['id', 'author', 'name', 'description', 'language', 'level', 'categories', 'upload_or_youtube', 'image', 'trailer', 'course_tags', 'price', 'has_certificate',
-                  'logo', 'turi', 'date', 'like', 'dislike', 'discount', 'view', 'course_rank', 'sell_count', 'is_top', 'is_tavsiya', 'is_confirmed', 'whatyoulearn', 'requirementscourse', 'forwhomcourse']
+                  'logo', 'turi', 'date', 'like', 'dislike', 'discount', 'view', 'course_rank', 'sell_count', 'is_top', 'is_tavsiya', 'is_confirmed', 'whatyoulearn', 'courserequirements', 'forwhom']
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -364,16 +364,16 @@ class CourseSerializer(serializers.ModelSerializer):
                 course.whatyoulearn.add(new_whatyoulearn)
 
         if requirementscourse_data:
-            for requirementscourse in requirementscourse_data:
-                new_requirementscourse, _ = RequirementsCourse.get_or_create(
-                    title=requirementscourse.get('title'), course=course)
-                course.requirementscourse.add(new_requirementscourse)
+            for requirement in requirementscourse_data:
+                new_requirement, _ = RequirementsCourse.objects.get_or_create(
+                    defaults={'title': requirement.get('title'), 'course': course}, **requirement)
+                course.courserequirements.add(new_requirement)
 
         if forwhoms_data:
             for forwhom in forwhoms_data:
                 new_forwhom, _ = ForWhomCourse.objects.get_or_create(
-                    title=forwhom.get('title'), course=course)
-                course.forwhomcourse.add(new_forwhom)
+                    defaults={'title': forwhom.get('title'), 'course': course}, **forwhom)
+                course.forwhom.add(new_forwhom)
 
         course.save()
         return course
