@@ -94,7 +94,11 @@ def wallet_api(data: dict, method: str):
         }
 
         rq = requests.post(BASE_URL, headers=headers, data=json.dumps(d))
-        return rq.json()
+
+        if rq.status_code == 200:
+            return rq.json()
+        else:
+            return Response(rq)
     else:
         return Response(res)
 
