@@ -1,35 +1,35 @@
+import csv
 import datetime
+import os
 import random
-import re
 
 from django.conf import settings
-from django.contrib import auth
-from rest_framework.permissions import IsAuthenticated
-# from rest_framework.authentication import BasicAuthentication
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
-from rest_framework_simplejwt.views import TokenRefreshView
-
-from .serializers import DjangoUserSerializers, GetSpeakerSerializer
-from simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt import tokens
-from home.api.serializers import UsersSerializer
-from home.serializers import SpeakerRegisterModelSerializer, SpeakerSerializer, UserSerializers, SpeakerLoginSerializer
-import os
-
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Sum
-from eduon.settings import BASE_DIR
-from django.shortcuts import render, redirect, HttpResponseRedirect
-from django.views.generic import TemplateView, DetailView
-from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import *
-from django.http import JsonResponse, HttpResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password, check_password
-import csv
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Sum
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import HttpResponseRedirect, redirect, render
+from django.views.generic import DetailView, TemplateView
+from eduon.settings import BASE_DIR
+from rest_framework_simplejwt import tokens
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.generics import ListCreateAPIView
+
+from home.serializers import (SpeakerLoginSerializer, SpeakerSerializer, CourseSerializer)
+
+from .models import *
+from .serializers import DjangoUserSerializers, GetSpeakerSerializer
+
+
+class CourseListCreateView(ListCreateAPIView):
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = CourseSerializer
+    queryset = Course.objects.all()
 
 
 def PagenatorPage(List, num, request):
@@ -892,6 +892,7 @@ def AddCourse(request):
         return redirect('speaker-courses')
 
 
+
 # kursni o'zgartirish
 @login_required(login_url='login')
 def ChangeCourse(request):
@@ -926,6 +927,7 @@ def ChangeCourse(request):
 
 
 from rest_framework.response import Response
+
 from home.sms import sms_send
 
 
@@ -992,7 +994,8 @@ def check_code(request):
     return JsonResponse(data, status=200)
 
 
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import (api_view, authentication_classes,
+                                       permission_classes)
 
 
 @api_view(['post'])

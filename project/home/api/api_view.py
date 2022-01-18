@@ -15,7 +15,7 @@ from home.models import (
     Speaker, RankCourse, CommentCourse, OrderPayment, VideoCourse, File
 )
 from home.sms import sms_send
-from home.serializers import CourseSerializer, DjangoCourseSerializer
+from home.serializers import CourseSerializer
 from rest_framework_simplejwt.backends import TokenBackend
 from simplejwt.tokens import RefreshToken
 from .serializers import (

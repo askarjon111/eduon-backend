@@ -10,6 +10,11 @@ class PaymentHistoryAdmin(admin.ModelAdmin):
 admin.site.register(ContractWithSpeaker)
 admin.site.register(Billing)
 admin.site.register(CommentCourse)
+admin.site.register(CourseTag)
+admin.site.register(CourseTrailer)
+admin.site.register(WhatYouLearn)
+admin.site.register(RequirementsCourse)
+admin.site.register(ForWhomCourse)
 
 
 @admin.register(VideoCourse)
@@ -112,7 +117,7 @@ class RankAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('author', 'name', 'category', 'turi', 'date')
+    list_display = ('author', 'name', 'turi', 'date')
     list_max_show_all = 50
     search_fields = ('name',)
     date_hierarchy = ('date')

@@ -370,23 +370,34 @@ class AddCourseAPIView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def post(self, request):
-        name = request.data.get('name')
-        turi = request.data.get('turi')
         author = request.user
-        speaker = Speaker.objects.filter(speaker_id=author.id).first()
-        image = request.FILES.get('image')
-        price = request.data.get('price', 0)
+        name = request.data.get('name')
+        description = request.data.get('description')
+        language = request.data.get('language')
         category = request.data.get('category')
+        child_category = request.data.get('child_category')
         video_or_url = request.data.get('upload_or_youtube')
-        descrip = request.data.get('description')
+        image = request.FILES.get('image')
+        turi = request.data.get('turi')
+        speaker = Speaker.objects.get(speaker_id=author.id).first()
+        price = request.data.get('price', 0)
         if speaker is None:
-            return Response({'success': True, 'message': "Speaker topilmadi"})
+            return Response({'success': True,
+                             'message': "Speaker topilmadi"})
         try:
-            add = Course.objects.create(name=name, turi=turi, author_id=speaker.pk, image=image, category_id=category,
-                                        upload_or_youtube=video_or_url, description=descrip, price=price)
+            add = Course.objects.create(author_id=speaker.pk,
+                                        name=name, turi=turi,
+                                        description=description,
+                                        language=language,
+                                        category_id=category,
+                                        child_category=child_category,
+                                        image=image,
+                                        upload_or_youtube=video_or_url,
+                                        price=price)
         except Exception as e:
             print(e)
-            return Response({'message': "Qaysidir fieldlar togri kiritilmadi"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': "Qaysidir fieldlar to'gri kiritilmadi"},
+                                status=status.HTTP_400_BAD_REQUEST)
         data = {
             'success': True,
             'message': '/courses/ ga yonaltirish kerak'
