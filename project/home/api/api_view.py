@@ -2,13 +2,16 @@ import datetime
 import random
 
 from clickuz import ClickUz
-from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render
+
+from django.template.response import TemplateResponse
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 from home.models import (
     Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
@@ -26,6 +29,15 @@ from .serializers import (
 from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
     VideoCourseSerializer
 
+
+def get_funancial_statistics(request):
+    speaker_money = Speaker.objects.aggregate(Sum('cash'))
+    print(speaker_money)
+    context = {
+        'speaker_money':speaker_money
+    }
+
+    return render(request, "admin/index.html", context)
 
 @api_view(['get'])
 @authentication_classes([])

@@ -1,5 +1,28 @@
 from django.contrib import admin
+
+from django.template.response import TemplateResponse
+from django.db.models import Sum
 from .models import *
+from django.urls import path
+
+
+class StatisticsPage(admin.AdminSite):
+    def get_urls(self):
+        urls = super().get_urls()
+        url_patterns = [
+            path('get-financial-statistics/', self.get_funancial_statistics)
+        ]
+        return url_patterns + urls
+
+    def get_funancial_statistics(request, self):
+        speaker_money = Speaker.objects.aggregate(Sum('cash'))
+
+        context = dict(
+            self.admin_site.each_context(request),
+            context=speaker_money
+        )
+
+        return TemplateResponse(request, "admin/statistics.html", context)
 
 
 @admin.register(PaymentHistory)
