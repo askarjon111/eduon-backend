@@ -52,7 +52,7 @@ urlpatterns = [
     path('get-cash-balance/', get_cash_balance),
     path('filter-by-cost/', filter_by_cost),
     path('filter-by-language/', filter_by_language),
-    path('get-languages/', get_languages)
+    path('get-languages/', get_languages),
 ]
 
 from .views import CourseSpeakerAPIView, UploadVideoAndDocumentAPIView, VideosAPIView, ChangeCourseAPIView, \
