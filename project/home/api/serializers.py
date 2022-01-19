@@ -142,7 +142,7 @@ class CategorySerializer(ModelSerializer):
     course_count = SerializerMethodField()
 
     def get_course_count(self, obj):
-        course_count = Course.objects.filter(category_id=obj.id).count()
+        course_count = Course.objects.filter(categories=obj.id).count()
         return course_count
 
     class Meta:
@@ -151,6 +151,7 @@ class CategorySerializer(ModelSerializer):
             "id",
             "name",
             "image",
+            "parent",
             "course_count",
         ]
 
