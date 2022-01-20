@@ -34,6 +34,7 @@ class Migration(migrations.Migration):
         migrations.RunPython(make_many_categories),
     ]
 
+
 def generate_ref():
     alphabet = string.ascii_letters + string.digits
     password = ''.join(secrets.choice(alphabet) for i in range(20))
@@ -379,12 +380,18 @@ class Language(models.Model):
 class CourseTag(models.Model):
     title = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.title
+
 
 class CourseTrailer(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     is_file = models.BooleanField(default=False)
-    video = models.FileField(upload_to=slugify_upload,blank=True, null=True)
-    url = models.URLField(max_length=100,blank=True, null=True)
+    video = models.FileField(upload_to=slugify_upload, blank=True, null=True)
+    url = models.URLField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Course(models.Model):
@@ -401,21 +408,23 @@ class Course(models.Model):
         ('Elementary', 'Elementary'),
         ('Intermediate', 'Intermediate')
     )
-    author = models.ForeignKey(Speaker, on_delete=models.CASCADE, related_name='course_author')
+    author = models.ForeignKey(
+        Speaker, on_delete=models.CASCADE, related_name='course_author')
     name = models.CharField(max_length=200)
     description = models.TextField(max_length=5000, null=True, blank=True)
     language = models.ForeignKey(
         Language, on_delete=models.CASCADE, default=1, related_name="course_language")
     level = models.CharField(max_length=12, choices=levels, default='Beginner')
     categories = models.ManyToManyField(
-        CategoryVideo, related_name="course_categories", blank=True )
+        CategoryVideo, related_name="course_categories", blank=True)
     upload_or_youtube = models.CharField(
         choices=video_type, blank=False, default='Youtube', max_length=15)
     image = ResizedImageField(size=[1280, 720], crop=[
                               'middle', 'center'], upload_to=slugify_upload, null=True)
     trailer = models.OneToOneField(
         CourseTrailer, on_delete=models.CASCADE, blank=True, null=True, related_name='course_trailer')
-    course_tags = models.ManyToManyField(CourseTag, related_name='course_tags', blank=True)
+    course_tags = models.ManyToManyField(
+        CourseTag, related_name='course_tags', blank=True)
     price = models.IntegerField(default=0)
     has_certificate = models.BooleanField(default=False)
     logo = models.ImageField(null=True, blank=True, upload_to=slugify_upload)
@@ -456,16 +465,26 @@ class WhatYouLearn(models.Model):
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name='whatyoulearn', null=True, blank=True)
 
+    def __str__(self):
+        return self.title
+
 
 class RequirementsCourse(models.Model):
     title = models.CharField(max_length=255)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='courserequirements', null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='courserequirements',
+                               null=True, blank=True)
+
+    def __str__(self):
+        return self.title
 
 
 class ForWhomCourse(models.Model):
     title = models.CharField(max_length=255)
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name='forwhom', null=True, blank=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):

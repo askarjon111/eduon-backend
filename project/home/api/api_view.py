@@ -32,19 +32,17 @@ from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserS
 
 def get_funancial_statistics(request):
     speaker_money = Speaker.objects.aggregate(Sum('cash'))
-    print(speaker_money)
     context = {
-        'speaker_money':speaker_money
+        'speaker_money':speaker_money['cash__sum']
     }
 
-    return render(request, "admin/index.html", context)
+    return render(request, "admin/statistics.html", context)
 
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
 def send_code(request):
     try:
-        # type = registeration,resset_password
         phone = request.GET.get('phone')
         type = request.GET.get('type')
         error = False

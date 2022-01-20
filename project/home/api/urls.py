@@ -2,7 +2,7 @@ from django.urls.conf import path
 from rest_framework import routers
 
 from .api_view import (
-    full_registration, send_code, verify_code, set_photo, registeration, reset_password,
+    full_registration, get_funancial_statistics, send_code, verify_code, set_photo, registeration, reset_password,
     get_countries, get_regions, login, get_course, get_boughted_course, buy_course, get_category, course_detail,
     boughted_course_detail, get_top_course, get_speaker, get_rayting, set_rayting, set_comment, get_comment,
     create_invoise, create_invoise_payme, payment_history, get_statistics, get_speaker_data, upload_file,
@@ -53,6 +53,7 @@ urlpatterns = [
     path('filter-by-cost/', filter_by_cost),
     path('filter-by-language/', filter_by_language),
     path('get-languages/', get_languages),
+    path('get-financial-statistics/', get_funancial_statistics)
 ]
 
 from .views import CourseSpeakerAPIView, UploadVideoAndDocumentAPIView, VideosAPIView, ChangeCourseAPIView, \
