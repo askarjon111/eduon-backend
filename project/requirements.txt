@@ -55,3 +55,4 @@ transliterate==1.10.2
 Unidecode==1.1.1
 urllib3==1.26.2
 webencodings==0.5.1
+django-flter=21.1

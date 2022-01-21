@@ -1,3 +1,4 @@
+from calendar import month
 import datetime
 import random
 
@@ -6,9 +7,9 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from django.db.models.functions import ExtractWeekDay
+from django.db.models import Count
+from django.db.models.functions import ExtractDay
 
-from django.template.response import TemplateResponse
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -1130,6 +1131,18 @@ def get_sell_course_statistics(request):
             print(day_before_week)
             print(cur_week_day)
             week_statistic = {}
+            
+            qs = Order.objects.filter(
+                date__year=2022,
+                date__month=1
+            ).annotate(
+                day=ExtractDay('date'),
+            ).values(
+                'day'
+            ).annotate(
+                n=Count('id')
+            ).order_by('day')
+            print(qs)
             for i in range(7):
                 cnt = 0
                 for j in orders:
@@ -1140,7 +1153,7 @@ def get_sell_course_statistics(request):
                 "success": True,
                 "message": "",
                 "data": {
-                    "week_statistic": week_statistic,
+                    "monthly_statistics": qs,
                 }
             }
         elif query == "oy":
