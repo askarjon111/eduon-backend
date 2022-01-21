@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
+from django.db.models.functions import ExtractWeekDay
 
 from django.template.response import TemplateResponse
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -1125,6 +1126,9 @@ def get_sell_course_statistics(request):
             day_before_week = day_before_week + datetime.timedelta(days=1)
             cur_week_day = datetime.datetime.now().weekday()
             cur_day = day_before_week.day
+            print(orders)
+            print(day_before_week)
+            print(cur_week_day)
             week_statistic = {}
             for i in range(7):
                 cnt = 0
