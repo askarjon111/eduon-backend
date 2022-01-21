@@ -18,6 +18,8 @@ from eduon.settings import BASE_DIR
 from rest_framework_simplejwt import tokens
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.generics import ListCreateAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 from home.serializers import (SpeakerLoginSerializer, SpeakerSerializer, CourseSerializer)
 
@@ -26,10 +28,14 @@ from .serializers import DjangoUserSerializers, GetSpeakerSerializer
 
 
 class CourseListCreateView(ListCreateAPIView):
+    filter_backends = [DjangoFilterBackend]
     authentication_classes = []
     permission_classes = []
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    
+    filterset_fields = ['categories']
+    
 
 
 def PagenatorPage(List, num, request):

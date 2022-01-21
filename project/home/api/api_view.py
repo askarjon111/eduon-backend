@@ -1,3 +1,4 @@
+from calendar import month
 import datetime
 import random
 
@@ -6,8 +7,9 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
+from django.db.models import Count
+from django.db.models.functions import ExtractDay
 
-from django.template.response import TemplateResponse
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -32,19 +34,17 @@ from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserS
 
 def get_funancial_statistics(request):
     speaker_money = Speaker.objects.aggregate(Sum('cash'))
-    print(speaker_money)
     context = {
-        'speaker_money':speaker_money
+        'speaker_money':speaker_money['cash__sum']
     }
 
-    return render(request, "admin/index.html", context)
+    return render(request, "admin/statistics.html", context)
 
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
 def send_code(request):
     try:
-        # type = registeration,resset_password
         phone = request.GET.get('phone')
         type = request.GET.get('type')
         error = False
@@ -1127,7 +1127,22 @@ def get_sell_course_statistics(request):
             day_before_week = day_before_week + datetime.timedelta(days=1)
             cur_week_day = datetime.datetime.now().weekday()
             cur_day = day_before_week.day
+            print(orders)
+            print(day_before_week)
+            print(cur_week_day)
             week_statistic = {}
+            
+            qs = Order.objects.filter(
+                date__year=2022,
+                date__month=1
+            ).annotate(
+                day=ExtractDay('date'),
+            ).values(
+                'day'
+            ).annotate(
+                n=Count('id')
+            ).order_by('day')
+            print(qs)
             for i in range(7):
                 cnt = 0
                 for j in orders:
@@ -1138,7 +1153,7 @@ def get_sell_course_statistics(request):
                 "success": True,
                 "message": "",
                 "data": {
-                    "week_statistic": week_statistic,
+                    "monthly_statistics": qs,
                 }
             }
         elif query == "oy":

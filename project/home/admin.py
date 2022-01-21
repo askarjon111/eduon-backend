@@ -6,29 +6,27 @@ from .models import *
 from django.urls import path
 
 
-class StatisticsPage(admin.AdminSite):
-    def get_urls(self):
-        urls = super().get_urls()
-        url_patterns = [
-            path('get-financial-statistics/', self.get_funancial_statistics)
-        ]
-        return url_patterns + urls
-
-    def get_funancial_statistics(request, self):
-        speaker_money = Speaker.objects.aggregate(Sum('cash'))
-
-        context = dict(
-            self.admin_site.each_context(request),
-            context=speaker_money
-        )
-
-        return TemplateResponse(request, "admin/statistics.html", context)
-
-
 @admin.register(PaymentHistory)
 class PaymentHistoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'summa')
 
+    def get_urls(self):
+        urls = super().get_urls()
+        url_patterns = [
+            path('get_funancial_statistics/',
+                 self.admin_site.admin_view(self.get_funancial_statistics))
+        ]
+        return url_patterns + urls
+
+    def get_funancial_statistics(self, request):
+        speaker_money = Speaker.objects.aggregate(Sum('cash'))
+
+        context = dict(
+            self.admin_site.each_context(request),
+            speaker_money=speaker_money['cash__sum']
+        )
+
+        return TemplateResponse(request, "admin/statistics.html", context)
 
 admin.site.register(ContractWithSpeaker)
 admin.site.register(Billing)
