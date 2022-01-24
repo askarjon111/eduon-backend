@@ -252,8 +252,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-SMS_EMAIL = 'akbar.ziyodov12345@gmail.com'
-SMS_SECRET_KEY = 'IZmx8TBzW17cNXH6u8ygbxuQrFgy5ZBIP886EtyY'
+SMS_EMAIL = 'ulugbekr2028@gmail.com'
+SMS_SECRET_KEY = 'VUp0VI4q7Q3c7xffTgfSbVnbLZiStjP5nK4QHnNx'
 SMS_BASE_URL = 'http://notify.eskiz.uz'
 SMS_TOKEN = ''
 SMS_TOKEN_GLOBAL = ''

@@ -1,14 +1,14 @@
-from calendar import month
 import datetime
 import random
+from ratelimit.decorators import ratelimit
 
 from clickuz import ClickUz
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.db.models import Count
-from django.db.models.functions import ExtractDay
+from django.db.models.functions import ExtractDay, ExtractMonth
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
@@ -43,58 +43,70 @@ def get_funancial_statistics(request):
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
+# @ratelimit(key='ip', rate='3/m')
 def send_code(request):
-    try:
-        phone = request.GET.get('phone')
-        type = request.GET.get('type')
-        error = False
-        code = random.randint(100000, 999999)
-        stds = Users.objects.filter(phone=phone)
-        if stds.count() > 0:
-            if type == "registeration":
-                error = True
-        else:
-            if type == "resset_password":
-                error = True
+    # was_limited = getattr(request, 'limited', False)
+    # if was_limited:
+    #     return JsonResponse({"code": 1, 'msg': 'try many times'},json_dumps_params={'ensure_ascii':False})
+    # else:
+        try:
+            phone = request.GET.get('phone')
+            type = request.GET.get('type')
+            error = False
+            code = random.randint(100000, 999999)
+            stds = Users.objects.filter(phone=phone)
+            sent_code = PhoneCode.objects.filter(phone=phone, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=5)).count()
+            if sent_code < 3:
+                if stds.count() > 0:
+                    if type == "registeration":
+                        error = True
+                else:
+                    if type == "resset_password":
+                        error = True
 
-        if error == False:
-            text = "Sizning tasdiq kodingiz {}. Eduon.uz".format(code)
-            res = sms_send(phone, text)
-            if res is not None:
-                p, created = PhoneCode.objects.update_or_create(phone=phone, defaults={'code': code})
+                if error == False:
+                    text = "Sizning tasdiq kodingiz {}. Eduon.uz".format(code)
+                    res = sms_send(phone, text)
+                    if res is not None:
+                        p = PhoneCode.objects.create(phone=phone, code=code)
 
-                data = {
-                    "success": True,
-                    "message": "Code yuborildi!",
-                }
+                        data = {
+                            "success": True,
+                            "message": "Code yuborildi!",
+                        }
+                    else:
+                        data = {
+                            "success": False,
+                            "message": "Code yuborilmadi!",
+                        }
+                else:
+                    if type == "registeration":
+                        data = {
+                            "success": False,
+                            "message": "Bu telefon raqam oldin ro'yhatga olingan!",
+                        }
+                    elif type == "resset_password":
+                        data = {
+                            "success": False,
+                            "message": "Bu telefon raqam oldin ro'yhatga olinmagan!",
+                        }
+                    else:
+                        data = {
+                            "success": False,
+                            "message": "Qandaydur xatolik yuz berdi!",
+                        }
             else:
                 data = {
-                    "success": False,
-                    "message": "Code yuborilmadi!",
-                }
-        else:
-            if type == "registeration":
-                data = {
-                    "success": False,
-                    "message": "Bu telefon raqam oldin ro'yhatga olingan!",
-                }
-            elif type == "resset_password":
-                data = {
-                    "success": False,
-                    "message": "Bu telefon raqam oldin ro'yhatga olinmagan!",
-                }
-            else:
-                data = {
-                    "success": False,
-                    "message": "Qandaydur xatolik yuz berdi!",
-                }
-    except Exception as er:
-        data = {
-            "success": False,
-            "message": "{}".format(er),
-        }
+                            "success": False,
+                            "message": "Urinishlar soni oshib ketdi, iltimos birozdan so'ng urinib ko'ring",
+                        }
+        except Exception as er:
+            data = {
+                "success": False,
+                "message": "{}".format(er),
+            }
 
-    return Response(data)
+        return Response(data)
 
 
 @api_view(['get'])
@@ -378,7 +390,7 @@ def login(request):
                     "error": "Telefon raqam yoki password xato!!",
                     "message": ""
                 }
-                return Response(status.HTTP_401_UNAUTHORIZED)
+                return JsonResponse(data, status=401)
         except Users.DoesNotExist:
             data = {
                 "success": False,
@@ -1120,82 +1132,57 @@ def get_sell_course_statistics(request):
         query = request.GET.get('query')
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
-        if query == "hafta":
-            day_before_week = datetime.datetime.now() - datetime.timedelta(days=8)
-            orders = Order.objects.filter(course__author_id=sp.id).filter(date__gt=day_before_week)
-            week_days = ["du", "se", "ch", "pa", "ju", "sh", "ya"]
-            day_before_week = day_before_week + datetime.timedelta(days=1)
-            cur_week_day = datetime.datetime.now().weekday()
-            cur_day = day_before_week.day
-            print(orders)
-            print(day_before_week)
-            print(cur_week_day)
-            week_statistic = {}
-            
-            qs = Order.objects.filter(
-                date__year=2022,
-                date__month=1
+        if query == "hafta":            
+            weekly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
+                date__year=datetime.datetime.now().year,
+                date__week=datetime.datetime.now().isocalendar().week
             ).annotate(
                 day=ExtractDay('date'),
             ).values(
                 'day'
             ).annotate(
-                n=Count('id')
+                sells=Count('id')
             ).order_by('day')
-            print(qs)
-            for i in range(7):
-                cnt = 0
-                for j in orders:
-                    if j.date.day == cur_day + i:
-                        cnt += j.summa
-                week_statistic[week_days[(cur_week_day + i) % 7]] = cnt
             data = {
                 "success": True,
                 "message": "",
                 "data": {
-                    "monthly_statistics": qs,
+                    "weekly_statistics": weekly_statistics,
                 }
             }
         elif query == "oy":
-            day_before_month = datetime.datetime.now() - datetime.timedelta(days=31)
-            orders = Order.objects.filter(course__author_id=sp.id).filter(date__gt=day_before_month)
-            day_before_month = day_before_month + datetime.timedelta(days=1)
-            month_statistic = {}
-            for i in range(30):
-                cnt = 0
-                cur_day = day_before_month.day
-                cur_month = day_before_month.month
-                for j in orders:
-                    if j.date.day == cur_day and j.date.month == cur_month:
-                        cnt += j.summa
-                month_statistic[cur_day] = cnt
-                day_before_month = day_before_month + datetime.timedelta(days=1)
+            monthly_statistics = Order.objects.filter(
+                date__year=datetime.datetime.now().year,
+                date__month=datetime.datetime.now().month
+            ).annotate(
+                day=ExtractDay('date'),
+            ).values(
+                'day'
+            ).annotate(
+                sells=Count('id')
+            ).order_by('day')
             data = {
                 "success": True,
                 "message": "",
                 "data": {
-                    "month_statistic": month_statistic,
+                    "monthly_statistics": monthly_statistics,
                 }
             }
         elif query == "yil":
-            day_before_year = datetime.datetime.now() - datetime.timedelta(days=365)
-            orders = Order.objects.filter(course__author_id=sp.id).filter(date__gte=day_before_year)
-            month_days = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            year_statistic = {}
-            for i in range(12):
-                cnt = 0
-                cur_month = day_before_year.month
-                cur_year = day_before_year.year
-                for j in orders:
-                    if j.date.month == cur_month and j.date.year == cur_year:
-                        cnt += j.summa;
-                year_statistic[cur_month] = cnt
-                day_before_year = day_before_year + datetime.timedelta(days=month_days[cur_month])
+            yearly_statistics = Order.objects.filter(
+                date__year=datetime.datetime.now().year,
+            ).annotate(
+                month=ExtractMonth('date'),
+            ).values(
+                'month'
+            ).annotate(
+                sells=Count('id')
+            ).order_by('month')
             data = {
                 "success": True,
                 "message": "",
                 "data": {
-                    "year_statistic": year_statistic,
+                    "yearly_statistics": yearly_statistics,
                 }
             }
         else:
