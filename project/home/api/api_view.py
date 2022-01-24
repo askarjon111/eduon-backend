@@ -1,11 +1,11 @@
-from calendar import month
 import datetime
 import random
+from ratelimit.decorators import ratelimit
 
 from clickuz import ClickUz
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.db.models import Count
 from django.db.models.functions import ExtractDay, ExtractMonth
@@ -43,58 +43,70 @@ def get_funancial_statistics(request):
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
+# @ratelimit(key='ip', rate='3/m')
 def send_code(request):
-    try:
-        phone = request.GET.get('phone')
-        type = request.GET.get('type')
-        error = False
-        code = random.randint(100000, 999999)
-        stds = Users.objects.filter(phone=phone)
-        if stds.count() > 0:
-            if type == "registeration":
-                error = True
-        else:
-            if type == "resset_password":
-                error = True
+    # was_limited = getattr(request, 'limited', False)
+    # if was_limited:
+    #     return JsonResponse({"code": 1, 'msg': 'try many times'},json_dumps_params={'ensure_ascii':False})
+    # else:
+        try:
+            phone = request.GET.get('phone')
+            type = request.GET.get('type')
+            error = False
+            code = random.randint(100000, 999999)
+            stds = Users.objects.filter(phone=phone)
+            sent_code = PhoneCode.objects.filter(phone=phone, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=5)).count()
+            if sent_code < 3:
+                if stds.count() > 0:
+                    if type == "registeration":
+                        error = True
+                else:
+                    if type == "resset_password":
+                        error = True
 
-        if error == False:
-            text = "Sizning tasdiq kodingiz {}. Eduon.uz".format(code)
-            res = sms_send(phone, text)
-            if res is not None:
-                p, created = PhoneCode.objects.update_or_create(phone=phone, defaults={'code': code})
+                if error == False:
+                    text = "Sizning tasdiq kodingiz {}. Eduon.uz".format(code)
+                    res = sms_send(phone, text)
+                    if res is not None:
+                        p = PhoneCode.objects.create(phone=phone, code=code)
 
-                data = {
-                    "success": True,
-                    "message": "Code yuborildi!",
-                }
+                        data = {
+                            "success": True,
+                            "message": "Code yuborildi!",
+                        }
+                    else:
+                        data = {
+                            "success": False,
+                            "message": "Code yuborilmadi!",
+                        }
+                else:
+                    if type == "registeration":
+                        data = {
+                            "success": False,
+                            "message": "Bu telefon raqam oldin ro'yhatga olingan!",
+                        }
+                    elif type == "resset_password":
+                        data = {
+                            "success": False,
+                            "message": "Bu telefon raqam oldin ro'yhatga olinmagan!",
+                        }
+                    else:
+                        data = {
+                            "success": False,
+                            "message": "Qandaydur xatolik yuz berdi!",
+                        }
             else:
                 data = {
-                    "success": False,
-                    "message": "Code yuborilmadi!",
-                }
-        else:
-            if type == "registeration":
-                data = {
-                    "success": False,
-                    "message": "Bu telefon raqam oldin ro'yhatga olingan!",
-                }
-            elif type == "resset_password":
-                data = {
-                    "success": False,
-                    "message": "Bu telefon raqam oldin ro'yhatga olinmagan!",
-                }
-            else:
-                data = {
-                    "success": False,
-                    "message": "Qandaydur xatolik yuz berdi!",
-                }
-    except Exception as er:
-        data = {
-            "success": False,
-            "message": "{}".format(er),
-        }
+                            "success": False,
+                            "message": "Urinishlar soni oshib ketdi, iltimos birozdan so'ng urinib ko'ring",
+                        }
+        except Exception as er:
+            data = {
+                "success": False,
+                "message": "{}".format(er),
+            }
 
-    return Response(data)
+        return Response(data)
 
 
 @api_view(['get'])
