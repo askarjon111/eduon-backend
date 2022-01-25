@@ -38,13 +38,13 @@ urlpatterns = [
     # path('telegram-bot', csrf_exempt(EduonBot.as_view())),
 ]
 
-r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',
-                  {'email': settings.SMS_EMAIL, 'password': settings.SMS_SECRET_KEY}).json()
-settings.SMS_TOKEN = r['data']['token']
+# r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',
+#                   {'email': settings.SMS_EMAIL, 'password': settings.SMS_SECRET_KEY}).json()
+# settings.SMS_TOKEN = r['data']['token']
 
-try:
-    rs = requests.post(settings.SMS_BASE_URL_GLOBAL + '/oauth/token',
-                      {'client_id': settings.SMS_CLIENT_ID, 'secret': settings.SMS_SECRET_KEY_GLOBAL, "expires_in": 3600}).json()
-    settings.SMS_TOKEN_GLOBAL = rs['jwt']
-except:
-    pass
+# try:
+#     rs = requests.post(settings.SMS_BASE_URL_GLOBAL + '/oauth/token',
+#                       {'client_id': settings.SMS_CLIENT_ID, 'secret': settings.SMS_SECRET_KEY_GLOBAL, "expires_in": 3600}).json()
+#     settings.SMS_TOKEN_GLOBAL = rs['jwt']
+# except:
+#     pass

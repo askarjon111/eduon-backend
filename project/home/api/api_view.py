@@ -1,5 +1,6 @@
 from calendar import month
 import datetime
+from http.client import HTTPResponse
 import random
 
 from clickuz import ClickUz
@@ -31,8 +32,16 @@ from .serializers import (
 from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
     VideoCourseSerializer
 
+@api_view(['get'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([])
+def speaker_orders(request):
+    speaker_orders = Order.objects.filter(course__author__id=request.user.id).count()
+    print(Course.objects.filter(author=request.user.id))
 
-def get_funancial_statistics(request):
+    return Response(speaker_orders)
+
+def get_financial_statistics(request):
     speaker_money = Speaker.objects.aggregate(Sum('cash'))
     context = {
         'speaker_money':speaker_money['cash__sum']
