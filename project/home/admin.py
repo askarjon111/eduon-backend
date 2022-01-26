@@ -13,12 +13,12 @@ class PaymentHistoryAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         url_patterns = [
-            path('get_funancial_statistics/',
-                 self.admin_site.admin_view(self.get_funancial_statistics))
+            path('get_financial_statistics/',
+                 self.admin_site.admin_view(self.get_financial_statistics))
         ]
         return url_patterns + urls
 
-    def get_funancial_statistics(self, request):
+    def get_financial_statistics(self, request):
         speaker_money = Speaker.objects.aggregate(Sum('cash'))
 
         context = dict(
