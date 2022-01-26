@@ -14,6 +14,7 @@ from django.db.models.functions import ExtractDay, ExtractMonth
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import serializers
 
 
 from home.models import (
@@ -27,7 +28,7 @@ from simplejwt.tokens import RefreshToken
 from .serializers import (
     UsersSerializer, CountrySerializer, RegionSerialzier, GetCourseSerializer, SpeakerGetSerializer, CategorySerializer,
     CourseDetailSerializer, BoughtedCourseSerializer, RaytingSerializer, CommentSerializer, OrderPaymentSerializer,
-    VideoSerializer
+    VideoSerializer, OrderSerializer
 )
 from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
     VideoCourseSerializer
@@ -36,10 +37,16 @@ from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserS
 @authentication_classes([JWTAuthentication])
 @permission_classes([])
 def speaker_orders(request):
-    speaker_orders = Order.objects.filter(course__author__id=request.user.id).count()
-    print(Course.objects.filter(author=request.user.id))
+    query = Order.objects.filter(course__author__speaker__id=request.user.id)
+    serializer = OrderSerializer(query, many=True)
+    data = {
+        "success": True,
+        "error": "",
+        "data": serializer.data
+    }
+    print(speaker_orders)
 
-    return Response(speaker_orders)
+    return Response(data)
 
 def get_financial_statistics(request):
     speaker_money = Speaker.objects.aggregate(Sum('cash'))
