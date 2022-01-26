@@ -506,7 +506,7 @@ class VideoCourse(models.Model):
     author = models.ForeignKey(Speaker, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=255)
-    url = models.URLField(max_length=100, default="")
+    url = models.URLField(max_length=100, blank=True, null=True)
     video = models.FileField(upload_to=slugify_upload, default=None, blank=True, null=True)
     image = ResizedImageField(size=[1280, 720], crop=[
                               'middle', 'center'], upload_to=slugify_upload, null=True)
