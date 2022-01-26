@@ -507,7 +507,7 @@ class VideoCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=255)
     url = models.URLField(max_length=100, default="")
-    video = models.FileField(upload_to=slugify_upload, default=None)
+    video = models.FileField(upload_to=slugify_upload, default=None, blank=True, null=True)
     image = ResizedImageField(size=[1280, 720], crop=[
                               'middle', 'center'], upload_to=slugify_upload, null=True)
     description = models.TextField(max_length=5000, blank=True, null=True)
