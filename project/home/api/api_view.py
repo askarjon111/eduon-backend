@@ -44,8 +44,6 @@ def speaker_orders(request):
         "error": "",
         "data": serializer.data
     }
-    print(speaker_orders)
-
     return Response(data)
 
 def get_financial_statistics(request):
@@ -311,7 +309,6 @@ def get_regions(request):
 def full_registration(request):
     try:
         user = request.user
-        print(user)
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         country = request.data.get("country")
@@ -616,7 +613,6 @@ def boughted_course_detail(request):
         if orders.count() > 0 or course.turi == "Bepul":
 
             ser = BoughtedCourseSerializer(course)
-            print(ser.data)
             data = {
                 "success": True,
                 "error": "",
@@ -677,7 +673,6 @@ def get_speaker(request):
             try:
                 query = Speaker.objects.get(pk=id)
                 ser = SpeakerGetSerializer(query)
-                print(query.id)
             except:
                 data = {
                     "success": False,
@@ -1053,7 +1048,6 @@ def get_statistics(request):
         users46p = 0
         users_unknown = Order.objects.filter(Q(course__author_id=sp.id) and Q(user__age=None)).count()
         age = [i.user.age.year for i in users if i.user.age is not None]
-        print(age)
         for i in age:
             yosh = datetime.datetime.now().year - i
             if 1 <= yosh <= 17:
@@ -1331,7 +1325,6 @@ def get_user_country_statistics(request):
                     country[ctry] = 1
         for i in country.keys():
             country[i] = country[i] / cnt * 100
-        # print(country, " -- ", uid)
         data = {
             "success": True,
             "message": "",

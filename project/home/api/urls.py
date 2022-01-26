@@ -53,7 +53,7 @@ urlpatterns = [
     path('filter-by-cost/', filter_by_cost),
     path('filter-by-language/', filter_by_language),
     path('get-languages/', get_languages),
-    path('get-financial-statistics/', get_financial_statistics),
+    path('financial-statistics/', get_financial_statistics),
     path('speaker-orders/', speaker_orders),
 ]
 
