@@ -14,7 +14,7 @@ SECRET_KEY = '(@s5no*3@a7s-h5rb+*sy0e(#zwdhliu96zo@22qmn)utsc9y8'
 from corsheaders.defaults import default_methods
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -252,8 +252,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-SMS_EMAIL = 'akbar.ziyodov12345@gmail.com'
-SMS_SECRET_KEY = 'IZmx8TBzW17cNXH6u8ygbxuQrFgy5ZBIP886EtyY'
+SMS_EMAIL = 'ulugbekr2028@gmail.com'
+SMS_SECRET_KEY = 'VUp0VI4q7Q3c7xffTgfSbVnbLZiStjP5nK4QHnNx'
 SMS_BASE_URL = 'http://notify.eskiz.uz'
 SMS_TOKEN = ''
 SMS_TOKEN_GLOBAL = ''

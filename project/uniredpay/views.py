@@ -438,20 +438,23 @@ def get_money_from_wallet(request):
     if not seria.is_valid():
         return Response({'status': False, 'error': seria.errors})
 
-    if speaker.cash < 50000:
+    if speaker.cash < 10000:
         return Response({'status': False, 'error': "Hisobingizda 50 ming dan kam mablag' bor!!!"})
 
-    data = {
-        "number": speaker.wallet_number,
-        "expire": speaker.wallet_expire,
-        "receiver": seria.validated_data['card_number'],
-        "amount": speaker.cash
-    }
+    if speaker.cash:
+        data = {
+            "number": speaker.wallet_number,
+            "expire": speaker.wallet_expire,
+            "receiver": seria.validated_data['card_number'],
+            "amount": speaker.cash * 100
+        }
+    else:
+        return Response({'status': False, 'error': "Sizda yetarli mablag' mavjud emas!!!"})
 
     try:
         res = uniredpay_conf.wallet_api(data=data, method='transfer.proceed')
-    except:
-        return Response({'status': False, 'error': "Kutilmagan xatolik. Iltimos keyinroq urinib ko'ring!!!"})
+    except Exception as e:
+        return Response({'status': False, 'error': f"{e}"})
 
     if res.get('status'):
         speaker.cash = speaker.calculate_cash
