@@ -11,6 +11,7 @@ def sms_login():
     settings.SMS_TOKEN = r['data']['token']
 
 
+
 def sms_refresh():
     r = requests.patch(settings.SMS_BASE_URL + '/api/auth/refresh',
                        headers={'Authorization': f'Bearer {settings.SMS_TOKEN}'}).json()
@@ -18,6 +19,7 @@ def sms_refresh():
 
 
 def sms_send(phone_number, text):
+    sms_login()
     phone_number = str(phone_number)
     phone_number.replace("+", "")
     try:
