@@ -25,7 +25,7 @@ from rest_framework_simplejwt.backends import TokenBackend
 from simplejwt.tokens import RefreshToken
 from .serializers import (
     UsersSerializer, CountrySerializer, RegionSerialzier, GetCourseSerializer, SpeakerGetSerializer, CategorySerializer,
-    CourseDetailSerializer, BoughtedCourseSerializer, RaytingSerializer, CommentSerializer, OrderPaymentSerializer,
+    CourseDetailSerializer, BoughtedCourseSerializer, RatingSerializer, CommentSerializer, OrderPaymentSerializer,
     VideoSerializer
 )
 from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
@@ -703,7 +703,7 @@ def get_speaker(request):
     return Response(data)
 
 
-def rayting(cr, rn):
+def rating(cr, rn):
     value_sp = cr.aggregate(value=Sum('speaker_value')).get('value')
     if value_sp is None:
         value_sp = 0
@@ -757,10 +757,10 @@ def rayting(cr, rn):
             "count": count_vr
         }
     }
-    ser = RaytingSerializer(rn)
+    ser = RatingSerializer(rn)
     data = {
-        "rayting_user": ser.data,
-        "rayting_full": data
+        "rating_user": ser.data,
+        "rating_full": data
     }
     return data
 
@@ -768,7 +768,7 @@ def rayting(cr, rn):
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
-def get_rayting(request):
+def get_rating(request):
     try:
         token = request.META.get('HTTP_AUTHORIZATION', False)
         if token:
@@ -776,6 +776,7 @@ def get_rayting(request):
             get_token = TokenBackend(algorithm='HS256').decode(access_token, verify=False)
             user = get_token.get('user_id')
             course_id = request.GET.get("course_id")
+            print(course_id)
             speaker_courses = Course.objects.filter(author_id=Course.objects.get(id=course_id).author_id)
             speaker_courses_count = speaker_courses.count()
             ids = [i.id for i in speaker_courses]
@@ -794,20 +795,20 @@ def get_rayting(request):
             else:
                 speaker_rank = 0
             try:
-                rnk = RankCourse.objects.get(user_id=user, course_id=course_id)
+                rnk = RankCourse.objects.get(course_id=course_id)
                 cr = RankCourse.objects.filter(course_id=course_id)
                 data = {
                     "success": True,
                     "error": "",
-                    "message": "Rayting olindi!",
+                    "message": "Rating olindi!",
                     "speaker_rank": speaker_rank,
-                    "data": rayting(cr, rnk)
+                    "data": rating(cr, rnk)
                 }
             except RankCourse.DoesNotExist:
                 data = {
                     "success": True,
                     "error": "",
-                    "message": "Rayting olindi!",
+                    "message": "Rating olindi!",
                     "speaker_rank": 0,
                     "data": {
                         "course": {
@@ -844,14 +845,15 @@ def get_rayting(request):
 
 
 @api_view(['post'])
-@authentication_classes([])
+@authentication_classes([JWTAuthentication])
 @permission_classes([])
-def set_rayting(request):
+def set_rating(request):
     try:
         token = request.META.get('HTTP_AUTHORIZATION', False)
         if token:
             access_token = token.split(' ')[-1]
-            get_token = TokenBackend(algorithm='HS256').decode(access_token, verify=False)
+            get_token = TokenBackend(algorithm='HS256').decode(
+                access_token, verify=False)
             user = get_token.get('user_id')
             course = request.POST.get('course_id')
             course_value = request.POST.get('course_value')
@@ -869,16 +871,16 @@ def set_rayting(request):
                 rn.save()
             else:
                 rn = RankCourse.objects.create(
-                        user_id=user, course_id=course, course_value=course_value,
-                        speaker_value=speaker_value, content_value=content_value, video_value=video_value
-                    )
+                    user_id=user, course_id=course, course_value=course_value,
+                    speaker_value=speaker_value, content_value=content_value, video_value=video_value
+                )
             cr = RankCourse.objects.filter(course_id=course)
 
             data = {
                 "success": True,
                 "error": "",
-                "message": "rayting qo'yildi!",
-                "data": rayting(cr, rn)
+                "message": "You rated the course!",
+                "data": rating(cr, rn)
             }
         else:
             data = {

@@ -312,7 +312,7 @@ class BoughtedCourseSerializer(ModelSerializer):
         ]
 
 
-class RaytingSerializer(ModelSerializer):
+class RatingSerializer(ModelSerializer):
     class Meta:
         model = RankCourse
         fields = "__all__"

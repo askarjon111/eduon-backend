@@ -4,7 +4,7 @@ from rest_framework import routers
 from .api_view import (
     full_registration, get_funancial_statistics, send_code, verify_code, set_photo, registeration, reset_password,
     get_countries, get_regions, login, get_course, get_boughted_course, buy_course, get_category, course_detail,
-    boughted_course_detail, get_top_course, get_speaker, get_rayting, set_rayting, set_comment, get_comment,
+    boughted_course_detail, get_top_course, get_speaker, get_rating, set_rating, set_comment, get_comment,
     create_invoise, create_invoise_payme, payment_history, get_statistics, get_speaker_data, upload_file,
     get_speaker_courses, verified_courses, verified_speaker_courses, get_courses, get_sell_course_statistics,
     get_user_country_statistics, get_rank_statistics
@@ -32,8 +32,8 @@ urlpatterns = [
     path('get-category/', get_category),
     path('course-detail/', course_detail),
     path('boughted-course-detail/', boughted_course_detail),
-    path('get-rayting/', get_rayting),
-    path('set-rayting/', set_rayting),
+    path('get-rating/', get_rating),
+    path('set-rating/', set_rating),
     path('set-comment/', set_comment),
     path('get-comment/', get_comment),
     path('create-invoise-click/', create_invoise),
