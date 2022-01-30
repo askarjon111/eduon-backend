@@ -29,7 +29,7 @@ from .serializers import DjangoUserSerializers, GetSpeakerSerializer
 
 class CourseListCreateView(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
-    authentication_classes = []
+    authentication_classes = [JWTAuthentication]
     permission_classes = []
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
