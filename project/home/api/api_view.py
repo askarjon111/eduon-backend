@@ -26,7 +26,7 @@ from home.serializers import CourseSerializer
 from rest_framework_simplejwt.backends import TokenBackend
 from simplejwt.tokens import RefreshToken
 from .serializers import (
-    UsersSerializer, CountrySerializer, RegionSerialzier, GetCourseSerializer, SpeakerGetSerializer, CategorySerializer,
+    BillingSerializer, OrderSerializer, UsersSerializer, CountrySerializer, RegionSerialzier, GetCourseSerializer, SpeakerGetSerializer, CategorySerializer,
     CourseDetailSerializer, BoughtedCourseSerializer, RatingSerializer, CommentSerializer, OrderPaymentSerializer,
     VideoSerializer
 
@@ -39,11 +39,13 @@ from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserS
 @permission_classes([])
 def speaker_orders(request):
     query = Order.objects.filter(course__author__speaker__id=request.user.id)
-    serializer = OrderSerializer(query, many=True)
+    orders = OrderSerializer(query, many=True)
+    billings = BillingSerializer(query, many=True)
     data = {
         "success": True,
         "error": "",
-        "data": serializer.data
+        "orders": orders.data,
+        "billings": billings.data
     }
     return Response(data)
 

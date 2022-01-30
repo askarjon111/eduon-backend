@@ -335,3 +335,9 @@ class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
+        
+
+class BillingSerializer(ModelSerializer):
+    class Meta:
+        model = Billing
+        fields = "__all__"
