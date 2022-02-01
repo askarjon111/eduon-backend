@@ -29,7 +29,7 @@ from .serializers import DjangoUserSerializers, GetSpeakerSerializer
 
 class CourseCreateView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = []
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     
