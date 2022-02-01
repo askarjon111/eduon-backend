@@ -285,6 +285,7 @@ class CourseSerializer(serializers.ModelSerializer):
     author = SpeakerSerializer(many=False, required=True)
     sell_count = serializers.SerializerMethodField()
     view = serializers.SerializerMethodField()
+    image = serializers.CharField()
     course_rank = serializers.SerializerMethodField()
     trailer = CourseTrailerSerializer(many=False, required=False)
     categories = CategorySerializer(many=True, required=False)
@@ -325,6 +326,8 @@ class CourseSerializer(serializers.ModelSerializer):
         return views
 
     def create(self, validated_data):
+        image = validated_data.pop('image', None)
+        # image = open(image_data, 'rb')
         language_data = validated_data.pop('language', None)
         categories_data = validated_data.pop('categories', None)
         trailer_data = validated_data.pop('course_trailer', None)
@@ -341,6 +344,9 @@ class CourseSerializer(serializers.ModelSerializer):
         if language_data:
             new_language, _ = Language.objects.get_or_create(name=language_data.get('name'))
             course.language = new_language
+            
+        if image:
+            course.image = image
 
         if categories_data:
             for category in categories_data:
@@ -349,7 +355,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
         if trailer_data:
             new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
-                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'), **trailer_data)
+                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('videoimage'), **trailer_data)
             course.trailer = new_trailer
 
         if tags_data:
