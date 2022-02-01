@@ -570,7 +570,7 @@ def buy_course(request):
 @permission_classes([])
 def get_category(request):
     try:
-        categories = CategoryVideo.objects.all()
+        categories = CategoryVideo.objects.filter(parent=None)
         ser = CategorySerializer(categories, many=True)
         data = {
             "success": True,
