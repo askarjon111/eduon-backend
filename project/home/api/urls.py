@@ -9,7 +9,7 @@ from .api_view import (
     get_speaker_courses, verified_courses, verified_speaker_courses, get_courses, get_sell_course_statistics,
     get_user_country_statistics, get_rank_statistics, speaker_orders
 )
-from home.views import CourseListCreateView
+from home.views import CourseCreateView, CourseListView
 
 from .views import get_cash_balance, DeleteVideoAPIView, filter_by_cost, filter_by_language, get_languages
 
@@ -27,7 +27,8 @@ urlpatterns = [
     # path('get-top-course/', get_top_course),
     path('get-boughted-course/', get_boughted_course),
     path('buy-course/', buy_course),
-    path('list-create-course/', CourseListCreateView.as_view()),
+    path('create-course/', CourseCreateView.as_view()),
+    path('list-course/', CourseListView.as_view()),
     path('get-speaker/', get_speaker),
     path('get-category/', get_category),
     path('course-detail/', course_detail),
