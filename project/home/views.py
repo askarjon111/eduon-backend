@@ -34,7 +34,7 @@ class CourseListCreateView(ListCreateAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     
-    filterset_fields = ['categories']
+    filterset_fields = ['categories', 'turi', 'price', 'date']
     
 
 
