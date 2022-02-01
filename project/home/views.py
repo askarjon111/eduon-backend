@@ -34,7 +34,7 @@ class CourseListCreateView(ListCreateAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     
-    filterset_fields = ['categories']
+    filterset_fields = ['categories', 'turi', 'price', 'date']
     
 
 
@@ -472,6 +472,7 @@ def UploadVideoPost(request):
     if request.method == 'POST':
         url = ''
         title = request.POST['title']
+        module = request.POST['module']
         course = request.POST['kurs']
         rasm = request.FILES['image']
         link = request.POST['url']
@@ -483,7 +484,7 @@ def UploadVideoPost(request):
         desc = request.POST['desc']
         user = request.user
         speaker = Speaker.objects.get(speaker_id=user.id)
-        VideoCourse.objects.create(title=title, course_id=course, image=rasm, video=video,
+        VideoCourse.objects.create(title=title, module=module, course_id=course, image=rasm, video=video,
                                    url=url, description=desc, author_id=speaker.id, place_number=place_number)
         return redirect('speaker-courses')
 

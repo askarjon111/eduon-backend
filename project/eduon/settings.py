@@ -164,7 +164,11 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     "EXCEPTION_HANDLER": "eduon.utils.custom_exception_handler",
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_FILTER_BACKENDS': 
+        [
+            'django_filters.rest_framework.DjangoFilterBackend',
+            'django_filters.rest_framework.OrderingFilter',
+        ],
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
