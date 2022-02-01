@@ -1379,7 +1379,8 @@ def upload_file(request):
             new.save()
             data = {
                 'success': True,
-                'message': 'Fayl yuklandi'
+                'message': 'Fayl yuklandi',
+                'path': new.file.path
             }
         else:
             data = {

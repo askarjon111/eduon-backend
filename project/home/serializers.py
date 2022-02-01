@@ -335,6 +335,7 @@ class CourseSerializer(serializers.ModelSerializer):
         forwhoms_data = validated_data.pop(
             'forwhom', None)
         author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
+        author = int(author.id)
         course, _ = Course.objects.get_or_create(
             author=author, **validated_data)
 
