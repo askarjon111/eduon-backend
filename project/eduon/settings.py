@@ -9,7 +9,7 @@ SECRET_KEY = '(@s5no*3@a7s-h5rb+*sy0e(#zwdhliu96zo@22qmn)utsc9y8'
 from corsheaders.defaults import default_methods
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -89,15 +89,7 @@ CLICK_SETTINGS = {
     'merchant_user_id': '17661'
 }
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            "ENGINE": 'django.db.backends.sqlite3',
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3")
-        }
-    }
-else:
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
@@ -105,6 +97,23 @@ else:
             },
         }
     }
+
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             "ENGINE": 'django.db.backends.sqlite3',
+#             "NAME": os.path.join(BASE_DIR, "db.sqlite3")
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
+#             },
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -168,7 +177,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': 
         [
             'django_filters.rest_framework.DjangoFilterBackend',
-            'django_filters.rest_framework.OrderingFilter',
+            # 'django_filters.rest_framework.OrderingFilter',
         ],
 }
 SIMPLE_JWT = {
@@ -209,7 +218,23 @@ DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_WHITELIST = [
+    # Front end
+    "https://eduon.uz/",
+    "https://speaker.eduon.uz/",
+    # Islom front end
+    "http://192.168.100.247:3000/",
+    "http://192.168.100.247:3001/",
+    # Ibrohim
+    "http:///192.168.10.203:3000/",
+    "http:///192.168.10.203:3001/",
+    # ASKAR
+    "http://192.168.1.40:8000/",
+    "http://192.168.1.40:5000/"
+]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',

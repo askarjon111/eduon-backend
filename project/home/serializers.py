@@ -241,6 +241,7 @@ class VideoViewsSerialzier(serializers.ModelSerializer):
 
 class CourseTrailerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    video = serializers.CharField(required=False)
     class Meta:
         model = CourseTrailer
         fields = ['id', 'title', 'is_file', 'video', 'url']
@@ -285,7 +286,7 @@ class CourseSerializer(serializers.ModelSerializer):
     author = SpeakerSerializer(many=False, required=True)
     sell_count = serializers.SerializerMethodField()
     view = serializers.SerializerMethodField()
-    image = serializers.CharField()
+    image = serializers.CharField(required=False)
     course_rank = serializers.SerializerMethodField()
     trailer = CourseTrailerSerializer(many=False, required=False)
     categories = CategorySerializer(many=True, required=False)
@@ -330,7 +331,7 @@ class CourseSerializer(serializers.ModelSerializer):
         # image = open(image_data, 'rb')
         language_data = validated_data.pop('language', None)
         categories_data = validated_data.pop('categories', None)
-        trailer_data = validated_data.pop('course_trailer', None)
+        trailer_data = validated_data.pop('trailer', None)
         tags_data = validated_data.pop('course_tags', None)
         whatyoulearns_data = validated_data.pop('whatyoulearn', None)
         requirementscourse_data = validated_data.pop(
@@ -338,7 +339,6 @@ class CourseSerializer(serializers.ModelSerializer):
         forwhoms_data = validated_data.pop(
             'forwhom', None)
         author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
-        author = int(author.id)
         course, _ = Course.objects.get_or_create(
             author=author, **validated_data)
 
@@ -356,7 +356,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
         if trailer_data:
             new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
-                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('videoimage'), **trailer_data)
+                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
             course.trailer = new_trailer
 
         if tags_data:
