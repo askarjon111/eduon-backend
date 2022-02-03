@@ -199,7 +199,7 @@ class Speaker(models.Model):
     has_course = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.speaker.username
+        return self.speaker.username or 'Speaker'
 
     def save(self, *args, **kwargs):
         if self.own_ref_code is None:
@@ -365,14 +365,14 @@ class CategoryVideo(models.Model):
                                on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.name or ' '
 
 
 class Language(models.Model):
     name = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.name
+        return self.name or 'Language'
 
     class Meta:
         verbose_name = "Til"
@@ -383,7 +383,7 @@ class CourseTag(models.Model):
     title = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.title
+        return self.title or 'Tag'
 
 
 class CourseTrailer(models.Model):
@@ -393,7 +393,7 @@ class CourseTrailer(models.Model):
     url = models.URLField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return self.title or 'Trailer'
 
 
 class Course(models.Model):
