@@ -32,15 +32,14 @@ class CourseCreateView(CreateAPIView):
     permission_classes = []
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    
-    
+
 
 class CourseListView(ListAPIView):
     filter_backends = [DjangoFilterBackend]
     authentication_classes =[]
     permission_classes = []
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
+    queryset = Course.objects.filter(is_confirmed=True)
     filterset_fields = ['categories', 'turi', 'price', 'date']
 
 
