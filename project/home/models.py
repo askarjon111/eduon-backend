@@ -395,6 +395,14 @@ class CourseTrailer(models.Model):
         return self.title
 
 
+class Module(models.Model):
+    title = models.CharField(max_length=100)
+    course = models.ForeignKey("Course", verbose_name=_("Kurs"), on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.title or "Module"
+    
+
 class Course(models.Model):
     turi = (
         ('Bepul', 'Bepul'),
@@ -505,6 +513,7 @@ class Comment(models.Model):
 class VideoCourse(models.Model):
     author = models.ForeignKey(Speaker, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=255)
     url = models.URLField(max_length=100, blank=True, null=True)
     video = models.FileField(upload_to=slugify_upload, default=None, blank=True, null=True)
