@@ -1,9 +1,11 @@
 from django.contrib import admin
+import json
+import requests
 
 from django.template.response import TemplateResponse
-from django.db.models import Sum
 from .models import *
 from django.urls import path
+from uniredpay import uniredpay_conf
 
 
 @admin.register(PaymentHistory)
@@ -14,19 +16,53 @@ class PaymentHistoryAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         url_patterns = [
             path('get_financial_statistics/',
-                 self.admin_site.admin_view(self.get_financial_statistics))
+                 self.admin_site.admin_view(self.account_balance))
         ]
         return url_patterns + urls
+    
+    def account_balance(self, request):
+        res = uniredpay_conf.get_token()
 
-    def get_financial_statistics(self, request):
-        speaker_money = Speaker.objects.aggregate(Sum('cash'))
+        if res['status']:
 
-        context = dict(
-            self.admin_site.each_context(request),
-            speaker_money=speaker_money['cash__sum']
-        )
+            access_token = res['result']['access_token']
+            headers = {
+                'Unisoft-Authorization': f'Bearer {access_token}',
+                'Content-type': 'application/json',
+                'Accept': 'Application/json',
+                'token': access_token
+            }
 
-        return TemplateResponse(request, "admin/statistics.html", context)
+            d = {
+                "jsonrpc": "2.0",
+                "id": "{{$randomUUID}}",
+                "method": "account.balance",
+                "params": {
+                }
+            }
+
+            req = requests.post(uniredpay_conf.BASE_URL, headers=headers, data=json.dumps(d))
+
+            
+            if req.status_code == 200:
+                context = dict(
+                    self.admin_site.each_context(request),
+                    speaker_money=str(req.json()['result']['balance']) + " so'm"
+                )
+                return TemplateResponse(request, "admin/statistics.html", context)
+            else:
+                context = dict(
+                    self.admin_site.each_context(request),
+                    speaker_money="Xatolik"
+                )
+                return TemplateResponse(request, "admin/statistics.html", context)
+        else:
+            context = dict(
+                self.admin_site.each_context(request),
+                speaker_money="Unired hisobiga kirishda xatolik yuzberdi"
+            )
+            return TemplateResponse(request, "admin/statistics.html", "salom")
+
 
 admin.site.register(ContractWithSpeaker)
 admin.site.register(Billing)
@@ -36,6 +72,7 @@ admin.site.register(CourseTrailer)
 admin.site.register(WhatYouLearn)
 admin.site.register(RequirementsCourse)
 admin.site.register(ForWhomCourse)
+admin.site.register(Module)
 
 
 @admin.register(VideoCourse)

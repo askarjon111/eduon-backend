@@ -89,24 +89,7 @@ CLICK_SETTINGS = {
     'merchant_user_id': '17661'
 }
 
-DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
-            },
-        }
-    }
-
-# if DEBUG:
-#     DATABASES = {
-#         'default': {
-#             "ENGINE": 'django.db.backends.sqlite3',
-#             "NAME": os.path.join(BASE_DIR, "db.sqlite3")
-#         }
-#     }
-# else:
-#     DATABASES = {
+# DATABASES = {
 #         'default': {
 #             'ENGINE': 'django.db.backends.mysql',
 #             'OPTIONS': {
@@ -114,6 +97,23 @@ DATABASES = {
 #             },
 #         }
 #     }
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            "ENGINE": 'django.db.backends.sqlite3',
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3")
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
+            },
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -222,17 +222,17 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = [
     # Front end
-    "https://eduon.uz/",
-    "https://speaker.eduon.uz/",
+    "https://eduon.uz",
+    "https://speaker.eduon.uz",
     # Islom front end
-    "http://192.168.100.247:3000/",
-    "http://192.168.100.247:3001/",
+    "http://192.168.100.247:3000",
+    "http://192.168.100.247:3001",
     # Ibrohim
-    "http:///192.168.10.203:3000/",
-    "http:///192.168.10.203:3001/",
+    "http://192.168.10.203:3000",
+    "http://192.168.10.203:3001",
     # ASKAR
-    "http://192.168.1.40:8000/",
-    "http://192.168.1.40:5000/"
+    "http://192.168.1.40:8000",
+    "http://192.168.1.40:5000"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -292,6 +292,11 @@ UNICOIN_LOGIN = "eduon"
 UNICOIN_PASSWORD = "SDqwd$se6l8Gp4ASMWmmhTxwO98Fiub9"
 UNICOIN_HOST_UZCARD = "https://core.unired.uz/api/v1/unired"
 UNICOIN_HOST_HUMO = "https://core.unired.uz/api/v1/humo"
+
+UNIRED_LOGIN = "Eduon"
+UNIRED_PASSWORD = "Nr9WAVeS1TjV"
+UNIRED_WALLET_URL = "https://wallet.unired.uz"
+UNIRED_ACCOUNT_BALANCE = ""
 
 UZCARD_MERCHANT_ID = '90489428'
 UZCARD_TERMINAL_ID = '92415924'
