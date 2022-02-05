@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'paycom',
     'uniredpay',
     'corsheaders',
+    'quiz',
     'rest_framework.authtoken',
     'django_filters',
 ]

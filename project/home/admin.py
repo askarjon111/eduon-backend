@@ -19,7 +19,7 @@ class PaymentHistoryAdmin(admin.ModelAdmin):
                  self.admin_site.admin_view(self.account_balance))
         ]
         return url_patterns + urls
-    
+
     def account_balance(self, request):
         res = uniredpay_conf.get_token()
 
@@ -41,13 +41,14 @@ class PaymentHistoryAdmin(admin.ModelAdmin):
                 }
             }
 
-            req = requests.post(uniredpay_conf.BASE_URL, headers=headers, data=json.dumps(d))
+            req = requests.post(uniredpay_conf.BASE_URL,
+                                headers=headers, data=json.dumps(d))
 
-            
             if req.status_code == 200:
                 context = dict(
                     self.admin_site.each_context(request),
-                    speaker_money=str(req.json()['result']['balance']) + " so'm"
+                    speaker_money=str(
+                        req.json()['result']['balance']) + " so'm"
                 )
                 return TemplateResponse(request, "admin/statistics.html", context)
             else:
@@ -72,7 +73,7 @@ admin.site.register(CourseTrailer)
 admin.site.register(WhatYouLearn)
 admin.site.register(RequirementsCourse)
 admin.site.register(ForWhomCourse)
-admin.site.register(Module)
+admin.site.register(CourseModule)
 
 
 @admin.register(VideoCourse)
@@ -99,7 +100,7 @@ class OrderPaymentAdmin(admin.ModelAdmin):
 @admin.register(Speaker)
 class SpeakerAdmin(admin.ModelAdmin):
     list_display = (
-    'speaker', 'get_first_name', 'get_last_name', 'phone', 'cash', 'get_email', 'get_date_joined', 'image')
+        'speaker', 'get_first_name', 'get_last_name', 'phone', 'cash', 'get_email', 'get_date_joined', 'image')
     list_filter = ('cash',)
     list_max_show_all = 50
     search_fields = ('speaker__username', 'speaker__first_name')
@@ -134,7 +135,8 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'phone', 'cash', 'bonus', 'status', 'email', 'last_sean', 'image')
+    list_display = ('first_name', 'last_name', 'phone', 'cash',
+                    'bonus', 'status', 'email', 'last_sean', 'image')
     list_max_show_all = 50
     search_fields = ('first_name', "phone", "last_name")
     date_hierarchy = ('regdate')
