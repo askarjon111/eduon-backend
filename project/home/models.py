@@ -580,10 +580,6 @@ class IsFinished(models.Model):
 
     finished_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.video.title or self.file.name or self.quiz.title or "Done object"
-
-
 class LikeOrDislike(models.Model):
     Up = 1
     Down = -1

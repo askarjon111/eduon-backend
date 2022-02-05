@@ -4,11 +4,11 @@ from home.serializers import CourseModuleSerializer, CourseModuleSerializer
 
 
 class QuizSerializer(serializers.ModelSerializer):
-    couseModule = CourseModuleSerializer(many=False, required=True)
+    module = CourseModuleSerializer(read_only=True)
 
     class Meta:
         model = Quiz
-        fields = ('id', 'title', 'couseModule', 'created_at')
+        fields = ('id', 'title', 'module', 'created_at')
 
 
 class QuestionSerializer(serializers.ModelSerializer):

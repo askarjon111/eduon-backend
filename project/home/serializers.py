@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class CourseModuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseModule
-        fields = ('id', 'title', 'description', 'created_at')
+        fields = ('id', 'title', 'course', 'place_number')
 
 
 class FileSerializer(serializers.ModelSerializer):
