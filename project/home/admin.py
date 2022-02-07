@@ -75,6 +75,7 @@ admin.site.register(RequirementsCourse)
 admin.site.register(ForWhomCourse)
 admin.site.register(CourseModule)
 admin.site.register(IsFinished)
+admin.site.register(File)
 
 
 @admin.register(VideoCourse)

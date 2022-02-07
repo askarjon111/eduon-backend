@@ -15,7 +15,7 @@ from rest_framework_simplejwt.backends import TokenBackend
 
 from home.api.pagination import CourseCustomPagination
 from home.api.serializers import GetCourseSerializer, LanguageSerializer
-from home.models import CategoryVideo, Speaker, Rank, Course, VideoCourse, Order, LikeOrDislike, VideoViews, \
+from home.models import CategoryVideo, File, Speaker, Rank, Course, VideoCourse, Order, LikeOrDislike, VideoViews, \
     AboutUsNote, Users, Language
 
 
@@ -169,7 +169,7 @@ class VideosAPIView(APIView):
             status = '1'
         else:
             status = '0'
-        course_data = {
+            course_data = {
             # 'id': course_obj.id,
             # 'name': course_obj.name,
             'course_obj': course_obj,
@@ -177,24 +177,33 @@ class VideosAPIView(APIView):
         }
 
         try:
-            videos = VideoCourse.objects.filter(course_id=pk).values().order_by("place_number")
+            videos = VideoCourse.objects.filter(course=pk).values().order_by("place_number")
+            files = File.objects.filter(
+                courseModule__course=pk).values().order_by("place_number")
+            file_list = []
+            for file in files:
+                data = {
+                    "file": file
+                }
+                file_list.append(data)
             videolar = []
             for video in videos:
                 likes = LikeOrDislike.objects.filter(value=1, video_id=video['id']).count()
                 dislikes = LikeOrDislike.objects.filter(value=-1, video_id=video['id']).count()
                 views = VideoViews.objects.filter(video_id=video['id']).count()
 
-                dt = {
+                data = {
                     'likes': likes,
                     'dislikes': dislikes,
                     'views': views,
                     'video': video,
                 }
 
-                videolar.append(dt)
+                videolar.append(data)
 
             context = {
                 'videolar': videolar,
+                'files': files,
                 'vd': 'active',
                 'course_obj': course_data,
             }
@@ -202,7 +211,8 @@ class VideosAPIView(APIView):
         except Exception as e:
             print(e)
             context = {
-                'videos': [],
+                'files': file_list,
+                'videos': videolar,
                 'vd': 'active',
                 'course_obj': course_data,
             }

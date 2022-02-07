@@ -2,6 +2,7 @@ from django.db.models import Sum
 from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
+from home.serializers import CourseModuleSerializer
 
 
 class SpeakerGetSerializer(ModelSerializer):
@@ -281,11 +282,19 @@ class CourseDetailSerializer(ModelSerializer):
 
 class BoughtedCourseSerializer(ModelSerializer):
     videos = SerializerMethodField()
+    modules = SerializerMethodField()
 
     def get_videos(self, obj):
         try:
             videos = VideoCourse.objects.filter(course=obj).order_by("place_number")
             return BoughtedVideoSerializer(videos, many=True).data
+        except:
+            return []
+    
+    def get_modules(self, obj):
+        try:
+            modules = CourseModule.objects.filter(course=obj).order_by("place_number")
+            return CourseModuleSerializer(modules, many=True)
         except:
             return []
 
@@ -309,6 +318,7 @@ class BoughtedCourseSerializer(ModelSerializer):
             "is_top",
             "is_tavsiya",
             "videos",
+            "modules",
         ]
 
 

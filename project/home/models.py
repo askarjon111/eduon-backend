@@ -561,6 +561,7 @@ class File(models.Model):
     file = models.FileField(upload_to=slugify_upload, default=None)
     courseModule = models.ForeignKey(CourseModule, on_delete=models.CASCADE,
                                blank=True, null=True)
+    place_number = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name

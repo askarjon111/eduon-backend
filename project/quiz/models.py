@@ -25,6 +25,7 @@ class Quiz(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     module = models.ForeignKey(
         CourseModule, on_delete=models.CASCADE, verbose_name=_("Module"))
+    place_number = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title or "Quiz"
