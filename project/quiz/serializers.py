@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from quiz.models import Quiz, Question, Answer, Result
-from home.serializers import CourseModuleSerializer, CourseModuleSerializer
+from home.serializers import CourseModuleSerializer
 
 
 class QuizSerializer(serializers.ModelSerializer):
-    module = CourseModuleSerializer(read_only=True)
+    # module = CourseModuleSerializer(read_only=True)
 
     class Meta:
         model = Quiz

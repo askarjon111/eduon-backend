@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from home.models import Users, IsFinished
 
 from quiz.models import Quiz, Question, Answer, Result
-from quiz.serializers import QuestionSerializer, QuizSerializer
+from quiz.serializers import AnswerSerializer, QuestionSerializer, QuizSerializer
 
 
 @api_view(['GET'])
@@ -17,9 +17,13 @@ def get_quiz_view(request, pk):
         questions = Question.objects.filter(quiz=pk)
         quiz = QuizSerializer(quiz, many=True)
         question = QuestionSerializer(questions, many=True)
+        answers = Answer.objects.filter(question__in=questions)
+        answers = AnswerSerializer(answers, many=True)
+        print(answers.data)
         data = {
             "quiz": quiz.data,
-            "question": question.data,
+            "questions": question.data,
+            "answers": answers.data
         }
         return Response(data)
 

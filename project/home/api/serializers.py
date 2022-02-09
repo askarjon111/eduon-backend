@@ -192,6 +192,7 @@ class VideoOnlyNameSerializer(ModelSerializer):
 
 
 class BoughtedVideoSerializer(ModelSerializer):
+    courseModule = CourseModuleSerializer()
     class Meta:
         model = VideoCourse
         fields = [
@@ -204,15 +205,29 @@ class BoughtedVideoSerializer(ModelSerializer):
             "is_file",
             "date",
             "views_count",
+            "courseModule",
         ]
 
+class FileSerializer(ModelSerializer):
+    class Meta:
+        model = File
+        fields = [
+            "id",
+            "speaker",
+            "name",
+            "file",
+            "courseModule",
+            "place_number",
+        ]
 
 class CourseDetailSerializer(ModelSerializer):
     trailer = SerializerMethodField()
+    modules = SerializerMethodField()
     videos = SerializerMethodField()
     author = SpeakerGetSerializer(read_only=True)
     sell_count = SerializerMethodField()
     course_rank = SerializerMethodField()
+    files = SerializerMethodField()
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -250,6 +265,20 @@ class CourseDetailSerializer(ModelSerializer):
             return VideoOnlyNameSerializer(videos, many=True).data
         except:
             return None
+    
+    def get_modules(self, obj):
+        try:
+            modules = CourseModule.objects.filter(course=obj).order_by("place_number")
+            return CourseModuleSerializer(modules, many=True).data
+        except:
+            return None
+    
+    def get_files(self, obj):
+        try:
+            files = File.objects.filter(courseModule__course=obj).order_by("place_number")
+            return FileSerializer(files, many=True).data
+        except:
+            return None
 
     class Meta:
         model = Course
@@ -274,15 +303,14 @@ class CourseDetailSerializer(ModelSerializer):
             "videos",
             "course_rank",
             "sell_count",
-
-            # additional_info
-            'detail'
+            "modules",
+            "detail",
+            "files",
         ]
 
 
 class BoughtedCourseSerializer(ModelSerializer):
     videos = SerializerMethodField()
-    modules = SerializerMethodField()
 
     def get_videos(self, obj):
         try:
@@ -290,13 +318,7 @@ class BoughtedCourseSerializer(ModelSerializer):
             return BoughtedVideoSerializer(videos, many=True).data
         except:
             return []
-    
-    def get_modules(self, obj):
-        try:
-            modules = CourseModule.objects.filter(course=obj).order_by("place_number")
-            return CourseModuleSerializer(modules, many=True)
-        except:
-            return []
+
 
     class Meta:
         model = Course
@@ -318,7 +340,6 @@ class BoughtedCourseSerializer(ModelSerializer):
             "is_top",
             "is_tavsiya",
             "videos",
-            "modules",
         ]
 
 
