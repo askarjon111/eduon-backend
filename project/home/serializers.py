@@ -4,6 +4,18 @@ from .models import *
 from django.contrib.auth.models import User
 
 
+class CourseModuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseModule
+        fields = ('id', 'title', 'course', 'place_number')
+
+
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = File
+        fields = ('id', 'title', 'file', 'created_at')
+
+
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
@@ -242,6 +254,7 @@ class VideoViewsSerialzier(serializers.ModelSerializer):
 class CourseTrailerSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     video = serializers.CharField(required=False)
+
     class Meta:
         model = CourseTrailer
         fields = ['id', 'title', 'is_file', 'video', 'url']
@@ -249,6 +262,7 @@ class CourseTrailerSerializer(serializers.ModelSerializer):
 
 class LanguageSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+
     class Meta:
         model = Language
         fields = ['id', 'name']
@@ -256,6 +270,7 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 class CourseTagsSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+
     class Meta:
         model = CourseTag
         fields = ['id', 'title']
@@ -263,6 +278,7 @@ class CourseTagsSerializer(serializers.ModelSerializer):
 
 class WhatYouLearnSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+
     class Meta:
         model = WhatYouLearn
         fields = ['id', 'title', 'course']
@@ -270,6 +286,7 @@ class WhatYouLearnSerializer(serializers.ModelSerializer):
 
 class RequirementsCourseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+
     class Meta:
         model = RequirementsCourse
         fields = ['id', 'title', 'course']
@@ -277,6 +294,7 @@ class RequirementsCourseSerializer(serializers.ModelSerializer):
 
 class ForWhomCourseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+
     class Meta:
         model = ForWhomCourse
         fields = ['id', 'title', 'course']
@@ -293,7 +311,8 @@ class CourseSerializer(serializers.ModelSerializer):
     language = LanguageSerializer(many=False, required=False)
     course_tags = CourseTagsSerializer(many=True, required=False)
     whatyoulearn = WhatYouLearnSerializer(many=True, required=False)
-    courserequirements = RequirementsCourseSerializer(many=True, required=False)
+    courserequirements = RequirementsCourseSerializer(
+        many=True, required=False)
     forwhom = ForWhomCourseSerializer(many=True, required=False)
 
     class Meta:
@@ -343,15 +362,17 @@ class CourseSerializer(serializers.ModelSerializer):
             author=author, **validated_data)
 
         if language_data:
-            new_language, _ = Language.objects.get_or_create(name=language_data.get('name'))
+            new_language, _ = Language.objects.get_or_create(
+                name=language_data.get('name'))
             course.language = new_language
-            
+
         if image:
             course.image = image
 
         if categories_data:
             for category in categories_data:
-                new_category, _ = CategoryVideo.objects.get_or_create(name=category.get('name'), defaults={'image': category.get('image'), 'parent': category.get('parent')})
+                new_category, _ = CategoryVideo.objects.get_or_create(name=category.get(
+                    'name'), defaults={'image': category.get('image'), 'parent': category.get('parent')})
                 course.categories.add(new_category.id)
 
         if trailer_data:
@@ -367,7 +388,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
         if whatyoulearns_data:
             for whatyoulearn in whatyoulearns_data:
-                new_whatyoulearn, _ = WhatYouLearn.objects.get_or_create(defaults={'title': whatyoulearn.get('title'), 'course': course}, **whatyoulearn)
+                new_whatyoulearn, _ = WhatYouLearn.objects.get_or_create(
+                    defaults={'title': whatyoulearn.get('title'), 'course': course}, **whatyoulearn)
                 course.whatyoulearn.add(new_whatyoulearn)
 
         if requirementscourse_data:
@@ -384,7 +406,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
         course.save()
         return course
-        
+
 
 class TopCourseSerializer(serializers.ModelSerializer):
     course = CourseSerializer(read_only=True)

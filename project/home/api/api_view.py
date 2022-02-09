@@ -18,7 +18,7 @@ from rest_framework import serializers
 
 
 from home.models import (
-    Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
+    CourseModule, Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
     Speaker, RankCourse, CommentCourse, OrderPayment, VideoCourse, File
 )
 from home.sms import sms_send
@@ -31,7 +31,7 @@ from .serializers import (
     VideoSerializer
 
 )
-from ..serializers import SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
+from ..serializers import CourseModuleSerializer, SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
     VideoCourseSerializer
 
 @api_view(['get'])
@@ -625,14 +625,17 @@ def boughted_course_detail(request):
         user = request.user
         course = Course.objects.get(id=course_id)
         orders = Order.objects.filter(course_id=course_id, user=user)
+        module = CourseModule.objects.filter(course=course.id)
+        modules = CourseModuleSerializer(module, many=True)
+        course = BoughtedCourseSerializer(course)
         if orders.count() > 0 or course.turi == "Bepul":
-
-            ser = BoughtedCourseSerializer(course)
+            
             data = {
                 "success": True,
                 "error": "",
                 "message": "Kurslar olindi!",
-                "data": ser.data
+                "course": course.data,
+                "modules": modules.data
             }
         else:
             data = {
@@ -1366,6 +1369,7 @@ def upload_file(request):
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
         name = request.POST.get('name')
+        courseModule = request.POST.get('courseModule')
         try:
             file = request.FILES.get('file')
         except:
@@ -1374,7 +1378,8 @@ def upload_file(request):
             new = File.objects.create(
                 speaker_id=sp.id,
                 name=name,
-                file=file
+                file=file,
+                courseModule=courseModule,
             )
             new.save()
             data = {

@@ -9,6 +9,7 @@ from django.db import models, migrations
 
 from transliterate.utils import _, slugify
 
+
 from uniredpay.uniredpay_conf import wallet_api
 
 
@@ -461,6 +462,16 @@ class Course(models.Model):
         verbose_name_plural = "Kurslar"
 
 
+class CourseModule(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True)
+    course = models.ForeignKey(Course, verbose_name=_(
+        "Kurs"), on_delete=models.CASCADE)
+    place_number = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.title or "Module"
+
+
 class WhatYouLearn(models.Model):
     title = models.CharField(max_length=255)
     course = models.ForeignKey(
@@ -505,11 +516,14 @@ class Comment(models.Model):
 class VideoCourse(models.Model):
     author = models.ForeignKey(Speaker, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    courseModule = models.ForeignKey(
+        CourseModule, on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=255)
     url = models.URLField(max_length=100, blank=True, null=True)
-    video = models.FileField(upload_to=slugify_upload, default=None, blank=True, null=True)
+    video = models.FileField(upload_to=slugify_upload,
+                             default=None, blank=True, null=True)
     image = ResizedImageField(size=[1280, 720], crop=[
-                              'middle', 'center'], upload_to=slugify_upload, null=True)
+                              'middle', 'center'], upload_to=slugify_upload, null=True, blank=True)
     description = models.TextField(max_length=5000, blank=True, null=True)
     is_file = models.BooleanField(default=False)
     link = models.CharField(max_length=255, null=True, blank=True)
@@ -543,12 +557,29 @@ class CommentCourse(models.Model):
 
 class File(models.Model):
     speaker = models.ForeignKey(Speaker, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50,blank=True, null=True)
     file = models.FileField(upload_to=slugify_upload, default=None)
+    courseModule = models.ForeignKey(CourseModule, on_delete=models.CASCADE,
+                               blank=True, null=True)
+    place_number = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
 
+
+class IsFinished(models.Model):
+    from quiz.models import Quiz
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    video = models.ForeignKey(
+        VideoCourse, on_delete=models.CASCADE, null=True, blank=True)
+    file = models.ForeignKey(
+        File, on_delete=models.CASCADE, null=True, blank=True)
+    quiz = models.ForeignKey(
+        Quiz, on_delete=models.CASCADE, null=True, blank=True)
+    courseModule = models.ForeignKey(
+        CourseModule, on_delete=models.CASCADE, null=True, blank=True)
+
+    finished_at = models.DateTimeField(auto_now_add=True)
 
 class LikeOrDislike(models.Model):
     Up = 1
