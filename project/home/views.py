@@ -17,7 +17,7 @@ from django.views.generic import DetailView, TemplateView
 from eduon.settings import BASE_DIR
 from rest_framework_simplejwt import tokens
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -33,6 +33,12 @@ class CourseCreateView(CreateAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
 
+
+class CourseUpdateView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = []
+    serializer_class = CourseSerializer
+    queryset = Course.objects.all()
 
 class CourseListView(ListAPIView):
     filter_backends = [DjangoFilterBackend]

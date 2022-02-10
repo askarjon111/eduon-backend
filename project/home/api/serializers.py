@@ -3,6 +3,8 @@ from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
 from home.serializers import CourseModuleSerializer
+from quiz.models import Quiz
+from quiz.serializers import QuizSerializer
 
 
 class SpeakerGetSerializer(ModelSerializer):
@@ -173,6 +175,16 @@ class VideoSerializer(ModelSerializer):
         ]
 
 
+class FileOnlyNameSerializer(ModelSerializer):
+    class Meta:
+        model = File
+        fields = [
+            "id",
+            "name",
+            "place_number",
+            "courseModule",
+        ]
+
 class VideoOnlyNameSerializer(ModelSerializer):
     class Meta:
         model = VideoCourse
@@ -220,14 +232,16 @@ class FileSerializer(ModelSerializer):
             "place_number",
         ]
 
+
 class CourseDetailSerializer(ModelSerializer):
-    trailer = SerializerMethodField()
+    # trailer = SerializerMethodField()
     modules = SerializerMethodField()
     videos = SerializerMethodField()
     author = SpeakerGetSerializer(read_only=True)
     sell_count = SerializerMethodField()
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
+    quizzes = SerializerMethodField()
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -247,22 +261,108 @@ class CourseDetailSerializer(ModelSerializer):
         except:
             return 0
 
-    def get_trailer(self, obj):
-        try:
-            videos = VideoCourse.objects.filter(course=obj).order_by("place_number")
-            if videos.first() is not None:
-                ser = VideoSerializer(videos.first())
-                return ser.data
-            else:
-                return None
-
-        except:
-            return None
+    # def get_trailer(self, obj):
+    #     try:
+    #         trailer = CourseTrailer.objects.get(course=obj)
+    #     except:
+    #         return None
 
     def get_videos(self, obj):
         try:
-            videos = VideoCourse.objects.filter(course=obj).order_by("place_number")
+            videos = VideoCourse.objects.filter(course=obj)
             return VideoOnlyNameSerializer(videos, many=True).data
+        except:
+            return None
+
+    def get_quizzes(self, obj):
+        try:
+            quizzes = Quiz.objects.filter(
+                module__course=obj)
+            return QuizSerializer(quizzes, many=True).data
+        except:
+            return None
+
+    def get_modules(self, obj):
+        try:
+            modules = CourseModule.objects.filter(
+                course=obj).order_by("place_number")
+            return CourseModuleSerializer(modules, many=True).data
+        except:
+            return None
+
+    def get_files(self, obj):
+        try:
+            files = File.objects.filter(courseModule__course=obj)
+            return FileOnlyNameSerializer(files, many=True).data
+        except:
+            return None
+
+    class Meta:
+        model = Course
+        fields = [
+            "id",
+            "name",
+            "image",
+            "turi",
+            "author",
+            "price",
+            "categories",
+            "date",
+            "upload_or_youtube",
+            "description",
+            "discount",
+            "view",
+            "is_top",
+            "is_tavsiya",
+            "trailer",
+            "videos",
+            "course_rank",
+            "sell_count",
+            "modules",
+            "files",
+            "quizzes",
+        ]
+
+
+class CourseDetailSpeakerSerializer(ModelSerializer):
+    modules = SerializerMethodField()
+    videos = SerializerMethodField()
+    author = SpeakerGetSerializer(read_only=True)
+    sell_count = SerializerMethodField()
+    course_rank = SerializerMethodField()
+    files = SerializerMethodField()
+    quizzes = SerializerMethodField()
+
+    def get_course_rank(self, obj):
+        cr = RankCourse.objects.filter(course_id=obj.id)
+        value = cr.aggregate(value=Sum('course_value')).get('value')
+        count = cr.filter(course_value__gt=0).count()
+        if value is None:
+            value = 0
+        if count > 0:
+            return {"rank": round(value / count, 2), "count": count}
+        else:
+            return {"rank": 0, "count": 0}
+
+    def get_sell_count(self, obj):
+        try:
+            sells = Order.objects.filter(course_id=obj.id)
+            return sells.count()
+        except:
+            return 0
+
+    def get_videos(self, obj):
+        try:
+            videos = VideoCourse.objects.filter(course=obj)
+            return VideoSerializer(videos, many=True).data
+        except:
+            return None
+    
+    def get_quizzes(self, obj):
+        try:
+            quizzes = Quiz.objects.filter(
+                module__course=obj)
+            return QuizSerializer(quizzes, many=True).data
         except:
             return None
     
@@ -275,7 +375,62 @@ class CourseDetailSerializer(ModelSerializer):
     
     def get_files(self, obj):
         try:
-            files = File.objects.filter(courseModule__course=obj).order_by("place_number")
+            files = File.objects.filter(courseModule__course=obj)
+            return FileSerializer(files, many=True).data
+        except:
+            return None
+
+    class Meta:
+        model = Course
+        fields = [
+            "id",
+            "name",
+            "image",
+            "turi",
+            "author",
+            "price",
+            "categories",
+            "date",
+            "upload_or_youtube",
+            "description",
+            "discount",
+            "view",
+            "is_top",
+            "is_tavsiya",
+            "trailer",
+            "videos",
+            "course_rank",
+            "sell_count",
+            "modules",
+            "files",
+            "quizzes",
+        ]
+
+
+class BoughtedCourseSerializer(ModelSerializer):
+    videos = SerializerMethodField()
+    modules = SerializerMethodField()
+    files = SerializerMethodField()
+
+    def get_videos(self, obj):
+        try:
+            videos = VideoCourse.objects.filter(course=obj).order_by("place_number")
+            return BoughtedVideoSerializer(videos, many=True).data
+        except:
+            return []
+
+    def get_modules(self, obj):
+        try:
+            modules = CourseModule.objects.filter(
+                course=obj).order_by("place_number")
+            return CourseModuleSerializer(modules, many=True).data
+        except:
+            return None
+
+    def get_files(self, obj):
+        try:
+            files = File.objects.filter(
+                courseModule__course=obj).order_by("place_number")
             return FileSerializer(files, many=True).data
         except:
             return None
@@ -299,47 +454,9 @@ class CourseDetailSerializer(ModelSerializer):
             "view",
             "is_top",
             "is_tavsiya",
-            "trailer",
             "videos",
-            "course_rank",
-            "sell_count",
             "modules",
-            "detail",
             "files",
-        ]
-
-
-class BoughtedCourseSerializer(ModelSerializer):
-    videos = SerializerMethodField()
-
-    def get_videos(self, obj):
-        try:
-            videos = VideoCourse.objects.filter(course=obj).order_by("place_number")
-            return BoughtedVideoSerializer(videos, many=True).data
-        except:
-            return []
-
-
-    class Meta:
-        model = Course
-        fields = [
-            "id",
-            "name",
-            "image",
-            "turi",
-            "author",
-            "price",
-            "categories",
-            "date",
-            "upload_or_youtube",
-            "description",
-            "like",
-            "dislike",
-            "discount",
-            "view",
-            "is_top",
-            "is_tavsiya",
-            "videos",
         ]
 
 

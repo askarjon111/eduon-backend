@@ -14,9 +14,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.backends import TokenBackend
 
 from home.api.pagination import CourseCustomPagination
-from home.api.serializers import GetCourseSerializer, LanguageSerializer
-from home.models import CategoryVideo, File, Speaker, Rank, Course, VideoCourse, Order, LikeOrDislike, VideoViews, \
+from home.api.serializers import CourseDetailSerializer, CourseDetailSpeakerSerializer, GetCourseSerializer, LanguageSerializer
+from home.models import CategoryVideo, CourseModule, CourseTag, File, Speaker, Rank, Course, VideoCourse, Order, LikeOrDislike, VideoViews, \
     AboutUsNote, Users, Language
+from home.serializers import CourseModuleSerializer
+from quiz.models import Quiz
 
 
 ################################################################################################
@@ -162,64 +164,42 @@ class VideosAPIView(APIView):
 
     def get(self, request, pk=None):
         try:
-            course_obj = Course.objects.values().get(id=pk)
+            course_obj = Course.objects.get(id=pk)
         except Exception:
             return Response(status=404)
-        if course_obj['upload_or_youtube'] == "Video":
-            status = '1'
-        else:
-            status = '0'
-            course_data = {
-            # 'id': course_obj.id,
-            # 'name': course_obj.name,
-            'course_obj': course_obj,
-            "status": status
-        }
+
+        course = CourseDetailSpeakerSerializer(course_obj)
 
         try:
-            videos = VideoCourse.objects.filter(course=pk).values().order_by("place_number")
+            videos = VideoCourse.objects.filter(
+                course=pk).values('courseModule', 'title', 'link', 'video', 'id', 'place_number')
+
             files = File.objects.filter(
-                courseModule__course=pk).values().order_by("place_number")
-            file_list = []
-            for file in files:
-                data = {
-                    "file": file
-                }
-                file_list.append(data)
-            videolar = []
-            for video in videos:
-                likes = LikeOrDislike.objects.filter(value=1, video_id=video['id']).count()
-                dislikes = LikeOrDislike.objects.filter(value=-1, video_id=video['id']).count()
-                views = VideoViews.objects.filter(video_id=video['id']).count()
+                courseModule__course=pk).values()
 
-                data = {
-                    'likes': likes,
-                    'dislikes': dislikes,
-                    'views': views,
-                    'video': video,
-                }
-
-                videolar.append(data)
+            modules = CourseModule.objects.filter(
+                course=pk).values().order_by("place_number")
+            quizzes = Quiz.objects.filter(module__course=pk).values()
 
             context = {
-                'videolar': videolar,
-                'files': files,
-                'vd': 'active',
-                'course_obj': course_data,
+                'course_obj': course.data,
+                # 'modules': modules,
+                # 'quizzes': quizzes,
+                # 'videolar': videos,
+                # 'files': files,
             }
 
         except Exception as e:
             print(e)
             context = {
-                'files': file_list,
-                'videos': videolar,
-                'vd': 'active',
-                'course_obj': course_data,
+                'success': False,
+                'errors': str(e),
+                'message': "Error",
             }
         data = {
             'success': True,
             'errors': [],
-            'message': "Nimadirlar",
+            'message': "Success",
             'data': context
         }
         return Response(data)
@@ -232,21 +212,28 @@ class VideosAPIView(APIView):
         return Response({"success": True, "message": "O'chirildi"}, status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request, pk=None):
+        course = Course.objects.filter(id=pk)
+        author = request.user
         name = request.data.get('name')
         turi = request.data.get('turi')
         discount = request.data.get('discount')
-        author = request.user
         speaker = Speaker.objects.get(speaker_id=author.id)
-        # speaker = Speaker.objects.get(id=1016)
         image = request.FILES.get('image', None)
         price = request.data.get('price')
-        category = request.data.get('category')
+        categories_data = request.data.pop('categories', None)
         video_or_url = request.data.get('upload_or_youtube')
-        descrip = request.data.get('description')
+        description = request.data.get('description')
+
+        if categories_data:
+            for category in categories_data:
+                new_category, _ = CategoryVideo.objects.update_or_create(name=category.get(
+                    'name'), defaults={'image': category.get('image'), 'parent':category.get('parent')})
+                course.categories.add(new_category.id)
+
         try:
-            add = Course.objects.filter(id=pk).update(name=name, turi=turi, author_id=speaker.pk, category_id=category,
-                                                      upload_or_youtube=video_or_url, description=descrip,
-                                                      discount=discount, price=price)
+            add = course.update(name=name, turi=turi, author_id=speaker.pk,
+                                upload_or_youtube=video_or_url, description=description,
+                                discount=discount, price=price)
         except Exception as e:
             print(e)
             return Response({"success": False, 'message': "Xatolik"}, status=status.HTTP_400_BAD_REQUEST)
@@ -405,7 +392,7 @@ class AddCourseAPIView(APIView):
         except Exception as e:
             print(e)
             return Response({'message': "Qaysidir fieldlar to'gri kiritilmadi"},
-                                status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST)
         data = {
             'success': True,
             'message': '/courses/ ga yonaltirish kerak'
@@ -432,11 +419,11 @@ class HomeSpeakerAPIView(APIView):
         sell_count = Order.objects.filter(course__author_id=speaker.id).count()
         reyting = rank.aggregate(total_summa=Sum('value')).get('total_summa')
         orders = Order.objects \
-                     .filter(course__author_id=speaker.id) \
-                     .select_related('user', 'course') \
-                     .values('id', 'summa', 'bonus', 'sp_summa', 'discount', 'date', 'user__first_name',
-                             'user__last_name', 'user__region', 'user__region__name') \
-                     .order_by('-id')[0:50]
+            .filter(course__author_id=speaker.id) \
+            .select_related('user', 'course') \
+            .values('id', 'summa', 'bonus', 'sp_summa', 'discount', 'date', 'user__first_name',
+                    'user__last_name', 'user__region', 'user__region__name') \
+            .order_by('-id')[0:50]
 
         if reyting is None:
             reyting = 0
@@ -530,7 +517,8 @@ class NewCourseListAPIView(ListAPIView):
     permission_classes = []
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset().filter(is_confirmed=True)).order_by('-id')[:10]
+        queryset = self.filter_queryset(self.get_queryset().filter(
+            is_confirmed=True)).order_by('-id')[:10]
 
         serializer = self.get_serializer(queryset, many=True)
         data = {
@@ -612,7 +600,8 @@ def users_retrieve_update_api_view(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
     if token:
         access_token = token.split(' ')[-1]
-        get_token = TokenBackend(algorithm='HS256').decode(access_token, verify=False)
+        get_token = TokenBackend(algorithm='HS256').decode(
+            access_token, verify=False)
         user_id = get_token.get('user_id')
         if user_id is None:
             return Response({'message': "Bunday `User` mavjud emas"}, status=400)
@@ -639,7 +628,8 @@ def get_cash_balance(request):
         token = request.META.get('HTTP_AUTHORIZATION', False)
 
         access_token = token.split(' ')[-1]
-        get_token = TokenBackend(algorithm='HS256').decode(access_token, verify=False)
+        get_token = TokenBackend(algorithm='HS256').decode(
+            access_token, verify=False)
         user_id = get_token.get('user_id')
         if user_id is None:
             return Response({'message': "Bunday foydalanuchi mavjud emas"}, status=400)
@@ -671,7 +661,8 @@ def filter_by_cost(request):
     try:
         minimum = request.GET.get("from")
         maximum = request.GET.get("to")
-        courses = Course.objects.filter(Q(price__gt=minimum), Q(price__lt=maximum))
+        courses = Course.objects.filter(
+            Q(price__gt=minimum), Q(price__lt=maximum))
         sr = GetCourseSerializer(courses, many=True)
         data = {
             "success": True,
