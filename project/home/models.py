@@ -564,7 +564,7 @@ class File(models.Model):
     place_number = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.name
+        return self.name or "file"
 
 
 class IsFinished(models.Model):
