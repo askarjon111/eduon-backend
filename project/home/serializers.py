@@ -347,7 +347,6 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         image = validated_data.pop('image', None)
-        # image = open(image_data, 'rb')
         language_data = validated_data.pop('language', None)
         categories_data = validated_data.pop('categories', None)
         trailer_data = validated_data.pop('trailer', None)
@@ -406,6 +405,86 @@ class CourseSerializer(serializers.ModelSerializer):
 
         course.save()
         return course
+
+    def update(self, instance, validated_data):
+        image = validated_data.pop('image', None)
+        language_data = validated_data.pop('language', None)
+        categories_data = validated_data.pop('categories', None)
+        trailer_data = validated_data.pop('trailer', None)
+        tags_data = validated_data.pop('course_tags', None)
+        whatyoulearns_data = validated_data.pop('whatyoulearn', None)
+        requirementscourse_data = validated_data.pop(
+            'courserequirements', None)
+        forwhoms_data = validated_data.pop(
+            'forwhom', None)
+        author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
+        # course, _ = Course.objects.filter(id=instance.id)
+        
+        language_id = language_data.get('id', None)
+        if language_id:
+            Language.objects.get(id=language_id).update(**language_data)
+        else:
+            new_language = Language.objects.create(**language_data)
+            instance.language = new_language
+
+        if image:
+            instance.image = image
+
+        for category in categories_data:
+            category_id = category.get('id', None)
+            if category_id:
+                CategoryVideo.objects.get(id=category_id).update(**category)
+            else:
+                
+                new_category = CategoryVideo.objects.create(**category)
+                instance.categories.add(new_category.id)
+
+        trailer_id = trailer_data.get('id', None)
+        if trailer_id:
+            CourseTrailer.objects.get(id=trailer_id).update(**trailer_data)
+        else:
+            new_trailer = CourseTrailer.objects.create(title=trailer_data.get(
+                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
+            instance.trailer = new_trailer
+        
+        for tag in tags_data:
+            tag_id = tag.get('id', None)
+            if tag_id:
+                CourseTag.objects.get(id=tag_id).update(**tag)
+            else:
+                CourseTag.objects.create(title=tag.get('title'))
+                instance.course_tags.add(tag_id)
+
+        for whatyoulearn in whatyoulearns_data:
+            whatyoulearn_id = whatyoulearn.get('id', None)
+            if whatyoulearn_id:
+                WhatYouLearn.objects.get(id=whatyoulearn_id).update(**whatyoulearn)
+            else:
+                new_whatyoulearn = WhatYouLearn.objects.create(**whatyoulearn)
+                new_whatyoulearn.course = instance
+                new_whatyoulearn.save()
+
+        for requirementscourse in requirementscourse_data:
+            requirementscourse_id = requirementscourse.get('id', None)
+            if requirementscourse_id:
+                RequirementsCourse.objects.get(
+                    id=requirementscourse_id).update(**requirementscourse)
+            else:
+                new_requirementscourse = RequirementsCourse.objects.create(
+                    **requirementscourse)
+                new_requirementscourse.course = instance
+                new_requirementscourse.save()
+
+        for forwhom in forwhoms_data:
+            forwhom_id = forwhom.get('id', None)
+            if forwhom_id:
+                ForWhomCourse.objects.get(id=forwhom_id).update(**forwhom)
+            else:
+                new_forwhom = ForWhomCourse.objects.create(**forwhom)
+                new_forwhom.course = instance
+                new_forwhom.save()
+
+        return super().update(instance, validated_data)
 
 
 class TopCourseSerializer(serializers.ModelSerializer):

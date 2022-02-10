@@ -625,8 +625,6 @@ def boughted_course_detail(request):
         user = request.user
         course = Course.objects.get(id=course_id)
         orders = Order.objects.filter(course_id=course_id, user=user)
-        module = CourseModule.objects.filter(course=course.id)
-        modules = CourseModuleSerializer(module, many=True)
         course = BoughtedCourseSerializer(course)
         if orders.count() > 0 or course.turi == "Bepul":
             
@@ -635,7 +633,6 @@ def boughted_course_detail(request):
                 "error": "",
                 "message": "Kurslar olindi!",
                 "course": course.data,
-                "modules": modules.data
             }
         else:
             data = {

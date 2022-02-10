@@ -557,10 +557,10 @@ class CommentCourse(models.Model):
 
 class File(models.Model):
     speaker = models.ForeignKey(Speaker, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50,blank=True, null=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
     file = models.FileField(upload_to=slugify_upload, default=None)
     courseModule = models.ForeignKey(CourseModule, on_delete=models.CASCADE,
-                               blank=True, null=True)
+                                     blank=True, null=True)
     place_number = models.IntegerField(default=0)
 
     def __str__(self):
@@ -580,6 +580,7 @@ class IsFinished(models.Model):
         CourseModule, on_delete=models.CASCADE, null=True, blank=True)
 
     finished_at = models.DateTimeField(auto_now_add=True)
+
 
 class LikeOrDislike(models.Model):
     Up = 1
