@@ -375,8 +375,7 @@ class CourseSerializer(serializers.ModelSerializer):
                 course.categories.add(new_category.id)
 
         if trailer_data:
-            new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
-                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
+            new_trailer, _ = CourseTrailer.objects.get_or_create(defaults={'title': trailer_data.get('title')}, **trailer_data)
             course.trailer = new_trailer
 
         if tags_data:
