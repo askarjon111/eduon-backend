@@ -417,11 +417,10 @@ class CourseSerializer(serializers.ModelSerializer):
         forwhoms_data = validated_data.pop(
             'forwhom', None)
         author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
-        # course, _ = Course.objects.filter(id=instance.id)
         
         language_id = language_data.get('id', None)
         if language_id:
-            Language.objects.get(id=language_id).update(**language_data)
+            Language.objects.get(id=language_id)
         else:
             new_language = Language.objects.create(**language_data)
             instance.language = new_language
@@ -432,9 +431,8 @@ class CourseSerializer(serializers.ModelSerializer):
         for category in categories_data:
             category_id = category.get('id', None)
             if category_id:
-                CategoryVideo.objects.get(id=category_id).update(**category)
+                CategoryVideo.objects.get(id=category_id)
             else:
-                
                 new_category = CategoryVideo.objects.create(**category)
                 instance.categories.add(new_category.id)
 
