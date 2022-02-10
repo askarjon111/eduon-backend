@@ -6,7 +6,7 @@ from ratelimit.decorators import ratelimit
 from clickuz import ClickUz
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.db.models import Count
 from django.db.models.functions import ExtractDay, ExtractMonth
@@ -22,7 +22,7 @@ from home.models import (
     Speaker, RankCourse, CommentCourse, OrderPayment, VideoCourse, File
 )
 from home.sms import sms_send
-from home.serializers import CourseSerializer
+from home.serializers import CourseSerializer, CourseModuleSerializer
 from rest_framework_simplejwt.backends import TokenBackend
 from simplejwt.tokens import RefreshToken
 from .serializers import (
@@ -33,6 +33,24 @@ from .serializers import (
 )
 from ..serializers import CourseModuleSerializer, SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
     VideoCourseSerializer
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([])
+def add_new_module(request):
+    title = request.data.get('title')
+    course_id = request.data.get('course')
+    course = Course.objects.get(id=course_id)
+    place_number = request.data.get('place_number')
+    
+    module = CourseModule.objects.create(title=title, course=course, place_number=place_number)
+    
+    module = CourseModuleSerializer(module)
+    
+    return Response(module.data)
+    
+
 
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
@@ -1367,6 +1385,7 @@ def upload_file(request):
         sp = Speaker.objects.get(speaker_id=user.id)
         name = request.POST.get('name')
         courseModule = request.POST.get('courseModule')
+        place_number = request.POST.get('place_number')
         try:
             file = request.FILES.get('file')
         except:
@@ -1377,6 +1396,7 @@ def upload_file(request):
                 name=name,
                 file=file,
                 courseModule=courseModule,
+                place_numer=place_number,
             )
             new.save()
             data = {
