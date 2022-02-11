@@ -1,3 +1,7 @@
+from rest_framework.decorators import (api_view, authentication_classes,
+                                       permission_classes)
+from home.sms import sms_send
+from rest_framework.response import Response
 import csv
 import datetime
 import os
@@ -21,7 +25,8 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdate
 from django_filters.rest_framework import DjangoFilterBackend
 
 
-from home.serializers import (SpeakerLoginSerializer, SpeakerSerializer, CourseSerializer)
+from home.serializers import (
+    SpeakerLoginSerializer, SpeakerSerializer, CourseSerializer)
 
 from .models import *
 from .serializers import DjangoUserSerializers, GetSpeakerSerializer
@@ -40,9 +45,10 @@ class CourseUpdateView(RetrieveUpdateDestroyAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
 
+
 class CourseListView(ListAPIView):
     filter_backends = [DjangoFilterBackend]
-    authentication_classes =[]
+    authentication_classes = []
     permission_classes = []
     serializer_class = CourseSerializer
     queryset = Course.objects.filter(is_confirmed=True)
@@ -135,8 +141,10 @@ class VideoUpload(LoginRequiredMixin, TemplateView):
         super(VideoUpload, self).get_context_data(**kwargs)
         user = self.request.user
         speaker = Speaker.objects.get(speaker_id=user.id)
-        courses_pullik = Course.objects.filter(author_id=speaker.id, turi="Pullik")
-        courses_bepul = Course.objects.filter(author_id=speaker.id, turi="Bepul")
+        courses_pullik = Course.objects.filter(
+            author_id=speaker.id, turi="Pullik")
+        courses_bepul = Course.objects.filter(
+            author_id=speaker.id, turi="Bepul")
         context = {
             'courses_pullik': courses_pullik,
             'courses_bepul': courses_bepul,
@@ -153,7 +161,8 @@ class BillingView(LoginRequiredMixin, TemplateView):
         super(BillingView, self).get_context_data(**kwargs)
         speaker = Speaker.objects.get(speaker=self.request.user)
         billing_query = Billing.objects.filter(speaker=speaker).order_by('-id')
-        summa = billing_query.filter(status=1).aggregate(total=Sum('summa')).get('total')
+        summa = billing_query.filter(status=1).aggregate(
+            total=Sum('summa')).get('total')
         date = self.request.GET.get('date')
         course_id = self.request.GET.get('course')
         if summa is None:
@@ -171,11 +180,14 @@ class BillingView(LoginRequiredMixin, TemplateView):
                 orders = Order.objects.filter(course__author=speaker, course_id=course_id, date__month=month,
                                               date__year=year).order_by('-id')
             elif course_id != "0" and date == "":
-                orders = Order.objects.filter(course__author=speaker, course_id=course_id).order_by('-id')
+                orders = Order.objects.filter(
+                    course__author=speaker, course_id=course_id).order_by('-id')
             else:
-                orders = Order.objects.filter(course__author=speaker).order_by('-id')
+                orders = Order.objects.filter(
+                    course__author=speaker).order_by('-id')
         else:
-            orders = Order.objects.filter(course__author=speaker).order_by('-id')
+            orders = Order.objects.filter(
+                course__author=speaker).order_by('-id')
         sp_summa_total = orders.aggregate(total=Sum('sp_summa')).get('total')
         if sp_summa_total is None:
             sp_summa_total = 0
@@ -213,7 +225,8 @@ class CourseSpeaker(LoginRequiredMixin, TemplateView):
 
         if user.first_name == '' or user.last_name == '' or txt is None or speaker.description == '':
             print('ok')
-            messages.info(request, "Iltimos shaxsiy malumotlaringizni to'ldiring!")
+            messages.info(
+                request, "Iltimos shaxsiy malumotlaringizni to'ldiring!")
             return redirect('profile')
         return super(CourseSpeaker, self).dispatch(request, *args, **kwargs)
 
@@ -294,11 +307,14 @@ class VideosView(LoginRequiredMixin, TemplateView):
             "status": status
         }
         try:
-            videos = VideoCourse.objects.filter(course_id=course).order_by("place_number")
+            videos = VideoCourse.objects.filter(
+                course_id=course).order_by("place_number")
             videolar = []
             for video in videos:
-                likes = LikeOrDislike.objects.filter(value=1, video_id=video.id).count()
-                dislikes = LikeOrDislike.objects.filter(value=-1, video_id=video.id).count()
+                likes = LikeOrDislike.objects.filter(
+                    value=1, video_id=video.id).count()
+                dislikes = LikeOrDislike.objects.filter(
+                    value=-1, video_id=video.id).count()
                 views = VideoViews.objects.filter(video_id=video.id).count()
 
                 dt = {
@@ -355,7 +371,8 @@ class HomeSpeaker(LoginRequiredMixin, TemplateView):
         rank = Rank.objects.filter(speaker_id=speaker.id)
         sell_count = Order.objects.filter(course__author_id=speaker.id).count()
         reyting = rank.aggregate(total_summa=Sum('value')).get('total_summa')
-        orders = Order.objects.filter(course__author_id=speaker.id).order_by('-id')[0:50]
+        orders = Order.objects.filter(
+            course__author_id=speaker.id).order_by('-id')[0:50]
         if reyting is None:
             reyting = 0
         try:
@@ -395,9 +412,11 @@ class ProfileView(LoginRequiredMixin, TemplateView):
             return redirect('logout')
 
         course_count = Course.objects.filter(author_id=speaker.id).count()
-        rank = RankCourse.objects.filter(course__author_id=speaker.id, speaker_value__gt=0)
+        rank = RankCourse.objects.filter(
+            course__author_id=speaker.id, speaker_value__gt=0)
         sell_count = Order.objects.filter(course__author_id=speaker.id).count()
-        reyting = rank.aggregate(total_summa=Sum('speaker_value')).get('total_summa')
+        reyting = rank.aggregate(total_summa=Sum(
+            'speaker_value')).get('total_summa')
         if reyting is None:
             reyting = 0
         try:
@@ -877,9 +896,12 @@ def DataChart(request):
             sana_end = str(year + 1) + "-01-01"
         else:
             sana_end = str(year) + '-' + str(i + 1) + "-01"
-        course = Course.objects.filter(date__gte=sana_start, date__lt=sana_end, author=speaker).count()
-        video = VideoCourse.objects.filter(date__gte=sana_start, date__lt=sana_end, course__author=speaker).count()
-        sell = Order.objects.filter(date__gte=sana_start, date__lt=sana_end, course__author=speaker).count()
+        course = Course.objects.filter(
+            date__gte=sana_start, date__lt=sana_end, author=speaker).count()
+        video = VideoCourse.objects.filter(
+            date__gte=sana_start, date__lt=sana_end, course__author=speaker).count()
+        sell = Order.objects.filter(
+            date__gte=sana_start, date__lt=sana_end, course__author=speaker).count()
 
         dts = {
             'period': i, 'smartphone': course, 'windows': video, 'mac': sell
@@ -907,7 +929,6 @@ def AddCourse(request):
         add = Course.objects.create(name=name, turi=turi, author_id=speaker.pk, image=image, category_id=category,
                                     upload_or_youtube=video_or_url, description=descrip, price=price)
         return redirect('speaker-courses')
-
 
 
 # kursni o'zgartirish
@@ -943,11 +964,6 @@ def ChangeCourse(request):
     return redirect('speaker-courses')
 
 
-from rest_framework.response import Response
-
-from home.sms import sms_send
-
-
 def check_phone_number(request):
     phone_number = request.POST.get('phone_number')
 
@@ -958,7 +974,8 @@ def check_phone_number(request):
         }
         return JsonResponse(data, status=405)
     if phone_number is not None:
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        code = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=5))
         print(phone_number)
         res = sms_send(
             phone_number,
@@ -967,7 +984,8 @@ def check_phone_number(request):
         phone_number = str(phone_number)
         phone_number = phone_number.replace("+", "")
         if res is not None:
-            PhoneCodeSpeaker.objects.update_or_create(phone=phone_number, defaults={'code': code})
+            PhoneCodeSpeaker.objects.update_or_create(
+                phone=phone_number, defaults={'code': code})
             data = {
                 "status": True,
                 "data": "SMS send"
@@ -1009,10 +1027,6 @@ def check_code(request):
             "message": "Code Tasdiqlanmadi!",
         }
     return JsonResponse(data, status=200)
-
-
-from rest_framework.decorators import (api_view, authentication_classes,
-                                       permission_classes)
 
 
 @api_view(['post'])
@@ -1195,7 +1209,8 @@ def updateProfile(request):
 
         if both_day != '':
             birth_day = both_day.split("-")
-            sp.both_date = datetime.date(int(birth_day[0]), int(birth_day[1]), int(birth_day[2]))
+            sp.both_date = datetime.date(
+                int(birth_day[0]), int(birth_day[1]), int(birth_day[2]))
         if logo is not None:
             sp.logo = logo
 
@@ -1327,7 +1342,8 @@ def reset_password_check(request):
         }
         return JsonResponse(data, status=405)
     if phone_number is not None:
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        code = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=5))
         res = sms_send(
             phone_number,
             settings.SMS_REGISTER_TEXT + code
@@ -1335,7 +1351,8 @@ def reset_password_check(request):
         phone_number = str(phone_number)
         phone_number = phone_number.replace("+", "")
         if res is not None:
-            PhoneCodeSpeaker.objects.update_or_create(phone=phone_number, defaults={'code': code})
+            PhoneCodeSpeaker.objects.update_or_create(
+                phone=phone_number, defaults={'code': code})
             data = {
                 "status": True,
                 "data": "SMS send"
@@ -1359,7 +1376,8 @@ def ResetPassword(request):
         sp_code = request.POST.get('code')
         phone_number = str(phone_number)
         phone_number = phone_number.replace("+", "")
-        ph_c = PhoneCodeSpeaker.objects.filter(phone=phone_number, code=sp_code)
+        ph_c = PhoneCodeSpeaker.objects.filter(
+            phone=phone_number, code=sp_code)
         if ph_c.count() > 0:
             speaker = Speaker.objects.filter(phone=phone_number).first()
             ser = SpeakerLoginSerializer(speaker)

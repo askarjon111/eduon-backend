@@ -148,9 +148,7 @@ class UploadVideoAndDocumentAPIView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
 
     def perform_create(self, serializer):
-        print(self.request)
         speaker = Speaker.objects.get(speaker_id=self.request.user.id)
-        # speaker = Speaker.objects.get(id=1016)  # check qilish uchun
         serializer.save(author=speaker)
 
 
@@ -190,7 +188,6 @@ class VideosAPIView(APIView):
             }
 
         except Exception as e:
-            print(e)
             context = {
                 'success': False,
                 'errors': str(e),
