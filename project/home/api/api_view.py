@@ -596,10 +596,7 @@ def course_detail(request):
         course_id = request.query_params.get("course_id", False)
         if course_id:
             course = Course.objects.get(id=course_id)
-            video_instead_trailer = VideoCourse.objects.get(courseModule__course=course)
             ser = CourseDetailSerializer(course)
-            if ser.data['trailer'] is None:
-                ser.data['trailer'] = video_instead_trailer.video
             data = {
                 "success": True,
                 "error": "",

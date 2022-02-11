@@ -270,6 +270,7 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 class CourseTagsSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    title = serializers.CharField()
 
     class Meta:
         model = CourseTag

@@ -383,7 +383,7 @@ class CourseTag(models.Model):
     title = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.title or "-"
+        return self.title
 
 
 class CourseTrailer(models.Model):
