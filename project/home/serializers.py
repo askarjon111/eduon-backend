@@ -223,12 +223,25 @@ class UserEditModelSerializer(serializers.ModelSerializer):
                   'email', 'age', 'job', 'country', 'region']
 
 
+class ParentCategorySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = CategoryVideo
+        fields = ['id', 'name', 'image', 'parent']
+
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = CategoryVideo
         fields = ['id', 'name', 'image', 'parent']
+        
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['parent'] = ParentCategorySerializer(instance.parent).data
+        
+        return rep
 
 
 class LikeOrDislikeSerializer(serializers.ModelSerializer):

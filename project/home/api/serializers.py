@@ -243,7 +243,7 @@ class CourseDetailSerializer(ModelSerializer):
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
-    categories = CategorySerializer()
+    categories = CategorySerializer(many=True)
     language = LanguageSerializer()
     trailer = CourseTrailerSerializer()
     whatyoulearns = SerializerMethodField()
@@ -364,12 +364,13 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
-    categories = CategorySerializer()
+    categories = CategorySerializer(many=True)
     language = LanguageSerializer()
     trailer = CourseTrailerSerializer()
     whatyoulearns = SerializerMethodField()
     requirementscourse = SerializerMethodField()
     forwhoms = SerializerMethodField()
+    course_tags = CourseTagsSerializer(many=True)
 
     def get_requirementscourse(self, obj):
         try:
