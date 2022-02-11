@@ -242,6 +242,36 @@ class CourseDetailSerializer(ModelSerializer):
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
+    categories = CategorySerializer()
+    language = LanguageSerializer()
+    trailer = CourseTrailerSerializer()
+    whatyoulearns = SerializerMethodField()
+    requirementscourse = SerializerMethodField()
+    forwhoms = SerializerMethodField()
+    
+    def get_requirementscourse(self, obj):
+        try:
+            requirementscourse = RequirementsCourse.objects.filter(
+                course=obj)
+            return RequirementsCourseSerializer(requirementscourse, many=True).data
+        except:
+            return None
+
+    def get_forwhoms(self, obj):
+        try:
+            forwhoms = ForWhomCourse.objects.filter(
+                course=obj)
+            return ForWhomCourseSerializer(forwhoms, many=True).data
+        except:
+            return None
+
+    def get_whatyoulearns(self, obj):
+        try:
+            whatyoulearns = WhatYouLearn.objects.filter(
+                course=obj)
+            return WhatYouLearnSerializer(whatyoulearns, many=True).data
+        except:
+            return None
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -260,12 +290,6 @@ class CourseDetailSerializer(ModelSerializer):
             return sells.count()
         except:
             return 0
-
-    # def get_trailer(self, obj):
-    #     try:
-    #         trailer = CourseTrailer.objects.get(course=obj)
-    #     except:
-    #         return None
 
     def get_videos(self, obj):
         try:
@@ -321,6 +345,9 @@ class CourseDetailSerializer(ModelSerializer):
             "modules",
             "files",
             "quizzes",
+            "requirementscourse",
+            "whatyoulearns",
+            "forwhoms",
         ]
 
 
