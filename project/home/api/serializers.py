@@ -325,6 +325,7 @@ class CourseDetailSerializer(ModelSerializer):
 
 
 class CourseDetailSpeakerSerializer(ModelSerializer):
+    from home.serializers import CategorySerializer
     modules = SerializerMethodField()
     videos = SerializerMethodField()
     author = SpeakerGetSerializer(read_only=True)
@@ -332,6 +333,7 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
+    categories = CategorySerializer()
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -388,6 +390,8 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             "image",
             "turi",
             "author",
+            "level",
+            "language",
             "price",
             "categories",
             "date",
