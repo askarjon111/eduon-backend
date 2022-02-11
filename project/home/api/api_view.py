@@ -1369,15 +1369,15 @@ def upload_file(request):
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
         name = request.POST.get('name')
-        try:
-            courseModule = request.POST.get('courseModule')
-        except:
-            courseModule = None
+        # try:
+        #     courseModule = request.POST.get('courseModule')
+        # except:
+        #     courseModule = None
 
-        try:
-            place_number = request.POST.get('place_number')
-        except:
-            place_number = None
+        # try:
+        #     place_number = request.POST.get('place_number')
+        # except:
+        #     place_number = None
 
         try:
             file = request.FILES.get('file')
@@ -1388,8 +1388,8 @@ def upload_file(request):
                 speaker_id=sp.id,
                 name=name,
                 file=file,
-                courseModule=courseModule,
-                place_number=place_number
+                # courseModule=courseModule,
+                # place_numer=place_number,
             )
             new.save()
             data = {
