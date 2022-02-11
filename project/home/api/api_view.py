@@ -1370,6 +1370,12 @@ def upload_file(request):
             courseModule = request.POST.get('courseModule')
         except:
             courseModule = None
+
+        try:
+            place_number = request.POST.get('place_number')
+        except:
+            place_number = None
+
         try:
             file = request.FILES.get('file')
         except:
