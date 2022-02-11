@@ -438,7 +438,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
         trailer_id = trailer_data.get('id', None)
         if trailer_id:
-            CourseTrailer.objects.get(id=trailer_id).update(**trailer_data)
+            CourseTrailer.objects.filter(id=trailer_id).update(**trailer_data)
         else:
             new_trailer = CourseTrailer.objects.create(title=trailer_data.get(
                 'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
@@ -447,7 +447,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for tag in tags_data:
             tag_id = tag.get('id', None)
             if tag_id:
-                CourseTag.objects.get(id=tag_id).update(**tag)
+                CourseTag.objects.filter(id=tag_id).update(**tag)
             else:
                 CourseTag.objects.create(title=tag.get('title'))
                 instance.course_tags.add(tag_id)
@@ -455,7 +455,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for whatyoulearn in whatyoulearns_data:
             whatyoulearn_id = whatyoulearn.get('id', None)
             if whatyoulearn_id:
-                WhatYouLearn.objects.get(id=whatyoulearn_id).update(**whatyoulearn)
+                WhatYouLearn.objects.filter(id=whatyoulearn_id).update(**whatyoulearn, course=instance)
             else:
                 new_whatyoulearn = WhatYouLearn.objects.create(**whatyoulearn)
                 new_whatyoulearn.course = instance
@@ -464,7 +464,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for requirementscourse in requirementscourse_data:
             requirementscourse_id = requirementscourse.get('id', None)
             if requirementscourse_id:
-                RequirementsCourse.objects.get(
+                RequirementsCourse.objects.filter(
                     id=requirementscourse_id).update(**requirementscourse)
             else:
                 new_requirementscourse = RequirementsCourse.objects.create(
@@ -475,7 +475,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for forwhom in forwhoms_data:
             forwhom_id = forwhom.get('id', None)
             if forwhom_id:
-                ForWhomCourse.objects.get(id=forwhom_id).update(**forwhom)
+                ForWhomCourse.objects.filter(id=forwhom_id).update(**forwhom)
             else:
                 new_forwhom = ForWhomCourse.objects.create(**forwhom)
                 new_forwhom.course = instance
