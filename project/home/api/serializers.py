@@ -2,7 +2,7 @@ from django.db.models import Sum
 from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
-from home.serializers import CourseModuleSerializer
+from home.serializers import CourseModuleSerializer, CourseTrailerSerializer
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 
@@ -334,6 +334,8 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
     categories = CategorySerializer()
+    language = LanguageSerializer()
+    trailer = CourseTrailerSerializer()
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
