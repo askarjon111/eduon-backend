@@ -2,7 +2,7 @@ from django.db.models import Sum
 from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
-from home.serializers import CourseModuleSerializer, CourseTrailerSerializer
+from home.serializers import CourseModuleSerializer, CourseTrailerSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, WhatYouLearnSerializer
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 
@@ -336,6 +336,33 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
     categories = CategorySerializer()
     language = LanguageSerializer()
     trailer = CourseTrailerSerializer()
+    whatyoulearns = SerializerMethodField()
+    requirementscourse = SerializerMethodField()
+    forwhoms = SerializerMethodField()
+
+    def get_requirementscourse(self, obj):
+        try:
+            requirementscourse = RequirementsCourse.objects.filter(
+                course=obj)
+            return RequirementsCourseSerializer(requirementscourse, many=True).data
+        except:
+            return None
+
+    def get_forwhoms(self, obj):
+        try:
+            forwhoms = ForWhomCourse.objects.filter(
+                course=obj)
+            return ForWhomCourseSerializer(forwhoms, many=True).data
+        except:
+            return None
+
+    def get_whatyoulearns(self, obj):
+        try:
+            whatyoulearns = WhatYouLearn.objects.filter(
+                course=obj)
+            return WhatYouLearnSerializer(whatyoulearns, many=True).data
+        except:
+            return None
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -410,6 +437,9 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             "modules",
             "files",
             "quizzes",
+            "requirementscourse",
+            "whatyoulearns",
+            "forwhoms",
         ]
 
 
