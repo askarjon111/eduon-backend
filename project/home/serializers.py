@@ -443,7 +443,7 @@ class CourseSerializer(serializers.ModelSerializer):
         if trailer_id:
             CourseTrailer.objects.get(id=trailer_id).update(**trailer_data)
         else:
-            new_trailer = CourseTrailer.objects.update_or_create(title=trailer_data.get(
+            new_trailer = CourseTrailer.objects.create(title=trailer_data.get(
                 'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
             instance.trailer = new_trailer
         
