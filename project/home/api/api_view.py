@@ -1366,7 +1366,10 @@ def upload_file(request):
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
         name = request.POST.get('name')
-        courseModule = request.POST.get('courseModule')
+        try:
+            courseModule = request.POST.get('courseModule')
+        except:
+            courseModule = None
         try:
             file = request.FILES.get('file')
         except:
