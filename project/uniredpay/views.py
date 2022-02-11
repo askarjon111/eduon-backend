@@ -449,7 +449,7 @@ def get_money_from_wallet(request):
             "amount": speaker.cash * 100
         }
     else:
-        return Response({'status': False, 'error': "Test!!!"})
+        return Response({'status': False, 'error': "Sizda yetarli mablag' mavjud emas!!!"})
 
     try:
         res = uniredpay_conf.wallet_api(data=data, method='transfer.proceed')

@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from home.models import Course, CourseModule, Users, IsFinished
+from home.models import Users, IsFinished
 
 from quiz.models import Quiz, Question, Answer, Result
 from quiz.serializers import AnswerSerializer, QuestionSerializer, QuizSerializer
@@ -46,20 +46,3 @@ def submit_quiz_view(request):
         }
 
     return Response(data)
-
-
-@api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([])
-def add_new_quiz(request):
-    title = request.data.get('title')
-    module_id = request.data.get('module')
-    module = CourseModule.objects.get(id=module_id)
-    place_number = request.data.get('place_number')
-
-    quiz = Quiz.objects.create(
-        title=title, module=module, place_number=place_number)
-
-    quiz = QuizSerializer(quiz)
-
-    return Response(quiz.data)

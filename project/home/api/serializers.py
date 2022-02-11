@@ -2,7 +2,7 @@ from django.db.models import Sum
 from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
-from home.serializers import CourseModuleSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, WhatYouLearnSerializer
+from home.serializers import CourseModuleSerializer
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 
@@ -325,6 +325,7 @@ class CourseDetailSerializer(ModelSerializer):
 
 
 class CourseDetailSpeakerSerializer(ModelSerializer):
+    from home.serializers import CategorySerializer
     modules = SerializerMethodField()
     videos = SerializerMethodField()
     author = SpeakerGetSerializer(read_only=True)
@@ -332,33 +333,7 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
-    whatyoulearns = SerializerMethodField()
-    requirementscourse = SerializerMethodField()
-    forwhoms = SerializerMethodField()
-    
-    def get_requirementscourse(self, obj):
-        try:
-            requirementscourse = RequirementsCourse.objects.filter(
-                course=obj)
-            return RequirementsCourseSerializer(requirementscourse, many=True).data
-        except:
-            return None
-        
-    def get_forwhoms(self, obj):
-        try:
-            forwhoms = ForWhomCourse.objects.filter(
-                course=obj)
-            return ForWhomCourseSerializer(forwhoms, many=True).data
-        except:
-            return None
-    
-    def get_whatyoulearns(self, obj):
-        try:
-            whatyoulearns = WhatYouLearn.objects.filter(
-                course=obj)
-            return WhatYouLearnSerializer(whatyoulearns, many=True).data
-        except:
-            return None
+    categories = CategorySerializer()
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -415,6 +390,8 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             "image",
             "turi",
             "author",
+            "level",
+            "language",
             "price",
             "categories",
             "date",
@@ -431,9 +408,6 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             "modules",
             "files",
             "quizzes",
-            "whatyoulearns",
-            "requirementscourse",
-            "forwhoms",
         ]
 
 
