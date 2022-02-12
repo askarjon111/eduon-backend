@@ -2,7 +2,7 @@ from django.db.models import Sum
 from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
-from home.serializers import CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, WhatYouLearnSerializer
+from home.serializers import CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, VideoCourseSerializer, WhatYouLearnSerializer
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 
@@ -245,19 +245,20 @@ class CourseDetailSerializer(ModelSerializer):
     quizzes = SerializerMethodField()
     categories = CategorySerializer(many=True)
     language = LanguageSerializer()
-    trailer = CourseTrailerSerializer()
+    trailer = SerializerMethodField()
     whatyoulearns = SerializerMethodField()
     requirementscourse = SerializerMethodField()
     forwhoms = SerializerMethodField()
     course_tags = CourseTagsSerializer(many=True)
     
     def get_trailer(self, obj):
-        if trailer is None:
-            try:
-                video = VideoCourse.objects.first(course=obj)
-                trailer = video
-            except:
-                return None
+        try:
+            trailer = obj.trailer
+        except:
+            video = VideoCourse.objects.filter(course=obj).first()
+            trailer = VideoCourseSerializer(video).data
+        else:
+            return None
         return trailer(CourseTrailerSerializer).data
         
     
