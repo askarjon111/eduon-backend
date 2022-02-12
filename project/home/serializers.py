@@ -75,10 +75,6 @@ class VideoCourseSerializer(serializers.ModelSerializer):
     content_rank = serializers.SerializerMethodField()
     video_rank = serializers.SerializerMethodField()
 
-    class Meta:
-        model = VideoCourse
-        fields = '__all__'
-
     def get_speaker_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.course.id)
         count = cr.filter(speaker_value__gt=0).count()
@@ -122,6 +118,10 @@ class VideoCourseSerializer(serializers.ModelSerializer):
             return {"rank": round(value / count, 2), "count": count}
         else:
             return {"rank": 0, "count": 0}
+
+    class Meta:
+        model = VideoCourse
+        fields = ['author', 'course', 'courseModule', 'title', 'url', 'video', 'image', 'description','is_file', 'link', 'date', 'views_count', 'place_number', 'speaker_rank', 'course_rank', 'content_rank', 'video_rank']
 
 
 class VideoCourseGetSerializer(serializers.ModelSerializer):
@@ -239,7 +239,7 @@ class CategorySerializer(serializers.ModelSerializer):
         
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['parent'] = ParentCategorySerializer(instance.parent).data
+        rep['parent'] = ParentCategorySerializer(instance.parent).data['name']
         
         return rep
 

@@ -2,7 +2,7 @@ from django.db.models import Sum
 from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
-from home.serializers import CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, VideoCourseSerializer, WhatYouLearnSerializer
+from home.serializers import CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, VideoCourseGetSerializer, VideoCourseSerializer, WhatYouLearnSerializer
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 
@@ -172,6 +172,8 @@ class VideoSerializer(ModelSerializer):
             "is_file",
             "date",
             "views_count",
+            "place_number",
+            "courseModule"
         ]
 
 
@@ -217,6 +219,7 @@ class BoughtedVideoSerializer(ModelSerializer):
             "is_file",
             "date",
             "views_count",
+            "place_number",
             "courseModule",
         ]
 
@@ -484,6 +487,7 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             "requirementscourse",
             "whatyoulearns",
             "forwhoms",
+            "course_tags",
         ]
 
 
@@ -491,6 +495,7 @@ class BoughtedCourseSerializer(ModelSerializer):
     videos = SerializerMethodField()
     modules = SerializerMethodField()
     files = SerializerMethodField()
+    categories = CategorySerializer(many=True)
 
     def get_videos(self, obj):
         try:
