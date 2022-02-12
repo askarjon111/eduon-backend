@@ -251,6 +251,16 @@ class CourseDetailSerializer(ModelSerializer):
     forwhoms = SerializerMethodField()
     course_tags = CourseTagsSerializer(many=True)
     
+    def get_trailer(self, obj):
+        if trailer is None:
+            try:
+                video = VideoCourse.objects.first(course=obj)
+                trailer = video
+            except:
+                return None
+        return trailer(CourseTrailerSerializer).data
+        
+    
     def get_requirementscourse(self, obj):
         try:
             requirementscourse = RequirementsCourse.objects.filter(
