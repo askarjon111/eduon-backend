@@ -223,13 +223,6 @@ class UserEditModelSerializer(serializers.ModelSerializer):
                   'email', 'age', 'job', 'country', 'region']
 
 
-class ParentCategorySerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
-
-    class Meta:
-        model = CategoryVideo
-        fields = ['id', 'name', 'image', 'parent']
-
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
@@ -436,7 +429,7 @@ class CourseSerializer(serializers.ModelSerializer):
         
         language_id = language_data.get('id', None)
         if language_id:
-            Language.objects.get(id=language_id).update(**language_data)
+            Language.objects.filter(id=language_id).update(**language_data)
         else:
             new_language = Language.objects.create(**language_data)
             instance.language = new_language
@@ -447,7 +440,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for category in categories_data:
             category_id = category.get('id', None)
             if category_id:
-                CategoryVideo.objects.get(id=category_id).update(**category)
+                CategoryVideo.objects.filter(id=category_id).update(**category)
             else:
                 
                 new_category = CategoryVideo.objects.create(**category)
