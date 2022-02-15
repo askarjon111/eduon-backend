@@ -229,12 +229,6 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoryVideo
         fields = ['id', 'name', 'image', 'parent']
-        
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep['parent'] = ParentCategorySerializer(instance.parent).data['name']
-        
-        return rep
 
 
 class LikeOrDislikeSerializer(serializers.ModelSerializer):
