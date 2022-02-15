@@ -154,9 +154,17 @@ class LikeOrDislikeAdmin(admin.ModelAdmin):
     date_hierarchy = ('voted_date')
 
 
+class CategoryInline(admin.TabularInline):
+    model = CategoryVideo
+    can_delete = False
+
 @admin.register(CategoryVideo)
 class CategoryVideoAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    inlines = (CategoryInline, )
+    list_display = ('name', 'parent')
+    
+    def get_parent(self, obj):
+        return obj.parent.name
 
 
 @admin.register(TopCourse)

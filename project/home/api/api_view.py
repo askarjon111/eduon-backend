@@ -1166,7 +1166,7 @@ def get_sell_course_statistics(request):
                 }
             }
         elif query == "oy":
-            monthly_statistics = Order.objects.filter(
+            monthly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
                 date__year=datetime.datetime.now().year,
                 date__month=datetime.datetime.now().month
             ).annotate(
@@ -1184,7 +1184,7 @@ def get_sell_course_statistics(request):
                 }
             }
         elif query == "yil":
-            yearly_statistics = Order.objects.filter(
+            yearly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
                 date__year=datetime.datetime.now().year,
             ).annotate(
                 month=ExtractMonth('date'),

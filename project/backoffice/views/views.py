@@ -8,12 +8,15 @@ from django.db.models import Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, DetailView
+from rest_framework.views import APIView
 import random
 import string
 from home.sms import sms_send
 from ratelimit.decorators import ratelimit
 from eduon import settings
 from home.models import *
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 def PagenatorPage(List, num, request):
@@ -67,48 +70,18 @@ def switcher(user, success_status):
 
 
 # Backofficedagi moliya bo'limi
-class MoliyaView(LoginRequiredMixin, TemplateView):
-    template_name = 'backoffice/moliya.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        user = request.user
-        ad = Admin.objects.filter(admin_id=user.id).count()
-        if ad <= 0:
-            return redirect('page-404')
-        else:
-            res = switcher(user, 5)
-            if res is not None:
-                return res
-        return super(MoliyaView, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        super(MoliyaView, self).get_context_data(**kwargs)
-        sana_start = self.request.GET.get("sana_start")
-        sana_end = self.request.GET.get("sana_end")
-        today = datetime.datetime.today()
-        if sana_start is None or sana_end is None:
-            query = OrderPayment.objects.filter(
-                date__day=today.day, date__month=today.month, date__year=today.year, status=2
-            )
-        else:
-            query = OrderPayment.objects.filter(
-                date__date__gte=sana_start, date__date__lte=sana_end, status=2
-            )
-        click_summa = query.filter(type="Click").aggregate(total=Sum('amount')).get("total")
-        payme_summa = query.filter(type="PayMe").aggregate(total=Sum('amount')).get("total")
-        jami_summa = query.aggregate(total=Sum('amount')).get("total")
-        if click_summa is None:
-            click_summa = 0
-        if payme_summa is None:
-            payme_summa = 0
+@api_view(['get'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([])
+def moliya(request):
+    param = request.query_params.get("filter")
+    if param == "sotuv":
+        jami_summa = OrderPayment.objects.aggregate(total=Sum('amount')).get("total")
 
         context = {
-            "click_summa": click_summa,
-            "payme_summa": payme_summa,
             "jami_summa": jami_summa,
-            "payments": PagenatorPage(query, 20, self.request)
         }
-        return context
+    return JsonResponse(context)
 
 
 # backofficegi speaker bo'limi

@@ -1,4 +1,4 @@
-from backoffice.views import check_phone_number
+from backoffice.views.views import check_phone_number
 from django.urls.conf import path, include
 
 from . import views

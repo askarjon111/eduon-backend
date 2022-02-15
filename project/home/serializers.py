@@ -436,7 +436,7 @@ class CourseSerializer(serializers.ModelSerializer):
         
         language_id = language_data.get('id', None)
         if language_id:
-            Language.objects.get(id=language_id).update(**language_data)
+            Language.objects.get(id=language_id)
         else:
             new_language = Language.objects.create(**language_data)
             instance.language = new_language
@@ -447,7 +447,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for category in categories_data:
             category_id = category.get('id', None)
             if category_id:
-                CategoryVideo.objects.get(id=category_id).update(**category)
+                CategoryVideo.objects.get(id=category_id)
             else:
                 
                 new_category = CategoryVideo.objects.create(**category)
@@ -472,7 +472,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for whatyoulearn in whatyoulearns_data:
             whatyoulearn_id = whatyoulearn.get('id', None)
             if whatyoulearn_id:
-                WhatYouLearn.objects.filter(id=whatyoulearn_id).update(**whatyoulearn, course=instance)
+                WhatYouLearn.objects.filter(id=whatyoulearn_id).update(**whatyoulearn)
             else:
                 new_whatyoulearn = WhatYouLearn.objects.create(**whatyoulearn)
                 new_whatyoulearn.course = instance
