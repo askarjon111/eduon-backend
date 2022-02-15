@@ -142,7 +142,7 @@ class UsersAdmin(admin.ModelAdmin):
     list_max_show_all = 50
     search_fields = ('first_name', "phone", "last_name")
     date_hierarchy = ('regdate')
-    readonly_fields = ('cash', 'bonus', 'card_number', 'wallet_number')
+    readonly_fields = ('cash', 'card_number', 'wallet_number')
     exclude = ('wallet_expire', 'card_expire')
 
 
