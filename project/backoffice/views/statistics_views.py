@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django.http import JsonResponse
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q
 from django.db.models.functions import ExtractDay, ExtractMonth, ExtractHour
 
 
@@ -244,7 +244,7 @@ def free_and_paid_courses(request):
     if courses.count() != 0:
         paid = (paid / courses.count()) * 100
         free = 100 - paid
-        
+
         data = {
             "paid_courses": paid,
             "free_courses": free,
@@ -267,7 +267,8 @@ def courses_by_categories(request):
         "success": "true",
     }
     for category in categories:
-        category_courses = Course.objects.filter(Q(categories=category)).count()
+        category_courses = Course.objects.filter(
+            Q(categories=category)).count()
         percent = (category_courses / courses) * 100
         data[f"{category}"] = percent
 
