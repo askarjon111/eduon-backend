@@ -257,6 +257,9 @@ def free_and_paid_courses(request):
     return Response(data)
 
 
+@api_view(['get'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([])
 def courses_by_categories(request):
     categories = CategoryVideo.objects.filter(parent=None)
     courses = Course.objects.all().count()
