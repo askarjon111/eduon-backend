@@ -91,24 +91,7 @@ CLICK_SETTINGS = {
     'merchant_user_id': '17661'
 }
 
-# DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'OPTIONS': {
-#                 'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
-#             },
-#         }
-#     }
-
-if DEBUG:
-    DATABASES = {
-        'default': {
-            "ENGINE": 'django.db.backends.sqlite3',
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3")
-        }
-    }
-else:
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
@@ -116,6 +99,23 @@ else:
             },
         }
     }
+
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             "ENGINE": 'django.db.backends.sqlite3',
+#             "NAME": os.path.join(BASE_DIR, "db.sqlite3")
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
+#             },
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -184,8 +184,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 7
 }
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=200),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,

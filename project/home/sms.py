@@ -11,6 +11,12 @@ def sms_login():
     settings.SMS_TOKEN = r['data']['token']
 
 
+def sms_login_global():
+    r = requests.post(settings.SMS_BASE_URL_GLOBAL + '/oauth/token',
+                {'client_id': settings.SMS_CLIENT_ID, 'secret': settings.SMS_SECRET_KEY_GLOBAL,
+                 "expires_in": 3600}).json()
+    settings.SMS_TOKEN_GLOBAL = r['jwt']
+
 
 def sms_refresh():
     r = requests.patch(settings.SMS_BASE_URL + '/api/auth/refresh',
@@ -19,17 +25,18 @@ def sms_refresh():
 
 
 def sms_send(phone_number, text):
-    sms_login()
     phone_number = str(phone_number)
     phone_number.replace("+", "")
     try:
         if phone_number[0:3] == "998":
+            sms_login()
             result = requests.post(settings.SMS_BASE_URL + '/api/message/sms/send',
                                    {'mobile_phone': phone_number, 'message': text},
                                    headers={'Authorization': f'Bearer {settings.SMS_TOKEN}'}).json()
 
             return result
         else:
+            sms_login_global()
             payload = {
                 "message": text,
                 "to": "+" + str(phone_number),
