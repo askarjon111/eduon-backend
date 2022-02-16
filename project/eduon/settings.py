@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'quiz',
     'rest_framework.authtoken',
     'django_filters',
+    'background_task',
 ]
 
 MIDDLEWARE = [

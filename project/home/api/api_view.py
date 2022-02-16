@@ -60,12 +60,7 @@ def get_financial_statistics(request):
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
-# @ratelimit(key='ip', rate='3/m')
 def send_code(request):
-    # was_limited = getattr(request, 'limited', False)
-    # if was_limited:
-    #     return JsonResponse({"code": 1, 'msg': 'try many times'},json_dumps_params={'ensure_ascii':False})
-    # else:
         try:
             phone = request.GET.get('phone')
             type = request.GET.get('type')
@@ -91,6 +86,7 @@ def send_code(request):
                             "success": True,
                             "message": "Code yuborildi!",
                         }
+                        print(res)
                     else:
                         data = {
                             "success": False,

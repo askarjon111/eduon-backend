@@ -54,6 +54,9 @@ urlpatterns = [
          name="courses_by_categories"),
     # backoffice speaker
     path('speakers-list', speakers_views.speakers_list, name="speakers_list"),
+    path('speaker-ban/<int:id>', speakers_views.speaker_ban, name="speaker_ban"),
+    path('speaker-karantin/<int:id>', speakers_views.speaker_karantin, name="speaker_karantin"),
+    path('speaker-detail/<int:id>', speakers_views.speaker_detail, name="speaker_detail"),
 ]
 
 # r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',
