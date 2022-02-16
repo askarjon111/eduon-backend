@@ -75,10 +75,6 @@ class VideoCourseSerializer(serializers.ModelSerializer):
     content_rank = serializers.SerializerMethodField()
     video_rank = serializers.SerializerMethodField()
 
-    class Meta:
-        model = VideoCourse
-        fields = '__all__'
-
     def get_speaker_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.course.id)
         count = cr.filter(speaker_value__gt=0).count()
@@ -122,6 +118,10 @@ class VideoCourseSerializer(serializers.ModelSerializer):
             return {"rank": round(value / count, 2), "count": count}
         else:
             return {"rank": 0, "count": 0}
+
+    class Meta:
+        model = VideoCourse
+        fields = ['author', 'course', 'courseModule', 'title', 'url', 'video', 'image', 'description','is_file', 'link', 'date', 'views_count', 'place_number', 'speaker_rank', 'course_rank', 'content_rank', 'video_rank']
 
 
 class VideoCourseGetSerializer(serializers.ModelSerializer):
@@ -223,12 +223,25 @@ class UserEditModelSerializer(serializers.ModelSerializer):
                   'email', 'age', 'job', 'country', 'region']
 
 
+class ParentCategorySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = CategoryVideo
+        fields = ['id', 'name', 'image', 'parent']
+
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = CategoryVideo
         fields = ['id', 'name', 'image', 'parent']
+        
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['parent'] = ParentCategorySerializer(instance.parent).data['name']
+        
+        return rep
 
 
 class LikeOrDislikeSerializer(serializers.ModelSerializer):
@@ -270,6 +283,7 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 class CourseTagsSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    title = serializers.CharField()
 
     class Meta:
         model = CourseTag
@@ -375,7 +389,8 @@ class CourseSerializer(serializers.ModelSerializer):
                 course.categories.add(new_category.id)
 
         if trailer_data:
-            new_trailer, _ = CourseTrailer.objects.get_or_create(defaults={'title': trailer_data.get('title')}, **trailer_data)
+            new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
+                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
             course.trailer = new_trailer
 
         if tags_data:
@@ -417,10 +432,11 @@ class CourseSerializer(serializers.ModelSerializer):
         forwhoms_data = validated_data.pop(
             'forwhom', None)
         author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
+        # course, _ = Course.objects.filter(id=instance.id)
         
         language_id = language_data.get('id', None)
         if language_id:
-            Language.objects.get(id=language_id)
+            Language.objects.get(id=language_id).update(**language_data)
         else:
             new_language = Language.objects.create(**language_data)
             instance.language = new_language
@@ -431,14 +447,15 @@ class CourseSerializer(serializers.ModelSerializer):
         for category in categories_data:
             category_id = category.get('id', None)
             if category_id:
-                CategoryVideo.objects.get(id=category_id)
+                CategoryVideo.objects.get(id=category_id).update(**category)
             else:
+                
                 new_category = CategoryVideo.objects.create(**category)
                 instance.categories.add(new_category.id)
 
         trailer_id = trailer_data.get('id', None)
         if trailer_id:
-            CourseTrailer.objects.get(id=trailer_id).update(**trailer_data)
+            CourseTrailer.objects.filter(id=trailer_id).update(**trailer_data)
         else:
             new_trailer = CourseTrailer.objects.create(title=trailer_data.get(
                 'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
@@ -447,7 +464,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for tag in tags_data:
             tag_id = tag.get('id', None)
             if tag_id:
-                CourseTag.objects.get(id=tag_id).update(**tag)
+                CourseTag.objects.filter(id=tag_id).update(**tag)
             else:
                 CourseTag.objects.create(title=tag.get('title'))
                 instance.course_tags.add(tag_id)
@@ -455,7 +472,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for whatyoulearn in whatyoulearns_data:
             whatyoulearn_id = whatyoulearn.get('id', None)
             if whatyoulearn_id:
-                WhatYouLearn.objects.get(id=whatyoulearn_id).update(**whatyoulearn)
+                WhatYouLearn.objects.filter(id=whatyoulearn_id).update(**whatyoulearn, course=instance)
             else:
                 new_whatyoulearn = WhatYouLearn.objects.create(**whatyoulearn)
                 new_whatyoulearn.course = instance
@@ -464,7 +481,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for requirementscourse in requirementscourse_data:
             requirementscourse_id = requirementscourse.get('id', None)
             if requirementscourse_id:
-                RequirementsCourse.objects.get(
+                RequirementsCourse.objects.filter(
                     id=requirementscourse_id).update(**requirementscourse)
             else:
                 new_requirementscourse = RequirementsCourse.objects.create(
@@ -475,7 +492,7 @@ class CourseSerializer(serializers.ModelSerializer):
         for forwhom in forwhoms_data:
             forwhom_id = forwhom.get('id', None)
             if forwhom_id:
-                ForWhomCourse.objects.get(id=forwhom_id).update(**forwhom)
+                ForWhomCourse.objects.filter(id=forwhom_id).update(**forwhom)
             else:
                 new_forwhom = ForWhomCourse.objects.create(**forwhom)
                 new_forwhom.course = instance

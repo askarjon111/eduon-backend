@@ -7,7 +7,7 @@ from .api_view import (
     boughted_course_detail, get_top_course, get_speaker, get_rating, set_rating, set_comment, get_comment,
     create_invoise, create_invoise_payme, payment_history, get_statistics, get_speaker_data, upload_file,
     get_speaker_courses, verified_courses, verified_speaker_courses, get_courses, get_sell_course_statistics,
-    get_user_country_statistics, get_rank_statistics, speaker_orders, add_new_module
+    get_user_country_statistics, get_rank_statistics, speaker_orders
 )
 from home.views import CourseCreateView, CourseListView, CourseUpdateView
 
@@ -65,9 +65,9 @@ from .views import CourseSpeakerAPIView, UploadVideoAndDocumentAPIView, VideosAP
     GetStatisticsAPIView, TopCourseAPIView, users_retrieve_update_api_view
 
 urlpatterns += [
+    # course.html
     path('courses/', CourseSpeakerAPIView.as_view()),
     path('courses/<int:pk>/', VideosAPIView.as_view()),
-    path('add-new-module/', add_new_module),
     path('video-doc-upload/', UploadVideoAndDocumentAPIView.as_view()),
     path('change-course/', ChangeCourseAPIView.as_view()),
     path('delete-course/', DeleteCourseAPIView.as_view()),

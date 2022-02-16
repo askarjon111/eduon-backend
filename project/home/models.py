@@ -118,7 +118,7 @@ class InfoWidget(models.Model):
     content = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return self.title
+        return self.title or "-"
 
 
 class ServiceContent(models.Model):
@@ -199,7 +199,7 @@ class Speaker(models.Model):
     has_course = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.speaker.username or 'Speaker'
+        return self.speaker.username or "-"
 
     def save(self, *args, **kwargs):
         if self.own_ref_code is None:
@@ -280,7 +280,7 @@ class Users(models.Model):
     )
 
     def __str__(self):
-        return self.phone
+        return self.phone or "-"
 
     @property
     def get_country_name(self):
@@ -365,14 +365,14 @@ class CategoryVideo(models.Model):
                                on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name or ' '
+        return self.name or "-"
 
 
 class Language(models.Model):
     name = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.name or 'Language'
+        return self.name or "-"
 
     class Meta:
         verbose_name = "Til"
@@ -383,7 +383,7 @@ class CourseTag(models.Model):
     title = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.title or 'Tag'
+        return self.title
 
 
 class CourseTrailer(models.Model):
@@ -393,7 +393,7 @@ class CourseTrailer(models.Model):
     url = models.URLField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.title or 'Trailer'
+        return self.title or "-"
 
 
 class Course(models.Model):
@@ -447,7 +447,7 @@ class Course(models.Model):
     about_course = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.name or "-"
 
     @property
     def detail(self):
@@ -564,7 +564,7 @@ class File(models.Model):
     place_number = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.name or "file"
+        return self.name
 
 
 class IsFinished(models.Model):
@@ -708,4 +708,4 @@ class AboutUsNote(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return self.name or "-"

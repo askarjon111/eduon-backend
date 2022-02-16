@@ -1,8 +1,8 @@
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from moviepy.editor import VideoFileClip
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from home.models import *
-from home.serializers import CourseModuleSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, WhatYouLearnSerializer
+from home.serializers import CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, VideoCourseGetSerializer, VideoCourseSerializer, WhatYouLearnSerializer
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 
@@ -143,10 +143,17 @@ class GetCourseSerializer(ModelSerializer):
 
 class CategorySerializer(ModelSerializer):
     course_count = SerializerMethodField()
+    children = SerializerMethodField()
 
     def get_course_count(self, obj):
-        course_count = Course.objects.filter(categories=obj.id).count()
+        course_count = Course.objects.filter(
+            categories__id=obj.id, is_confirmed=True).count()
         return course_count
+
+    def get_children(self, obj):
+        children = CategoryVideo.objects.filter(parent_id=obj.id)
+
+        return CategorySerializer(children, many=True).data
 
     class Meta:
         model = CategoryVideo
@@ -155,6 +162,7 @@ class CategorySerializer(ModelSerializer):
             "name",
             "image",
             "parent",
+            "children",
             "course_count",
         ]
 
@@ -172,6 +180,8 @@ class VideoSerializer(ModelSerializer):
             "is_file",
             "date",
             "views_count",
+            "place_number",
+            "courseModule"
         ]
 
 
@@ -184,6 +194,7 @@ class FileOnlyNameSerializer(ModelSerializer):
             "place_number",
             "courseModule",
         ]
+
 
 class VideoOnlyNameSerializer(ModelSerializer):
     class Meta:
@@ -205,6 +216,7 @@ class VideoOnlyNameSerializer(ModelSerializer):
 
 class BoughtedVideoSerializer(ModelSerializer):
     courseModule = CourseModuleSerializer()
+
     class Meta:
         model = VideoCourse
         fields = [
@@ -217,8 +229,10 @@ class BoughtedVideoSerializer(ModelSerializer):
             "is_file",
             "date",
             "views_count",
+            "place_number",
             "courseModule",
         ]
+
 
 class FileSerializer(ModelSerializer):
     class Meta:
@@ -234,6 +248,7 @@ class FileSerializer(ModelSerializer):
 
 
 class CourseDetailSerializer(ModelSerializer):
+    from home.serializers import CategorySerializer
     # trailer = SerializerMethodField()
     modules = SerializerMethodField()
     videos = SerializerMethodField()
@@ -242,6 +257,47 @@ class CourseDetailSerializer(ModelSerializer):
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
+    categories = CategorySerializer(many=True)
+    language = LanguageSerializer()
+    trailer = SerializerMethodField()
+    whatyoulearns = SerializerMethodField()
+    requirementscourse = SerializerMethodField()
+    forwhoms = SerializerMethodField()
+    course_tags = CourseTagsSerializer(many=True)
+
+    def get_trailer(self, obj):
+        video = VideoCourse.objects.filter(course=obj).first()
+        if obj.trailer:
+            trailer = CourseTrailerSerializer(obj.trailer).data
+        elif video:
+            trailer = VideoCourseSerializer(video).data
+        else:
+            return None
+        return CourseTrailerSerializer(trailer).data
+
+    def get_requirementscourse(self, obj):
+        try:
+            requirementscourse = RequirementsCourse.objects.filter(
+                course=obj)
+            return RequirementsCourseSerializer(requirementscourse, many=True).data
+        except:
+            return None
+
+    def get_forwhoms(self, obj):
+        try:
+            forwhoms = ForWhomCourse.objects.filter(
+                course=obj)
+            return ForWhomCourseSerializer(forwhoms, many=True).data
+        except:
+            return None
+
+    def get_whatyoulearns(self, obj):
+        try:
+            whatyoulearns = WhatYouLearn.objects.filter(
+                course=obj)
+            return WhatYouLearnSerializer(whatyoulearns, many=True).data
+        except:
+            return None
 
     def get_course_rank(self, obj):
         cr = RankCourse.objects.filter(course_id=obj.id)
@@ -260,12 +316,6 @@ class CourseDetailSerializer(ModelSerializer):
             return sells.count()
         except:
             return 0
-
-    # def get_trailer(self, obj):
-    #     try:
-    #         trailer = CourseTrailer.objects.get(course=obj)
-    #     except:
-    #         return None
 
     def get_videos(self, obj):
         try:
@@ -307,6 +357,7 @@ class CourseDetailSerializer(ModelSerializer):
             "author",
             "price",
             "categories",
+            "language",
             "date",
             "upload_or_youtube",
             "description",
@@ -321,10 +372,15 @@ class CourseDetailSerializer(ModelSerializer):
             "modules",
             "files",
             "quizzes",
+            "requirementscourse",
+            "whatyoulearns",
+            "forwhoms",
+            "course_tags",
         ]
 
 
 class CourseDetailSpeakerSerializer(ModelSerializer):
+    from home.serializers import CategorySerializer
     modules = SerializerMethodField()
     videos = SerializerMethodField()
     author = SpeakerGetSerializer(read_only=True)
@@ -332,10 +388,14 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
     course_rank = SerializerMethodField()
     files = SerializerMethodField()
     quizzes = SerializerMethodField()
+    categories = CategorySerializer(many=True)
+    language = LanguageSerializer()
+    trailer = CourseTrailerSerializer()
     whatyoulearns = SerializerMethodField()
     requirementscourse = SerializerMethodField()
     forwhoms = SerializerMethodField()
-    
+    course_tags = CourseTagsSerializer(many=True)
+
     def get_requirementscourse(self, obj):
         try:
             requirementscourse = RequirementsCourse.objects.filter(
@@ -343,7 +403,7 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             return RequirementsCourseSerializer(requirementscourse, many=True).data
         except:
             return None
-        
+
     def get_forwhoms(self, obj):
         try:
             forwhoms = ForWhomCourse.objects.filter(
@@ -351,7 +411,7 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             return ForWhomCourseSerializer(forwhoms, many=True).data
         except:
             return None
-    
+
     def get_whatyoulearns(self, obj):
         try:
             whatyoulearns = WhatYouLearn.objects.filter(
@@ -384,7 +444,7 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             return VideoSerializer(videos, many=True).data
         except:
             return None
-    
+
     def get_quizzes(self, obj):
         try:
             quizzes = Quiz.objects.filter(
@@ -392,14 +452,15 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             return QuizSerializer(quizzes, many=True).data
         except:
             return None
-    
+
     def get_modules(self, obj):
         try:
-            modules = CourseModule.objects.filter(course=obj).order_by("place_number")
+            modules = CourseModule.objects.filter(
+                course=obj).order_by("place_number")
             return CourseModuleSerializer(modules, many=True).data
         except:
             return None
-    
+
     def get_files(self, obj):
         try:
             files = File.objects.filter(courseModule__course=obj)
@@ -415,6 +476,8 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             "image",
             "turi",
             "author",
+            "level",
+            "language",
             "price",
             "categories",
             "date",
@@ -431,9 +494,10 @@ class CourseDetailSpeakerSerializer(ModelSerializer):
             "modules",
             "files",
             "quizzes",
-            "whatyoulearns",
             "requirementscourse",
+            "whatyoulearns",
             "forwhoms",
+            "course_tags",
         ]
 
 
@@ -441,10 +505,12 @@ class BoughtedCourseSerializer(ModelSerializer):
     videos = SerializerMethodField()
     modules = SerializerMethodField()
     files = SerializerMethodField()
+    categories = CategorySerializer(many=True)
 
     def get_videos(self, obj):
         try:
-            videos = VideoCourse.objects.filter(course=obj).order_by("place_number")
+            videos = VideoCourse.objects.filter(
+                course=obj).order_by("place_number")
             return BoughtedVideoSerializer(videos, many=True).data
         except:
             return []
@@ -509,11 +575,12 @@ class OrderPaymentSerializer(ModelSerializer):
         model = OrderPayment
         fields = "__all__"
 
+
 class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
         fields = "__all__"
-        
+
 
 class BillingSerializer(ModelSerializer):
     class Meta:
