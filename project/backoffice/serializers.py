@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from home.models import Course, Order, RankCourse, Speaker
 from django.db.models import Count, Q, Sum
+from paycom.models import Transaction
+from home.serializers import OrderSerializers
+
 
 
 class SpeakerSerializer(serializers.ModelSerializer):
@@ -9,6 +12,8 @@ class SpeakerSerializer(serializers.ModelSerializer):
     students = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
     revenue = serializers.SerializerMethodField()
+    eduons_revenue = serializers.SerializerMethodField()
+    transactions = serializers.SerializerMethodField()
 
     def get_name(self, obj):
         first_name = obj.speaker.first_name
@@ -38,8 +43,18 @@ class SpeakerSerializer(serializers.ModelSerializer):
         revenue = Order.objects.filter(
             course__author=obj.id).aggregate(revenue=Sum('sp_summa'))
         return revenue.get('revenue')
+    
+    def get_eduons_revenue(self, obj):
+        revenue = Order.objects.filter(
+            course__author=obj.id).aggregate(revenue=Sum('for_eduon'))
+        return revenue.get('revenue')
+    
+    def get_transactions(self, obj):
+        transactions = Transaction.objects.filter(receivers=obj.card_number).aggregate(transactions=Sum('amount'))
+        
+        return transactions.get('transactions')
 
     class Meta:
         model = Speaker
         fields = ['id', 'name', 'both_date', 'kasbi', 'phone', 'country', 'city', 'compony', 'card_number', 'cash', 'courses',
-                  'students', 'rating', 'revenue', 'image']
+                  'students', 'rating', 'revenue', 'eduons_revenue', 'transactions',  'image']

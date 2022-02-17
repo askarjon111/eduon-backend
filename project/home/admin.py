@@ -106,7 +106,7 @@ class SpeakerAdmin(admin.ModelAdmin):
     list_filter = ('cash',)
     list_max_show_all = 50
     search_fields = ('speaker__username', 'speaker__first_name')
-    readonly_fields = ('cash', 'card_number', 'wallet_number')
+    readonly_fields = ('cash', 'wallet_number')
     exclude = ('card_date', 'wallet_expire')
 
     def get_first_name(self, obj):
@@ -142,7 +142,7 @@ class UsersAdmin(admin.ModelAdmin):
     list_max_show_all = 50
     search_fields = ('first_name', "phone", "last_name")
     date_hierarchy = ('regdate')
-    readonly_fields = ('cash', 'card_number', 'wallet_number')
+    readonly_fields = ('cash', 'wallet_number')
     exclude = ('wallet_expire', 'card_expire')
 
 
