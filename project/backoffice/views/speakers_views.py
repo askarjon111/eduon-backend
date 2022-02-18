@@ -9,12 +9,13 @@ from home.release_task import release_speaker
 from home.serializers import OrderSerializers
 from paycom.models import Transaction
 from paycom.serializers import TransactionSerializer
+from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPermission
 
 
 # Spikerlar ro'yxati
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([])
+@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
 def speakers_list(request):
     speakers = Speaker.objects.all()
     paginator = PageNumberPagination()
@@ -26,7 +27,7 @@ def speakers_list(request):
 # speaker ma'lumotlari
 @api_view(['GET'])
 @authentication_classes([])
-@permission_classes([])
+@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
 def speaker_detail(request, id):
     speaker = Speaker.objects.get(id=id)
     speaker_details = SpeakerSerializer(speaker, context={'request': request})
@@ -47,7 +48,7 @@ def speaker_detail(request, id):
 # spikerga ban berish
 @api_view(['POST'])
 @authentication_classes([])
-@permission_classes([])
+@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
 def speaker_ban(request, id):
     speaker = Speaker.objects.filter(id=id)
     date_of_release = request.POST.get('date_of_release')
@@ -61,7 +62,7 @@ def speaker_ban(request, id):
 # spikerni karantinga yuborish
 @api_view(['POST'])
 @authentication_classes([])
-@permission_classes([])
+@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
 def speaker_karantin(request, id):
     speaker = Speaker.objects.filter(id=id)
     reason_of_ban = request.POST.get('reason_of_ban')

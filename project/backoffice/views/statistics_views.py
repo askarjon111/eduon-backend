@@ -6,12 +6,13 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractDay, ExtractMonth, ExtractHour
+from backoffice.permissions import MarketingManagerPermission, OwnerPermission, ManagerPermission
 
 
 # Spikerlar,  Foydalanuvchilar, Kurslar va buyurtmalar soni
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([])
+@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
 def total_count(request):
     speakers = Speaker.objects.all().count()
     users = Users.objects.all().count()
@@ -28,12 +29,11 @@ def total_count(request):
 
     return JsonResponse(data)
 
+
 # Kontent va auditoriya bo'limi
-
-
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([])
+@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
 def content_and_auditory(request):
     content = Course.objects.filter(
         date__year=datetime.datetime.now().year,
@@ -66,7 +66,7 @@ def content_and_auditory(request):
 # Foydalanuvchilar yoshi va jinsi
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([])
+@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
 def user_statistics(request):
     users = Order.objects.all()
     users1_17 = 0
@@ -133,7 +133,7 @@ def user_statistics(request):
 # Sotilgan kunlar: kecha, bugun, hafta, oy, yil uchun
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([])
+@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
 def order_statistics(request):
     query = request.GET.get('query')
     if query == "hafta":
@@ -211,7 +211,7 @@ def order_statistics(request):
 # Foydalanuvchilarning davlatlar bo'yicha statistikasi
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([])
+@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
 def country_statistics(request):
     users = Order.objects.all()
     cnt = 0
@@ -257,9 +257,10 @@ def free_and_paid_courses(request):
     return Response(data)
 
 
+# Kurslar foizi kategoriyalari bo'yicha
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([])
+@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
 def courses_by_categories(request):
     categories = CategoryVideo.objects.filter(parent=None)
     courses = Course.objects.all().count()
