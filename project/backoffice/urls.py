@@ -4,7 +4,7 @@ import requests
 # from .bot import EduonBot
 from eduon import settings
 from .views.views import *
-from backoffice.views import statistics_views, speakers_views, users_views, courses_views
+from backoffice.views import statistics_views, speakers_views, users_views, courses_views, moliya_views
 
 urlpatterns = [
     path('', HomeView.as_view(), name='backoffice-home'),
@@ -73,6 +73,9 @@ urlpatterns = [
          courses_views.course_detail, name="course_detail"),
     path('course-karantin/<int:id>',
          courses_views.course_karantin, name="course_karantin"),
+    
+    # backoffice moliya
+    path('kirim-chiqim', moliya_views.kirim_chiqim, name="kirim_chiqim"),
 ]
 
 # r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',

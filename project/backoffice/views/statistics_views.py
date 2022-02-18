@@ -240,7 +240,7 @@ def country_statistics(request):
 @permission_classes([])
 def free_and_paid_courses(request):
     courses = Course.objects.all()
-    paid = Course.objects.filter(Q(turi='Pullik')).count()
+    paid = Course.objects.filter(turi='Pullik').count()
     if courses.count() != 0:
         paid = (paid / courses.count()) * 100
         free = 100 - paid
