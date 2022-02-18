@@ -1,8 +1,11 @@
 from rest_framework import serializers
-from home.models import Admin, Course, Order, RankCourse, Speaker, Users
+from home.api.serializers import FileSerializer, LanguageSerializer, SpeakerGetSerializer, VideoSerializer
+from home.models import Admin, Course, CourseModule, File, ForWhomCourse, Order, RankCourse, RequirementsCourse, Speaker, Users, VideoCourse, WhatYouLearn
 from django.db.models import Count, Q, Sum
 from paycom.models import Transaction
-from home.serializers import CountrySerializer, DjangoUserSerializers
+from home.serializers import CountrySerializer, CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, DjangoUserSerializers, ForWhomCourseSerializer, RequirementsCourseSerializer, WhatYouLearnSerializer
+from quiz.models import Quiz
+from quiz.serializers import QuizSerializer
 from uniredpay.models import PayForBalance
 
 
@@ -121,4 +124,158 @@ class UserSerializer(serializers.ModelSerializer):
 class PayForBalanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = PayForBalance
-        fields = ['id', 'amount', 'date']
+        fields = ['id', 'amount', 'date']     
+
+
+class CourseListSerializer(serializers.ModelSerializer):
+    course_rank = serializers.SerializerMethodField()
+    sell_count = serializers.SerializerMethodField()
+    author_image = serializers.SerializerMethodField()
+
+    def get_author_image(self, obj):
+        author_image = obj.author.image.url
+        return author_image
+
+    def get_course_rank(self, obj):
+        cr = RankCourse.objects.filter(course_id=obj.id)
+        value = cr.aggregate(value=Sum('course_value')).get('value')
+        count = cr.filter(course_value__gt=0).count()
+        if value is None:
+            value = 0
+        if count > 0:
+            return {"rank": round(value / count, 2), "count": count}
+        else:
+            return {"rank": 0, "count": 0}
+
+    def get_sell_count(self, obj):
+        try:
+            sells = Order.objects.filter(course_id=obj.id)
+            return sells.count()
+        except:
+            return 0
+    class Meta:
+        model = Course
+        fields = ['id', 'name', 'image', 'author_image',
+                  'price', 'view', 'course_rank', 'sell_count']
+
+
+class CourseDetailSerializer(serializers.ModelSerializer):
+    from home.serializers import CategorySerializer
+    modules = serializers.SerializerMethodField()
+    videos = serializers.SerializerMethodField()
+    author = SpeakerGetSerializer(read_only=True)
+    sell_count = serializers.SerializerMethodField()
+    course_rank = serializers.SerializerMethodField()
+    files = serializers.SerializerMethodField()
+    quizzes = serializers.SerializerMethodField()
+    categories = CategorySerializer(many=True)
+    language = LanguageSerializer()
+    trailer = CourseTrailerSerializer()
+    whatyoulearns = serializers.SerializerMethodField()
+    requirementscourse = serializers.SerializerMethodField()
+    forwhoms = serializers.SerializerMethodField()
+    course_tags = CourseTagsSerializer(many=True)
+
+    def get_requirementscourse(self, obj):
+        try:
+            requirementscourse = RequirementsCourse.objects.filter(
+                course=obj)
+            return RequirementsCourseSerializer(requirementscourse, many=True).data
+        except:
+            return None
+
+    def get_forwhoms(self, obj):
+        try:
+            forwhoms = ForWhomCourse.objects.filter(
+                course=obj)
+            return ForWhomCourseSerializer(forwhoms, many=True).data
+        except:
+            return None
+
+    def get_whatyoulearns(self, obj):
+        try:
+            whatyoulearns = WhatYouLearn.objects.filter(
+                course=obj)
+            return WhatYouLearnSerializer(whatyoulearns, many=True).data
+        except:
+            return None
+
+    def get_course_rank(self, obj):
+        cr = RankCourse.objects.filter(course_id=obj.id)
+        value = cr.aggregate(value=Sum('course_value')).get('value')
+        count = cr.filter(course_value__gt=0).count()
+        if value is None:
+            value = 0
+        if count > 0:
+            return {"rank": round(value / count, 2), "count": count}
+        else:
+            return {"rank": 0, "count": 0}
+
+    def get_sell_count(self, obj):
+        try:
+            sells = Order.objects.filter(course_id=obj.id)
+            return sells.count()
+        except:
+            return 0
+
+    def get_videos(self, obj):
+        try:
+            videos = VideoCourse.objects.filter(course=obj)
+            return VideoSerializer(videos, many=True).data
+        except:
+            return None
+
+    def get_quizzes(self, obj):
+        try:
+            quizzes = Quiz.objects.filter(
+                module__course=obj)
+            return QuizSerializer(quizzes, many=True).data
+        except:
+            return None
+
+    def get_modules(self, obj):
+        try:
+            modules = CourseModule.objects.filter(
+                course=obj).order_by("place_number")
+            return CourseModuleSerializer(modules, many=True).data
+        except:
+            return None
+
+    def get_files(self, obj):
+        try:
+            files = File.objects.filter(courseModule__course=obj)
+            return FileSerializer(files, many=True).data
+        except:
+            return None
+
+    class Meta:
+        model = Course
+        fields = [
+            "id",
+            "name",
+            "image",
+            "turi",
+            "author",
+            "level",
+            "language",
+            "price",
+            "categories",
+            "date",
+            "upload_or_youtube",
+            "description",
+            "discount",
+            "view",
+            "is_top",
+            "is_tavsiya",
+            "trailer",
+            "videos",
+            "course_rank",
+            "sell_count",
+            "modules",
+            "files",
+            "quizzes",
+            "requirementscourse",
+            "whatyoulearns",
+            "forwhoms",
+            "course_tags",
+        ]

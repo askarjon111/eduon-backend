@@ -26,7 +26,7 @@ def speakers_list(request):
 
 # speaker ma'lumotlari
 @api_view(['GET'])
-@authentication_classes([])
+@authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
 def speaker_detail(request, id):
     speaker = Speaker.objects.get(id=id)
@@ -47,7 +47,7 @@ def speaker_detail(request, id):
 
 # spikerga ban berish
 @api_view(['POST'])
-@authentication_classes([])
+@authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
 def speaker_ban(request, id):
     speaker = Speaker.objects.filter(id=id)
@@ -61,7 +61,7 @@ def speaker_ban(request, id):
 
 # spikerni karantinga yuborish
 @api_view(['POST'])
-@authentication_classes([])
+@authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
 def speaker_karantin(request, id):
     speaker = Speaker.objects.filter(id=id)
