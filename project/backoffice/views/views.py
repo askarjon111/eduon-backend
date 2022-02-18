@@ -9,6 +9,9 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, DetailView
 from rest_framework.views import APIView
+from django.contrib.auth.hashers import check_password
+from backoffice.serializers import AdminLoginSerializer
+from simplejwt.tokens import RefreshToken
 import random
 import string
 from home.sms import sms_send
@@ -17,6 +20,60 @@ from eduon import settings
 from home.models import *
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
+@api_view(['post'])
+@authentication_classes([])
+@permission_classes([])
+def AdminLoginView(request):
+    try:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        try:
+            admin = Admin.objects.get(admin__username=username)
+            user = User.objects.get(username=username)
+
+            if check_password(password, user.password):
+                ser = AdminLoginSerializer(admin)
+                token = RefreshToken.for_user(admin.admin)
+                tk = {
+                    "refresh": str(token),
+                    "access": str(token.access_token)
+                }
+                data = {
+                    "success": True,
+                    "error": "",
+                    "message": "Kirish tasdiqlandi!",
+                    "data": {
+                        "admin": {
+                            'first_name': user.first_name,
+                            'last_name': user.last_name,
+                            'username': user.username,
+                            'email': user.email
+                        },
+                        "token": tk
+                    }
+                }
+            else:
+                data = {
+                    "success": False,
+                    "error": "Telefon raqam yoki password xato!!",
+                    "message": ""
+                }
+        except Admin.DoesNotExist:
+            data = {
+                "success": False,
+                "error": "Bunday foydalanuvchi mavjud emas!",
+                "message": ""
+            }
+
+    except Exception as er:
+        data = {
+            "success": False,
+            "error": "{}".format(er),
+            "message": ""
+        }
+    return JsonResponse(data)
 
 
 def PagenatorPage(List, num, request):

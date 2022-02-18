@@ -1,4 +1,3 @@
-import datetime
 from home.models import Order, Speaker
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -63,8 +62,8 @@ def speaker_ban(request, id):
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
-def speaker_karantin(request, pk):
-    speaker = Speaker.objects.filter(pk=pk)
+def speaker_karantin(request, id):
+    speaker = Speaker.objects.filter(id=id)
     reason_of_ban = request.POST.get('reason_of_ban')
     speaker.update(status=0, reason_of_ban=reason_of_ban)
 

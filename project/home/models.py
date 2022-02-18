@@ -266,6 +266,8 @@ class Users(models.Model):
     status = models.IntegerField(default=0)
     parent_ref_code = models.CharField(max_length=255, null=True, blank=True)
     own_ref_code = models.CharField(max_length=255, null=True, blank=True)
+    date_of_release = models.DateField(null=True, blank=True)
+    reason_of_ban = models.CharField(max_length=500, blank=True, null=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,

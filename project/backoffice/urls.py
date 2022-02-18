@@ -4,7 +4,7 @@ import requests
 # from .bot import EduonBot
 from eduon import settings
 from .views.views import *
-from backoffice.views import statistics_views, speakers_views
+from backoffice.views import statistics_views, speakers_views, users_views
 
 urlpatterns = [
     path('', HomeView.as_view(), name='backoffice-home'),
@@ -37,7 +37,8 @@ urlpatterns = [
     path('set-bonus', setBonusSumma, name='set-bonus'),
 
     # path('telegram-bot', csrf_exempt(EduonBot.as_view())),
-    
+    # backoffice login
+    path('login', AdminLoginView, name='backoffice_login'),
     # backoffice statistics
     path('total-count', statistics_views.total_count, name="total_count"),
     path('content-and-auditory', statistics_views.content_and_auditory,
@@ -57,6 +58,14 @@ urlpatterns = [
     path('speaker-ban/<int:id>', speakers_views.speaker_ban, name="speaker_ban"),
     path('speaker-karantin/<int:id>', speakers_views.speaker_karantin, name="speaker_karantin"),
     path('speaker-detail/<int:id>', speakers_views.speaker_detail, name="speaker_detail"),
+    
+    # backoffice users
+    path('users-list', users_views.users_list, name="users_list"),
+    path('user-ban/<int:id>', users_views.user_ban, name="user_ban"),
+    path('user-karantin/<int:id>', users_views.user_karantin, name="user_karantin"),
+    path('user-detail/<int:id>',
+         users_views.user_detail, name="user_detail"),
+    path('user-bonus/<int:id>', users_views.user_bonus, name="user_bonus"),
 ]
 
 # r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',
