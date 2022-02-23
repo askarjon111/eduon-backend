@@ -4,16 +4,16 @@ import requests
 # from .bot import EduonBot
 from eduon import settings
 from .views.views import *
-from backoffice.views import statistics_views, speakers_views, users_views, courses_views, moliya_views
+from backoffice.views import statistics_views, speakers_views, users_views, courses_views, moliya_views, confirm_views, settings_views, karantin_views
 
 urlpatterns = [
     path('', HomeView.as_view(), name='backoffice-home'),
     path('sozlamalar', SettingsView.as_view(), name='sozlamalar'),
     path('setContract', setContrantWithSpeaker, name='setContract'),
-    path('set-discount', set_discount, name='set-discount'),
     path('speaker', SpeakersView.as_view(), name='backoffice-speaker'),
     path('speaker/course', SpeakerCourse, name='backoffice-speaker-course'),
-    path('speaker/<int:pk>', SpeakerDetail.as_view(), name='backoffice-speaker-detail'),
+    path('speaker/<int:pk>', SpeakerDetail.as_view(),
+         name='backoffice-speaker-detail'),
     path('course', CoursesView, name='backoffice-course'),
     path('tolov', Tolov.as_view(), name='backoffice-tolov'),
     path('get-billings-count', get_billings_count, name='get_billings_count'),
@@ -25,12 +25,15 @@ urlpatterns = [
     path('tasdiqlash-check', TasdiqOk, name='tasdiq-check'),
     path('count-offer', CountOfferAjax, name='count-offer'),
     path('change-course-status', ChangeCourseStatus, name='change-course-status'),
-    path('change-course-status-tavsiya', ChangeCourseStatusTavsiya, name='change-course-status-tavsiya'),
-    path('change-speaker-status', ChangeSpeakerStatus, name='change-speaker-status'),
+    path('change-course-status-tavsiya', ChangeCourseStatusTavsiya,
+         name='change-course-status-tavsiya'),
+    path('change-speaker-status', ChangeSpeakerStatus,
+         name='change-speaker-status'),
     path('change-user-cash', ChangeCashUser, name='change-user-cash'),
     path('change-user-bonus', ChangeBonusUser, name='change-user-bonus'),
     path('check-phone-number', check_phone_number, name='check-phone-number'),
-    path('check-phone-number-reset', check_phone_number_reset, name='check-phone-number-reset'),
+    path('check-phone-number-reset', check_phone_number_reset,
+         name='check-phone-number-reset'),
     path('set-ref-sp', setReferalValueSp, name='set-ref-sp'),
     path('set-ref-us', setReferalValueUS, name='set-ref-us'),
     path('moliya', moliya, name='moliya'),
@@ -56,9 +59,11 @@ urlpatterns = [
     # backoffice speaker
     path('speakers-list', speakers_views.speakers_list, name="speakers_list"),
     path('speaker-ban/<int:id>', speakers_views.speaker_ban, name="speaker_ban"),
-    path('speaker-karantin/<int:id>', speakers_views.speaker_karantin, name="speaker_karantin"),
-    path('speaker-detail/<int:id>', speakers_views.speaker_detail, name="speaker_detail"),
-    
+    path('speaker-karantin/<int:id>',
+         speakers_views.speaker_karantin, name="speaker_karantin"),
+    path('speaker-detail/<int:id>',
+         speakers_views.speaker_detail, name="speaker_detail"),
+
     # backoffice users
     path('users-list', users_views.users_list, name="users_list"),
     path('user-ban/<int:id>', users_views.user_ban, name="user_ban"),
@@ -66,16 +71,34 @@ urlpatterns = [
     path('user-detail/<int:id>',
          users_views.user_detail, name="user_detail"),
     path('user-bonus/<int:id>', users_views.user_bonus, name="user_bonus"),
-    
+
     # backoffice courses
     path('course-list', courses_views.course_list, name="course_list"),
     path('course-detail/<int:id>',
          courses_views.course_detail, name="course_detail"),
     path('course-karantin/<int:id>',
          courses_views.course_karantin, name="course_karantin"),
-    
+
     # backoffice moliya
     path('kirim-chiqim', moliya_views.kirim_chiqim, name="kirim_chiqim"),
+
+    # backoffice tasdiqlash
+    path('unconfirmed-courses', confirm_views.unconfirmed_courses,
+         name="unconfirmed_courses"),
+    path('course-confirm/<int:id>',
+         confirm_views.course_confirm, name="course_confirm"),
+    path('course-ban/<int:id>', confirm_views.course_ban, name="course_ban"),
+    
+    # backoffice settings
+    path('update-contract', settings_views.speaker_contract_edit,
+         name="speaker_contract_edit"),
+    path('update-reg-bonus', settings_views.reg_bonus_edit,
+         name="reg_bonus_edit"),
+    path('set-discount', settings_views.set_discount_course, name="set_discount_course"),
+    path('give-bonus', settings_views.give_bonus, name="give_bonus"),
+    
+    # Backoffice Karantin
+    path('karantindagi-kurslar', karantin_views.karantindagi_kurslar, name="karantindagi_kurslar"),
 ]
 
 # r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',

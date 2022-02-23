@@ -12,7 +12,7 @@ from backoffice.permissions import MarketingManagerPermission, OwnerPermission, 
 # Spikerlar,  Foydalanuvchilar, Kurslar va buyurtmalar soni
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
+@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission])
 def total_count(request):
     speakers = Speaker.objects.all().count()
     users = Users.objects.all().count()
@@ -133,7 +133,7 @@ def user_statistics(request):
 # Sotilgan kunlar: kecha, bugun, hafta, oy, yil uchun
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
+@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission])
 def order_statistics(request):
     query = request.GET.get('query')
     if query == "hafta":

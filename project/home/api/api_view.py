@@ -1,3 +1,4 @@
+from rest_framework.pagination import PageNumberPagination
 import datetime
 from http.client import HTTPResponse
 import random
@@ -9,7 +10,7 @@ from django.db.models import Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.db.models import Count
-from django.db.models.functions import ExtractDay, ExtractMonth
+from django.db.models.functions import ExtractDay, ExtractMonth, ExtractWeekDay
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
@@ -34,6 +35,7 @@ from .serializers import (
 from ..serializers import CourseModuleSerializer, SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
     VideoCourseSerializer
 
+
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([])
@@ -49,77 +51,80 @@ def speaker_orders(request):
     }
     return Response(data)
 
+
 def get_financial_statistics(request):
     speaker_money = Speaker.objects.aggregate(Sum('cash'))
     context = {
-        'speaker_money':speaker_money['cash__sum']
+        'speaker_money': speaker_money['cash__sum']
     }
 
     return render(request, "admin/statistics.html", context)
+
 
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
 def send_code(request):
-        try:
-            phone = request.GET.get('phone')
-            type = request.GET.get('type')
-            error = False
-            code = random.randint(100000, 999999)
-            stds = Users.objects.filter(phone=phone)
-            sent_code = PhoneCode.objects.filter(phone=phone, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=5)).count()
-            if sent_code < 3:
-                if stds.count() > 0:
-                    if type == "registeration":
-                        error = True
-                else:
-                    if type == "resset_password":
-                        error = True
-
-                if error == False:
-                    text = "Sizning tasdiq kodingiz {}. Eduon.uz".format(code)
-                    res = sms_send(phone, text)
-                    if res is not None:
-                        p = PhoneCode.objects.create(phone=phone, code=code)
-
-                        data = {
-                            "success": True,
-                            "message": "Code yuborildi!",
-                        }
-                        print(res)
-                    else:
-                        data = {
-                            "success": False,
-                            "message": "Code yuborilmadi!",
-                        }
-                else:
-                    if type == "registeration":
-                        data = {
-                            "success": False,
-                            "message": "Bu telefon raqam oldin ro'yhatga olingan!",
-                        }
-                    elif type == "resset_password":
-                        data = {
-                            "success": False,
-                            "message": "Bu telefon raqam oldin ro'yhatga olinmagan!",
-                        }
-                    else:
-                        data = {
-                            "success": False,
-                            "message": "Qandaydur xatolik yuz berdi!",
-                        }
+    try:
+        phone = request.GET.get('phone')
+        type = request.GET.get('type')
+        error = False
+        code = random.randint(100000, 999999)
+        stds = Users.objects.filter(phone=phone)
+        sent_code = PhoneCode.objects.filter(
+            phone=phone, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=5)).count()
+        if sent_code < 3:
+            if stds.count() > 0:
+                if type == "registeration":
+                    error = True
             else:
-                data = {
-                            "success": False,
-                            "message": "Urinishlar soni oshib ketdi, iltimos birozdan so'ng urinib ko'ring",
-                        }
-        except Exception as er:
+                if type == "resset_password":
+                    error = True
+
+            if error == False:
+                text = "Sizning tasdiq kodingiz {}. Eduon.uz".format(code)
+                res = sms_send(phone, text)
+                if res is not None:
+                    p = PhoneCode.objects.create(phone=phone, code=code)
+
+                    data = {
+                        "success": True,
+                        "message": "Code yuborildi!",
+                    }
+                    print(res)
+                else:
+                    data = {
+                        "success": False,
+                        "message": "Code yuborilmadi!",
+                    }
+            else:
+                if type == "registeration":
+                    data = {
+                        "success": False,
+                        "message": "Bu telefon raqam oldin ro'yhatga olingan!",
+                    }
+                elif type == "resset_password":
+                    data = {
+                        "success": False,
+                        "message": "Bu telefon raqam oldin ro'yhatga olinmagan!",
+                    }
+                else:
+                    data = {
+                        "success": False,
+                        "message": "Qandaydur xatolik yuz berdi!",
+                    }
+        else:
             data = {
                 "success": False,
-                "message": "{}".format(er),
+                "message": "Urinishlar soni oshib ketdi, iltimos birozdan so'ng urinib ko'ring",
             }
+    except Exception as er:
+        data = {
+            "success": False,
+            "message": "{}".format(er),
+        }
 
-        return Response(data)
+    return Response(data)
 
 
 @api_view(['get'])
@@ -449,8 +454,10 @@ def get_course(request):
             search = ""
 
         # if category is None:
-        query = Course.objects.filter(name__icontains=search, is_confirmed=True)
-        query2 = Speaker.objects.filter(Q(speaker__first_name__icontains=search) or Q(speaker__last_name__icontains=search))
+        query = Course.objects.filter(
+            name__icontains=search, is_confirmed=True)
+        query2 = Speaker.objects.filter(Q(speaker__first_name__icontains=search) or Q(
+            speaker__last_name__icontains=search))
         # else:
         #     query = Course.objects.filter(category_id=category, name__icontains=search)
 
@@ -541,9 +548,11 @@ def buy_course(request):
 
                 eduon_summa = eduonpay.eduon
                 speaker = ord.course.author
-                speaker.cash = int(round(speaker.cash + ord.summa * (100 - eduon_summa) / 100))
+                speaker.cash = int(
+                    round(speaker.cash + ord.summa * (100 - eduon_summa) / 100))
                 speaker.save()
-                ord.sp_summa = int(round(ord.summa * (100 - eduon_summa) / 100))
+                ord.sp_summa = int(
+                    round(ord.summa * (100 - eduon_summa) / 100))
                 ord.save()
                 usr.save()
                 data = {
@@ -623,7 +632,7 @@ def boughted_course_detail(request):
         orders = Order.objects.filter(course_id=course_id, user=user)
         course = BoughtedCourseSerializer(course)
         if orders.count() > 0 or course.turi == "Bepul":
-            
+
             data = {
                 "success": True,
                 "error": "",
@@ -783,11 +792,13 @@ def get_rating(request):
         token = request.META.get('HTTP_AUTHORIZATION', False)
         if token:
             access_token = token.split(' ')[-1]
-            get_token = TokenBackend(algorithm='HS256').decode(access_token, verify=False)
+            get_token = TokenBackend(algorithm='HS256').decode(
+                access_token, verify=False)
             user = get_token.get('user_id')
             course_id = request.GET.get("course_id")
             print(course_id)
-            speaker_courses = Course.objects.filter(author_id=Course.objects.get(id=course_id).author_id)
+            speaker_courses = Course.objects.filter(
+                author_id=Course.objects.get(id=course_id).author_id)
             speaker_courses_count = speaker_courses.count()
             ids = [i.id for i in speaker_courses]
             speaker_ranks = []
@@ -798,10 +809,12 @@ def get_rating(request):
                     rnk = None
                     speaker_courses_count -= 1
                 if rnk is not None:
-                    course_rank = (rnk.course_value + rnk.video_value + rnk.content_value + rnk.speaker_value) / 4
+                    course_rank = (rnk.course_value + rnk.video_value +
+                                   rnk.content_value + rnk.speaker_value) / 4
                     speaker_ranks.append(course_rank)
             if speaker_courses_count != 0:
-                speaker_rank = round(sum(speaker_ranks) / speaker_courses_count, 2)
+                speaker_rank = round(sum(speaker_ranks) /
+                                     speaker_courses_count, 2)
             else:
                 speaker_rank = 0
             try:
@@ -913,8 +926,10 @@ def set_comment(request):
         user = request.user.id
         course = request.data.get('course_id')
         comment = request.data.get('comment')
-        CommentCourse.objects.create(comment=comment, user_id=user, course_id=course)
-        comments = CommentCourse.objects.filter(course_id=course).order_by('-id')
+        CommentCourse.objects.create(
+            comment=comment, user_id=user, course_id=course)
+        comments = CommentCourse.objects.filter(
+            course_id=course).order_by('-id')
         ser = CommentSerializer(comments, many=True)
         data = {
             "success": True,
@@ -938,7 +953,8 @@ def set_comment(request):
 def get_comment(request):
     try:
         course_id = request.GET.get('course_id')
-        comments = CommentCourse.objects.filter(course_id=course_id).order_by('-id')
+        comments = CommentCourse.objects.filter(
+            course_id=course_id).order_by('-id')
         ser = CommentSerializer(comments, many=True)
         data = {
             "success": True,
@@ -966,7 +982,8 @@ def create_invoise(request):
             amount=amount,
             user=user
         )
-        url = ClickUz.generate_url(order_id=str(order.id), amount=str(order.amount), return_url='https://eduon.uz')
+        url = ClickUz.generate_url(order_id=str(order.id), amount=str(
+            order.amount), return_url='https://eduon.uz')
         data = {
             "success": True,
             "error": "",
@@ -1059,7 +1076,8 @@ def get_statistics(request):
         users30_35 = 0
         users36_45 = 0
         users46p = 0
-        users_unknown = Order.objects.filter(Q(course__author_id=sp.id) and Q(user__age=None)).count()
+        users_unknown = Order.objects.filter(
+            Q(course__author_id=sp.id) and Q(user__age=None)).count()
         age = [i.user.age.year for i in users if i.user.age is not None]
         for i in age:
             yosh = datetime.datetime.now().year - i
@@ -1075,7 +1093,10 @@ def get_statistics(request):
                 users36_45 += 1
             elif yosh >= 46:
                 users46p += 1
-        male = Order.objects.filter(Q(course__author_id=sp.id) and Q(user__gender='Erkak')).count()
+        male = Order.objects.filter(
+            Q(course__author_id=sp.id) and Q(user__gender='Erkak')).count()
+        print(male)
+        print(users)
         if users.count() != 0:
             mpercent = (male / users.count()) * 100
             fpercent = 100 - mpercent
@@ -1143,12 +1164,11 @@ def get_sell_course_statistics(request):
         query = request.GET.get('query')
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
-        if query == "hafta":            
-            weekly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
+        if query == "hafta":
+            weekly_statistics = Order.objects.filter(Q(course__author_id=sp.id)).filter(Q(
                 date__year=datetime.datetime.now().year,
-                date__week=datetime.datetime.now().isocalendar().week
-            ).annotate(
-                day=ExtractDay('date'),
+                date__week=datetime.datetime.now().isocalendar().week)).annotate(
+                day=ExtractWeekDay('date'),
             ).values(
                 'day'
             ).annotate(
@@ -1220,11 +1240,16 @@ def get_rank_statistics(request):
         usr = request.user
         speaker = Speaker.objects.get(speaker=usr)
         if query == 'Video':
-            cnt_1 = RankCourse.objects.filter(Q(video_value=1), Q(course__author_id=speaker.id)).count()
-            cnt_2 = RankCourse.objects.filter(Q(video_value=2), Q(course__author_id=speaker.id)).count()
-            cnt_3 = RankCourse.objects.filter(Q(video_value=3), Q(course__author_id=speaker.id)).count()
-            cnt_4 = RankCourse.objects.filter(Q(video_value=4), Q(course__author_id=speaker.id)).count()
-            cnt_5 = RankCourse.objects.filter(Q(video_value=5), Q(course__author_id=speaker.id)).count()
+            cnt_1 = RankCourse.objects.filter(
+                Q(video_value=1), Q(course__author_id=speaker.id)).count()
+            cnt_2 = RankCourse.objects.filter(
+                Q(video_value=2), Q(course__author_id=speaker.id)).count()
+            cnt_3 = RankCourse.objects.filter(
+                Q(video_value=3), Q(course__author_id=speaker.id)).count()
+            cnt_4 = RankCourse.objects.filter(
+                Q(video_value=4), Q(course__author_id=speaker.id)).count()
+            cnt_5 = RankCourse.objects.filter(
+                Q(video_value=5), Q(course__author_id=speaker.id)).count()
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
@@ -1234,11 +1259,16 @@ def get_rank_statistics(request):
                 "cnt_5": cnt_5
             }
         elif query == 'Kurs':
-            cnt_1 = RankCourse.objects.filter(Q(course_value=1), Q(course__author=speaker.id)).count()
-            cnt_2 = RankCourse.objects.filter(Q(course_value=2), Q(course__author=speaker.id)).count()
-            cnt_3 = RankCourse.objects.filter(Q(course_value=3), Q(course__author=speaker.id)).count()
-            cnt_4 = RankCourse.objects.filter(Q(course_value=4), Q(course__author=speaker.id)).count()
-            cnt_5 = RankCourse.objects.filter(Q(course_value=5), Q(course__author=speaker.id)).count()
+            cnt_1 = RankCourse.objects.filter(
+                Q(course_value=1), Q(course__author=speaker.id)).count()
+            cnt_2 = RankCourse.objects.filter(
+                Q(course_value=2), Q(course__author=speaker.id)).count()
+            cnt_3 = RankCourse.objects.filter(
+                Q(course_value=3), Q(course__author=speaker.id)).count()
+            cnt_4 = RankCourse.objects.filter(
+                Q(course_value=4), Q(course__author=speaker.id)).count()
+            cnt_5 = RankCourse.objects.filter(
+                Q(course_value=5), Q(course__author=speaker.id)).count()
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
@@ -1248,11 +1278,16 @@ def get_rank_statistics(request):
                 "cnt_5": cnt_5
             }
         elif query == 'Kontent':
-            cnt_1 = RankCourse.objects.filter(Q(content_value=1), Q(course__author=speaker.id)).count()
-            cnt_2 = RankCourse.objects.filter(Q(content_value=2), Q(course__author=speaker.id)).count()
-            cnt_3 = RankCourse.objects.filter(Q(content_value=3), Q(course__author=speaker.id)).count()
-            cnt_4 = RankCourse.objects.filter(Q(content_value=4), Q(course__author=speaker.id)).count()
-            cnt_5 = RankCourse.objects.filter(Q(content_value=5), Q(course__author=speaker.id)).count()
+            cnt_1 = RankCourse.objects.filter(
+                Q(content_value=1), Q(course__author=speaker.id)).count()
+            cnt_2 = RankCourse.objects.filter(
+                Q(content_value=2), Q(course__author=speaker.id)).count()
+            cnt_3 = RankCourse.objects.filter(
+                Q(content_value=3), Q(course__author=speaker.id)).count()
+            cnt_4 = RankCourse.objects.filter(
+                Q(content_value=4), Q(course__author=speaker.id)).count()
+            cnt_5 = RankCourse.objects.filter(
+                Q(content_value=5), Q(course__author=speaker.id)).count()
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
@@ -1262,11 +1297,16 @@ def get_rank_statistics(request):
                 "cnt_5": cnt_5
             }
         elif query == 'Spiker':
-            cnt_1 = RankCourse.objects.filter(Q(speaker_value=1), Q(course__author=speaker.id)).count()
-            cnt_2 = RankCourse.objects.filter(Q(speaker_value=2), Q(course__author=speaker.id)).count()
-            cnt_3 = RankCourse.objects.filter(Q(speaker_value=3), Q(course__author=speaker.id)).count()
-            cnt_4 = RankCourse.objects.filter(Q(speaker_value=4), Q(course__author=speaker.id)).count()
-            cnt_5 = RankCourse.objects.filter(Q(speaker_value=5), Q(course__author=speaker.id)).count()
+            cnt_1 = RankCourse.objects.filter(
+                Q(speaker_value=1), Q(course__author=speaker.id)).count()
+            cnt_2 = RankCourse.objects.filter(
+                Q(speaker_value=2), Q(course__author=speaker.id)).count()
+            cnt_3 = RankCourse.objects.filter(
+                Q(speaker_value=3), Q(course__author=speaker.id)).count()
+            cnt_4 = RankCourse.objects.filter(
+                Q(speaker_value=4), Q(course__author=speaker.id)).count()
+            cnt_5 = RankCourse.objects.filter(
+                Q(speaker_value=5), Q(course__author=speaker.id)).count()
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
@@ -1276,14 +1316,16 @@ def get_rank_statistics(request):
                 "cnt_5": cnt_5
             }
         elif query == 'Umumiy':
-            speaker_course_ranks = RankCourse.objects.filter(course__author=speaker.id)
+            speaker_course_ranks = RankCourse.objects.filter(
+                course__author=speaker.id)
             cnt_1 = 0
             cnt_2 = 0
             cnt_3 = 0
             cnt_4 = 0
             cnt_5 = 0
             for i in speaker_course_ranks:
-                cnt = (i.video_value + i.course_value + i.content_value + i.speaker_value) / 4
+                cnt = (i.video_value + i.course_value +
+                       i.content_value + i.speaker_value) / 4
                 if 1 <= cnt <= 1.5:
                     cnt_1 += 1
                 elif 1.5 < cnt <= 2.5:
@@ -1430,9 +1472,6 @@ def get_speaker_data(request):
     return Response(data)
 
 
-from rest_framework.pagination import PageNumberPagination
-
-
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
@@ -1472,7 +1511,8 @@ def verified_courses(request):
 
 def verified_speaker_courses(request):
     try:
-        speaker_count = Course.objects.filter(is_confirmed=True).distinct().count()
+        speaker_count = Course.objects.filter(
+            is_confirmed=True).distinct().count()
         data = {
             "success": True,
             "speaker_count": speaker_count

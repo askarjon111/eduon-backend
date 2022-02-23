@@ -4,6 +4,17 @@ from .models import *
 from django.contrib.auth.models import User
 
 
+class ContractWithSpeakerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContractWithSpeaker
+        fields = '__all__'
+
+
+class RegBonusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegBonus
+        fields = '__all__'
+
 class CourseModuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseModule

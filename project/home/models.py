@@ -444,6 +444,8 @@ class Course(models.Model):
     is_top = models.IntegerField(default=0)
     is_tavsiya = models.IntegerField(default=0)
     is_confirmed = models.BooleanField(default=False)
+    is_banned = models.BooleanField(default=False)
+    reason_of_ban = models.CharField(max_length=500, null=True, blank=True)
 
     # additional info
     get_from_course = models.TextField(null=True, blank=True)

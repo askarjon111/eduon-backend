@@ -76,6 +76,7 @@ admin.site.register(ForWhomCourse)
 admin.site.register(CourseModule)
 admin.site.register(IsFinished)
 admin.site.register(File)
+admin.site.register(ReferalValue)
 
 
 @admin.register(VideoCourse)

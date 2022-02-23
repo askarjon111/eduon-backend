@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from home.api.serializers import FileSerializer, LanguageSerializer, SpeakerGetSerializer, VideoSerializer
-from home.models import Admin, Course, CourseModule, File, ForWhomCourse, Order, RankCourse, RequirementsCourse, Speaker, Users, VideoCourse, WhatYouLearn
+from home.models import Admin, Course, CourseModule, File, ForWhomCourse, Order, RankCourse, ReferalValue, RequirementsCourse, Speaker, Users, VideoCourse, WhatYouLearn
 from django.db.models import Count, Q, Sum
 from paycom.models import Transaction
 from home.serializers import CountrySerializer, CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, DjangoUserSerializers, ForWhomCourseSerializer, RequirementsCourseSerializer, WhatYouLearnSerializer
@@ -16,7 +16,10 @@ class AdminLoginSerializer(serializers.ModelSerializer):
         model = Admin
         fields = '__all__'
 
-
+class ReferalValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReferalValue
+        fields = '__all__'
 
 class SpeakerSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()

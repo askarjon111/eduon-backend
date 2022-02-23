@@ -3,17 +3,15 @@ from home.models import Course
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
-from backoffice.serializers import CourseDetailSerializer, CourseListSerializer
+from backoffice.serializers import CourseListSerializer
 from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPermission
 
-
-# Kurslar ro'yxati
+# tasdiqlanmagan kurslar
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
-def course_list(request):
-    courses = Course.objects.filter(is_confirmed=True).order_by('-id')
+def unconfirmed_courses(request):
+    courses = Course.objects.filter(is_confirmed=False).order_by('-id')
     paginator = PageNumberPagination()
     page = paginator.paginate_queryset(courses, request)
     serializer = CourseListSerializer(
@@ -21,27 +19,25 @@ def course_list(request):
     return paginator.get_paginated_response(serializer.data)
 
 
-# kurs ma'lumotlari
+# kursni tasdiqlash / karantindan chiqarish
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
-def course_detail(request, id):
-    course = Course.objects.get(id=id)
-    course_details = CourseDetailSerializer(course, context={'request': request})
+def course_confirm(request, id):
+    course = Course.objects.filter(id=id)
+    course.update(is_confirmed=True)
 
-    data = {
-        "course_details": course_details.data,
-    }
-
-    return Response(data)
+    return JsonResponse({'status': 'ok'})
 
 
 # kursni karantinga yuborish
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
-def course_karantin(request, id):
-    course = Course.objects.filter(id=id)
-    course.update(is_confirmed=False)
+def course_ban(request, id):
+    course = Course.objects.get(id=id)
+    course.is_banned=True
+    course.is_confirmed=False
+    course.save()
 
-    return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': f"{course.name} banned"})
