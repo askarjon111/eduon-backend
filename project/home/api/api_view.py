@@ -1252,7 +1252,11 @@ def get_rank_statistics(request):
                 Q(video_value=4), Q(course__author_id=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(video_value=5), Q(course__author_id=speaker.id)).count()
-            total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total = (cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5) / add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
@@ -1275,7 +1279,7 @@ def get_rank_statistics(request):
                 Q(course_value=5), Q(course__author=speaker.id)).count()
             add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
             else:
                 total = 0
             data = {
@@ -1300,7 +1304,7 @@ def get_rank_statistics(request):
                 Q(content_value=5), Q(course__author=speaker.id)).count()
             add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
             else:
                 total = 0
             data = {
@@ -1325,7 +1329,7 @@ def get_rank_statistics(request):
                 Q(speaker_value=5), Q(course__author=speaker.id)).count()
             add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
             else:
                 total = 0
             data = {
@@ -1358,9 +1362,9 @@ def get_rank_statistics(request):
                     cnt_4 += 1
                 elif 4.5 < cnt <= 5:
                     cnt_5 += 1
-                add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
             else:
                 total = 0
             data = {
