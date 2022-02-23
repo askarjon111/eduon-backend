@@ -137,7 +137,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'phone', 'cash',
+    list_display = ('first_name', 'last_name', 'gender', 'phone', 'cash',
                     'bonus', 'status', 'email', 'last_sean', 'image')
     list_max_show_all = 50
     search_fields = ('first_name', "phone", "last_name")

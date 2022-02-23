@@ -365,7 +365,6 @@ class CourseDetailSerializer(ModelSerializer):
             "view",
             "is_top",
             "is_tavsiya",
-            "trailer",
             "videos",
             "course_rank",
             "sell_count",
@@ -376,6 +375,7 @@ class CourseDetailSerializer(ModelSerializer):
             "whatyoulearns",
             "forwhoms",
             "course_tags",
+            "trailer",
         ]
 
 
