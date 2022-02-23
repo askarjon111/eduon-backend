@@ -1253,13 +1253,15 @@ def get_rank_statistics(request):
                 Q(video_value=4), Q(course__author_id=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(video_value=5), Q(course__author_id=speaker.id)).count()
+            total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Kurs':
             cnt_1 = RankCourse.objects.filter(
@@ -1272,13 +1274,19 @@ def get_rank_statistics(request):
                 Q(course_value=4), Q(course__author=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(course_value=5), Q(course__author=speaker.id)).count()
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Kontent':
             cnt_1 = RankCourse.objects.filter(
@@ -1291,13 +1299,19 @@ def get_rank_statistics(request):
                 Q(content_value=4), Q(course__author=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(content_value=5), Q(course__author=speaker.id)).count()
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Spiker':
             cnt_1 = RankCourse.objects.filter(
@@ -1310,13 +1324,19 @@ def get_rank_statistics(request):
                 Q(speaker_value=4), Q(course__author=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(speaker_value=5), Q(course__author=speaker.id)).count()
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Umumiy':
             speaker_course_ranks = RankCourse.objects.filter(
@@ -1339,13 +1359,19 @@ def get_rank_statistics(request):
                     cnt_4 += 1
                 elif 4.5 < cnt <= 5:
                     cnt_5 += 1
+                add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total = cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 / add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         else:
             data = {
