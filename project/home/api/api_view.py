@@ -7,10 +7,10 @@ from ratelimit.decorators import ratelimit
 from clickuz import ClickUz
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.db.models import Count
-from django.db.models.functions import ExtractDay, ExtractMonth
+from django.db.models.functions import ExtractDay, ExtractMonth, ExtractWeekDay
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
@@ -64,7 +64,6 @@ def get_financial_statistics(request):
 @api_view(['get'])
 @authentication_classes([])
 @permission_classes([])
-# @ratelimit(key='ip', rate='3/m')
 def send_code(request):
     # was_limited = getattr(request, 'limited', False)
     # if was_limited:
@@ -1121,6 +1120,7 @@ def get_statistics(request):
                     "u36_45": users36_45 / users.count() * 100,
                     "u46p": users46p / users.count() * 100,
                     "user_unknown": users_unknown,
+                    "male": male,
                     'yigitlar': mpercent,
                     'qizlar': fpercent
                 }
@@ -1169,9 +1169,8 @@ def get_sell_course_statistics(request):
         if query == "hafta":
             weekly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
                 date__year=datetime.datetime.now().year,
-                date__week=datetime.datetime.now().isocalendar().week
-            ).annotate(
-                day=ExtractDay('date'),
+                date__week=datetime.datetime.now().isocalendar()[1]).annotate(
+                day=ExtractWeekDay('date'),
             ).values(
                 'day'
             ).annotate(
@@ -1185,7 +1184,7 @@ def get_sell_course_statistics(request):
                 }
             }
         elif query == "oy":
-            monthly_statistics = Order.objects.filter(
+            monthly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
                 date__year=datetime.datetime.now().year,
                 date__month=datetime.datetime.now().month
             ).annotate(
@@ -1203,7 +1202,7 @@ def get_sell_course_statistics(request):
                 }
             }
         elif query == "yil":
-            yearly_statistics = Order.objects.filter(
+            yearly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
                 date__year=datetime.datetime.now().year,
             ).annotate(
                 month=ExtractMonth('date'),
