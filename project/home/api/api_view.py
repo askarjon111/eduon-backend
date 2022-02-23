@@ -1080,7 +1080,7 @@ def get_statistics(request):
         users36_45 = 0
         users46p = 0
         users_unknown = Order.objects.filter(
-            Q(course__author_id=sp.id) and Q(user__age=None)).count()
+            Q(course__author_id=sp.id) & Q(user__age=None)).count()
         age = [i.user.age.year for i in users if i.user.age is not None]
         for i in age:
             yosh = datetime.datetime.now().year - i
@@ -1097,7 +1097,7 @@ def get_statistics(request):
             elif yosh >= 46:
                 users46p += 1
         male = Order.objects.filter(
-            Q(course__author_id=sp.id) and Q(user__gender='Erkak')).count()
+            Q(course__author_id=sp.id) & Q(user__gender='Erkak')).count()
         if users.count() != 0:
             mpercent = (male / users.count()) * 100
             fpercent = 100 - mpercent
