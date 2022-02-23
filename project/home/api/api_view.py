@@ -1327,13 +1327,13 @@ def get_user_country_statistics(request):
     try:
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
-        users = Order.objects.filter(course__author_id=sp.id)
+        users = Order.objects.filter(Q(course__author_id=sp.id) & Q(country not None))
         cnt = 0
         country = {}
         uid = set()
         for i in users:
             if i.user_id not in uid:
-                ctry = i.user.country.name
+                ctry = i.user.country
                 uid.add(i.user_id)
                 cnt += 1
                 if ctry in country.keys():
