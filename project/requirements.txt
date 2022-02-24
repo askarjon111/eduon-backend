@@ -57,3 +57,4 @@ urllib3==1.26.2
 webencodings==0.5.1
 django-filter==21.1
 django-adminlte-3==0.1.6
+django-background-tasks==1.2.5
