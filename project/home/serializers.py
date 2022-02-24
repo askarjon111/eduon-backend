@@ -242,8 +242,6 @@ class ParentCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoryVideo
         fields = ['id', 'name', 'image', 'parent']
-
-
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
@@ -256,7 +254,6 @@ class CategorySerializer(serializers.ModelSerializer):
         rep['parent'] = ParentCategorySerializer(instance.parent).data['name']
 
         return rep
-
 
 class LikeOrDislikeSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,7 +2,7 @@ from django.urls.conf import path
 from rest_framework import routers
 
 from .api_view import (
-    full_registration, get_financial_statistics, send_code, verify_code, set_photo, registeration, reset_password,
+    content_and_auditory, full_registration, get_financial_statistics, get_user_region_statistics, send_code, verify_code, set_photo, registeration, reset_password,
     get_countries, get_regions, login, get_course, get_boughted_course, buy_course, get_category, course_detail,
     boughted_course_detail, get_top_course, get_speaker, get_rating, set_rating, set_comment, get_comment,
     create_invoise, create_invoise_payme, payment_history, get_statistics, get_speaker_data, upload_file,
@@ -45,6 +45,7 @@ urlpatterns = [
     path('get-sell-course-statistics/', get_sell_course_statistics),
     path('get-rank-statistics/', get_rank_statistics),
     path('get-user-country-statics/', get_user_country_statistics),
+    path('get-user-region-statistics/', get_user_region_statistics),
     path('get-speaker-data/', get_speaker_data),
     path('upload-file/', upload_file),
     path('get-speaker-courses/', get_speaker_courses),
@@ -57,6 +58,7 @@ urlpatterns = [
     path('get-languages/', get_languages),
     path('financial-statistics/', get_financial_statistics),
     path('speaker-orders/', speaker_orders),
+    path('content-and-auditory/', content_and_auditory),
 ]
 
 from .views import CourseSpeakerAPIView, UploadVideoAndDocumentAPIView, VideosAPIView, ChangeCourseAPIView, \

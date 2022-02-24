@@ -5,7 +5,7 @@ import random
 from clickuz import ClickUz
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q, Sum
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.db.models import Count
 from django.db.models.functions import ExtractDay, ExtractMonth, ExtractWeekDay
@@ -30,6 +30,7 @@ from .serializers import (
 
 )
 from ..serializers import  UserSerializers, VideoCourseSerializer
+
 
 
 @api_view(['get'])
@@ -61,6 +62,11 @@ def get_financial_statistics(request):
 @authentication_classes([])
 @permission_classes([])
 def send_code(request):
+    # was_limited = getattr(request, 'limited', False)
+    # if was_limited:
+    #     return JsonResponse({"code": 1, 'msg': 'try many times'},json_dumps_params={'ensure_ascii':False})
+    # else:
+
     try:
         phone = request.GET.get('phone')
         type = request.GET.get('type')
@@ -87,7 +93,6 @@ def send_code(request):
                         "success": True,
                         "message": "Code yuborildi!",
                     }
-                    print(res)
                 else:
                     data = {
                         "success": False,
@@ -1073,7 +1078,7 @@ def get_statistics(request):
         users36_45 = 0
         users46p = 0
         users_unknown = Order.objects.filter(
-            Q(course__author_id=sp.id) and Q(user__age=None)).count()
+            Q(course__author_id=sp.id) & Q(user__age=None)).count()
         age = [i.user.age.year for i in users if i.user.age is not None]
         for i in age:
             yosh = datetime.datetime.now().year - i
@@ -1090,9 +1095,7 @@ def get_statistics(request):
             elif yosh >= 46:
                 users46p += 1
         male = Order.objects.filter(
-            Q(course__author_id=sp.id) and Q(user__gender='Erkak')).count()
-        print(male)
-        print(users)
+            Q(course__author_id=sp.id) & Q(user__gender='Erkak')).count()
         if users.count() != 0:
             mpercent = (male / users.count()) * 100
             fpercent = 100 - mpercent
@@ -1115,6 +1118,7 @@ def get_statistics(request):
                     "u36_45": users36_45 / users.count() * 100,
                     "u46p": users46p / users.count() * 100,
                     "user_unknown": users_unknown,
+                    "male": male,
                     'yigitlar': mpercent,
                     'qizlar': fpercent
                 }
@@ -1161,9 +1165,9 @@ def get_sell_course_statistics(request):
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
         if query == "hafta":
-            weekly_statistics = Order.objects.filter(Q(course__author_id=sp.id)).filter(Q(
+            weekly_statistics = Order.objects.filter(course__author_id=sp.id).filter(
                 date__year=datetime.datetime.now().year,
-                date__week=datetime.datetime.now().isocalendar().week)).annotate(
+                date__week=datetime.datetime.now().isocalendar()[1]).annotate(
                 day=ExtractWeekDay('date'),
             ).values(
                 'day'
@@ -1246,13 +1250,19 @@ def get_rank_statistics(request):
                 Q(video_value=4), Q(course__author_id=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(video_value=5), Q(course__author_id=speaker.id)).count()
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total = (cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5) / add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Kurs':
             cnt_1 = RankCourse.objects.filter(
@@ -1265,13 +1275,19 @@ def get_rank_statistics(request):
                 Q(course_value=4), Q(course__author=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(course_value=5), Q(course__author=speaker.id)).count()
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Kontent':
             cnt_1 = RankCourse.objects.filter(
@@ -1284,13 +1300,19 @@ def get_rank_statistics(request):
                 Q(content_value=4), Q(course__author=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(content_value=5), Q(course__author=speaker.id)).count()
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Spiker':
             cnt_1 = RankCourse.objects.filter(
@@ -1303,13 +1325,20 @@ def get_rank_statistics(request):
                 Q(speaker_value=4), Q(course__author=speaker.id)).count()
             cnt_5 = RankCourse.objects.filter(
                 Q(speaker_value=5), Q(course__author=speaker.id)).count()
+
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         elif query == 'Umumiy':
             speaker_course_ranks = RankCourse.objects.filter(
@@ -1332,13 +1361,19 @@ def get_rank_statistics(request):
                     cnt_4 += 1
                 elif 4.5 < cnt <= 5:
                     cnt_5 += 1
+            add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
+            if add > 0:
+                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+            else:
+                total = 0
             data = {
                 "success": True,
                 "cnt_1": cnt_1,
                 "cnt_2": cnt_2,
                 "cnt_3": cnt_3,
                 "cnt_4": cnt_4,
-                "cnt_5": cnt_5
+                "cnt_5": cnt_5,
+                "total": total,
             }
         else:
             data = {
@@ -1357,11 +1392,44 @@ def get_rank_statistics(request):
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([])
+def content_and_auditory(request):
+    user = request.user
+    sp = Speaker.objects.get(speaker_id=user.id)
+    content = Course.objects.filter(Q(author_id=sp) &
+                                    Q(date__year=datetime.datetime.now().year),
+                                    ).annotate(
+        month=ExtractMonth('date'),
+    ).values(
+        'month'
+    ).annotate(
+        content=Count('id')
+    ).order_by('month')
+    auditory = Order.objects.filter(Q(course__author_id=sp.id) & Q(user__regdate__year=datetime.datetime.now().year),
+    ).annotate(
+        month=ExtractMonth('user__regdate'),
+    ).values(
+        'month'
+    ).annotate(
+        auditory=Count('id')
+    ).order_by('month')
+
+    data = {
+        "content": content,
+        "auditory": auditory,
+    }
+
+    return Response(data)
+
+
+@api_view(['get'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([])
 def get_user_country_statistics(request):
     try:
         user = request.user
         sp = Speaker.objects.get(speaker_id=user.id)
-        users = Order.objects.filter(course__author_id=sp.id)
+        users = Order.objects.filter(
+            Q(course__author_id=sp.id) & Q(user__country__id__gte=0))
         cnt = 0
         country = {}
         uid = set()
@@ -1381,6 +1449,45 @@ def get_user_country_statistics(request):
             "message": "",
             "data": {
                 "country_statistic": country,
+            }
+        }
+    except Exception as er:
+        data = {
+            "success": False,
+            "error": "{}".format(er),
+            "message": ""
+        }
+    return Response(data)
+
+
+@api_view(['get'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([])
+def get_user_region_statistics(request):
+    try:
+        user = request.user
+        sp = Speaker.objects.get(speaker_id=user.id)
+        users = Order.objects.filter(
+            Q(course__author_id=sp.id) & Q(user__region__id__gte=0))
+        cnt = 0
+        region = {}
+        uid = set()
+        for i in users:
+            if i.user_id not in uid:
+                reg = i.user.region.name
+                uid.add(i.user_id)
+                cnt += 1
+                if reg in region.keys():
+                    region[reg] = region[reg] + 1
+                else:
+                    region[reg] = 1
+        for i in region.keys():
+            region[i] = region[i] / cnt * 100
+        data = {
+            "success": True,
+            "message": "",
+            "data": {
+                "region_statistic": region,
             }
         }
     except Exception as er:
