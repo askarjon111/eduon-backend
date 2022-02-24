@@ -18,6 +18,7 @@ from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPerm
 def users_list(request):
     users = Users.objects.all()
     paginator = PageNumberPagination()
+    paginator.page_size = 12
     page = paginator.paginate_queryset(users, request)
     serializer = UserSerializer(
         page, many=True, context={'request': request})

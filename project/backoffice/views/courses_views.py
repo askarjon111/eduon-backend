@@ -15,6 +15,7 @@ from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPerm
 def course_list(request):
     courses = Course.objects.filter(is_confirmed=True).order_by('-id')
     paginator = PageNumberPagination()
+    paginator.page_size = 12
     page = paginator.paginate_queryset(courses, request)
     serializer = CourseListSerializer(
         page, many=True, context={'request': request})

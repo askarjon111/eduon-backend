@@ -15,6 +15,7 @@ from rest_framework.response import Response
 def karantindagi_kurslar(request):
     courses = Course.objects.filter(is_banned=True).order_by('-id')
     paginator = PageNumberPagination()
+    paginator.page_size = 12
     page = paginator.paginate_queryset(courses, request)
     serializer = CourseListSerializer(
         page, many=True, context={'request': request})

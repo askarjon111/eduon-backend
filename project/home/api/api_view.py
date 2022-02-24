@@ -1,8 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 import datetime
-from http.client import HTTPResponse
 import random
-from ratelimit.decorators import ratelimit
 
 from clickuz import ClickUz
 from django.contrib.auth.hashers import make_password, check_password
@@ -15,11 +13,10 @@ from django.db.models.functions import ExtractDay, ExtractMonth, ExtractWeekDay
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import serializers
 
 
 from home.models import (
-    CourseModule, Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
+    Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
     Speaker, RankCourse, CommentCourse, OrderPayment, VideoCourse, File
 )
 from home.sms import sms_send
@@ -32,8 +29,7 @@ from .serializers import (
     VideoSerializer
 
 )
-from ..serializers import CourseModuleSerializer, SpeakerModelSerializer, SpeakerCourseSerializer, UserSerializers, SpeakerSerializer, \
-    VideoCourseSerializer
+from ..serializers import  UserSerializers, VideoCourseSerializer
 
 
 @api_view(['get'])

@@ -15,6 +15,7 @@ class RegBonusSerializer(serializers.ModelSerializer):
         model = RegBonus
         fields = '__all__'
 
+
 class CourseModuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseModule
@@ -132,7 +133,8 @@ class VideoCourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VideoCourse
-        fields = ['author', 'course', 'courseModule', 'title', 'url', 'video', 'image', 'description','is_file', 'link', 'date', 'views_count', 'place_number', 'speaker_rank', 'course_rank', 'content_rank', 'video_rank']
+        fields = ['author', 'course', 'courseModule', 'title', 'url', 'video', 'image', 'description', 'is_file',
+                  'link', 'date', 'views_count', 'place_number', 'speaker_rank', 'course_rank', 'content_rank', 'video_rank']
 
 
 class VideoCourseGetSerializer(serializers.ModelSerializer):
@@ -241,17 +243,18 @@ class ParentCategorySerializer(serializers.ModelSerializer):
         model = CategoryVideo
         fields = ['id', 'name', 'image', 'parent']
 
+
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = CategoryVideo
         fields = ['id', 'name', 'image', 'parent']
-        
+
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         rep['parent'] = ParentCategorySerializer(instance.parent).data['name']
-        
+
         return rep
 
 
@@ -443,8 +446,7 @@ class CourseSerializer(serializers.ModelSerializer):
         forwhoms_data = validated_data.pop(
             'forwhom', None)
         author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
-        # course, _ = Course.objects.filter(id=instance.id)
-        
+
         language_id = language_data.get('id', None)
         if language_id:
             Language.objects.get(id=language_id)
@@ -460,7 +462,7 @@ class CourseSerializer(serializers.ModelSerializer):
             if category_id:
                 CategoryVideo.objects.get(id=category_id)
             else:
-                
+
                 new_category = CategoryVideo.objects.create(**category)
                 instance.categories.add(new_category.id)
 
@@ -471,7 +473,7 @@ class CourseSerializer(serializers.ModelSerializer):
             new_trailer = CourseTrailer.objects.create(title=trailer_data.get(
                 'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
             instance.trailer = new_trailer
-        
+
         for tag in tags_data:
             tag_id = tag.get('id', None)
             if tag_id:
@@ -483,7 +485,8 @@ class CourseSerializer(serializers.ModelSerializer):
         for whatyoulearn in whatyoulearns_data:
             whatyoulearn_id = whatyoulearn.get('id', None)
             if whatyoulearn_id:
-                WhatYouLearn.objects.filter(id=whatyoulearn_id).update(**whatyoulearn)
+                WhatYouLearn.objects.filter(
+                    id=whatyoulearn_id).update(**whatyoulearn)
             else:
                 new_whatyoulearn = WhatYouLearn.objects.create(**whatyoulearn)
                 new_whatyoulearn.course = instance

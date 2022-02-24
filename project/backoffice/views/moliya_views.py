@@ -18,6 +18,7 @@ def kirim_chiqim(request):
     transactions = Transaction.objects.all().order_by('time')
     orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
     paginator = PageNumberPagination()
+    paginator.page_size = 12
     transaction_page = paginator.paginate_queryset(transactions, request)
     order_page = paginator.paginate_queryset(orders, request)
     transactions = TransactionSerializer(

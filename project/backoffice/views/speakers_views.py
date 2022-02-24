@@ -19,6 +19,7 @@ from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPerm
 def speakers_list(request):
     speakers = Speaker.objects.all()
     paginator = PageNumberPagination()
+    paginator.page_size = 12
     page = paginator.paginate_queryset(speakers, request)
     serializer = SpeakerSerializer(
         page, many=True, context={'request': request})
