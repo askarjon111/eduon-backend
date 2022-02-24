@@ -76,6 +76,7 @@ admin.site.register(ForWhomCourse)
 admin.site.register(CourseModule)
 admin.site.register(IsFinished)
 admin.site.register(File)
+admin.site.register(ReferalValue)
 
 
 @admin.register(VideoCourse)
@@ -106,7 +107,7 @@ class SpeakerAdmin(admin.ModelAdmin):
     list_filter = ('cash',)
     list_max_show_all = 50
     search_fields = ('speaker__username', 'speaker__first_name')
-    readonly_fields = ('cash', 'card_number', 'wallet_number')
+    readonly_fields = ('cash', 'wallet_number')
     exclude = ('card_date', 'wallet_expire')
 
     def get_first_name(self, obj):
@@ -142,7 +143,7 @@ class UsersAdmin(admin.ModelAdmin):
     list_max_show_all = 50
     search_fields = ('first_name', "phone", "last_name")
     date_hierarchy = ('regdate')
-    readonly_fields = ('cash', 'card_number', 'wallet_number')
+    readonly_fields = ('cash', 'wallet_number')
     exclude = ('wallet_expire', 'card_expire')
 
 
@@ -154,9 +155,17 @@ class LikeOrDislikeAdmin(admin.ModelAdmin):
     date_hierarchy = ('voted_date')
 
 
+class CategoryInline(admin.TabularInline):
+    model = CategoryVideo
+    can_delete = False
+
 @admin.register(CategoryVideo)
 class CategoryVideoAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    inlines = (CategoryInline, )
+    list_display = ('name', 'parent')
+    
+    def get_parent(self, obj):
+        return obj.parent.name
 
 
 @admin.register(TopCourse)

@@ -27,28 +27,24 @@ def sms_refresh():
 def sms_send(phone_number, text):
     phone_number = str(phone_number)
     phone_number.replace("+", "")
-    try:
-        if phone_number[0:3] == "998":
-            sms_login()
-            result = requests.post(settings.SMS_BASE_URL + '/api/message/sms/send',
-                                   {'mobile_phone': phone_number, 'message': text},
-                                   headers={'Authorization': f'Bearer {settings.SMS_TOKEN}'}).json()
+    if phone_number[0:3] == "998":
+        sms_login()
+        result = requests.post(settings.SMS_BASE_URL + '/api/message/sms/send',
+                                {'mobile_phone': phone_number, 'message': text},
+                                headers={'Authorization': f'Bearer {settings.SMS_TOKEN}'}).json()
 
-            return result
-        else:
-            sms_login_global()
-            payload = {
-                "message": text,
-                "to": "+" + str(phone_number),
-                "sender_id": "EduOn"
-            }
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + settings.SMS_TOKEN_GLOBAL
-            }
-            result = requests.post('https://api.sms.to/sms/send', json.dumps(payload),
-                                   headers=headers).json()
-            return result
-
-    except:
-        return None
+        return result
+    else:
+        sms_login_global()
+        payload = {
+            "message": text,
+            "to": "+" + str(phone_number),
+            "sender_id": "EduOn"
+        }
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + settings.SMS_TOKEN_GLOBAL
+        }
+        result = requests.post('https://api.sms.to/sms/send', json.dumps(payload),
+                                headers=headers).json()
+        return result

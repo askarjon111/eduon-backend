@@ -183,7 +183,9 @@ class Speaker(models.Model):
     ), null=True, blank=True, default=None)
     description = models.TextField(max_length=5000, null=True, blank=True)
     message = models.TextField(max_length=650, null=True, blank=True)
-    status = models.IntegerField(default=0)
+    status = models.IntegerField(default=1)
+    date_of_release = models.DateField(null=True, blank=True)
+    reason_of_ban = models.CharField(max_length=500, null=True, blank=True)
     is_top = models.IntegerField(default=0)
     both_date = models.DateField(null=True, blank=True)
     country = models.CharField(max_length=50, null=True, blank=True)
@@ -264,6 +266,8 @@ class Users(models.Model):
     status = models.IntegerField(default=0)
     parent_ref_code = models.CharField(max_length=255, null=True, blank=True)
     own_ref_code = models.CharField(max_length=255, null=True, blank=True)
+    date_of_release = models.DateField(null=True, blank=True)
+    reason_of_ban = models.CharField(max_length=500, blank=True, null=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
@@ -440,6 +444,8 @@ class Course(models.Model):
     is_top = models.IntegerField(default=0)
     is_tavsiya = models.IntegerField(default=0)
     is_confirmed = models.BooleanField(default=False)
+    is_banned = models.BooleanField(default=False)
+    reason_of_ban = models.CharField(max_length=500, null=True, blank=True)
 
     # additional info
     get_from_course = models.TextField(null=True, blank=True)

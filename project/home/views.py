@@ -19,7 +19,7 @@ from rest_framework_simplejwt import tokens
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 from home.serializers import (SpeakerLoginSerializer, SpeakerSerializer, CourseSerializer)
 

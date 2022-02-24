@@ -1,4 +1,4 @@
-from backoffice.views import check_phone_number
+from backoffice.views.views import check_phone_number
 from django.urls.conf import path, include
 
 from . import views
@@ -47,5 +47,5 @@ urlpatterns = [
     path('update-speaker', views.updateProfile, name='speaker_update'),
     path('update-speaker-card', views.updateCardProfile, name='speaker-card-update'),
     path('update-speaker-password', views.updatePasswordProfile, name='speaker-password-update'),
-    path('speaker', views.get_speaker, name='get-speaker')
+    path('speaker', views.get_speaker, name='get-speaker'),
 ]
