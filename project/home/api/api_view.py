@@ -441,7 +441,7 @@ def login(request):
                     "error": "Telefon raqam yoki password xato!!",
                     "message": ""
                 }
-                return JsonResponse(data, status=401)
+                return JsonResponse(data, status=400)
         except Users.DoesNotExist:
             data = {
                 "success": False,
