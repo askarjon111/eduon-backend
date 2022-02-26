@@ -294,6 +294,13 @@ UNICOIN_PASSWORD = "SDqwd$se6l8Gp4ASMWmmhTxwO98Fiub9"
 UNICOIN_HOST_UZCARD = "https://core.unired.uz/api/v1/unired"
 UNICOIN_HOST_HUMO = "https://core.unired.uz/api/v1/humo"
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'askarjon2002@gmail.com'
+EMAIL_HOST_PASSWORD = 'my!0V#26.04'
+
 UNIRED_LOGIN = "Eduon"
 UNIRED_PASSWORD = "Nr9WAVeS1TjV"
 UNIRED_WALLET_URL = "https://wallet.unired.uz"

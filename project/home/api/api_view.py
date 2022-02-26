@@ -13,7 +13,8 @@ from django.db.models.functions import ExtractDay, ExtractMonth, ExtractWeekDay
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 from home.models import (
     Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
@@ -85,7 +86,16 @@ def send_code(request):
 
             if error == False:
                 text = "Sizning tasdiq kodingiz {}. Eduon.uz".format(code)
-                res = sms_send(phone, text)
+                # check if its phone or email
+                if phone.find('@') > 0:
+                    res = send_mail(
+                        subject='Tasdiqlash kodi',
+                        message=text,
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[phone]
+                    )
+                else:
+                    res = sms_send(phone, text)
                 if res is not None:
                     p = PhoneCode.objects.create(phone=phone, code=code)
 
@@ -162,14 +172,18 @@ def registeration(request):
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         phone = request.data.get("phone")
+        email = request.data.get("email")
         password = request.data.get("password")
         gender = request.data.get("gender")
         code = request.data.get("code")
         ref_code = request.data.get("ref_code")
-        ph_c = PhoneCode.objects.filter(phone=phone, code=code)
+        if phone:
+            ph_c = PhoneCode.objects.filter(phone=phone, code=code)
+        else:
+            ph_c = PhoneCode.objects.filter(phone=email, code=code)
         if ph_c.count() > 0:
             std = Users.objects.create(
-                phone=phone, first_name=first_name, last_name=last_name,
+                phone=phone, email=email, first_name=first_name, last_name=last_name,
                 gender=gender, password=password
             )
             try:
@@ -383,9 +397,13 @@ def full_registration(request):
 def login(request):
     try:
         phone = request.data.get('phone')
+        email = request.data.get('email')
         password = request.data.get('password')
         try:
-            user = Users.objects.get(phone=phone)
+            if phone:
+                user = Users.objects.get(phone=phone)
+            elif email:
+                user = Users.objects.get(email=email)
             if check_password(password, user.password):
                 ser = UsersSerializer(user)
                 token = RefreshToken.for_user(user)

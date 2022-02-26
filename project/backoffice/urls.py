@@ -78,7 +78,6 @@ urlpatterns = [
          courses_views.course_detail, name="course_detail"),
     path('course-karantin/<int:id>',
          courses_views.course_karantin, name="course_karantin"),
-
     # backoffice moliya
     path('kirim-chiqim', moliya_views.kirim_chiqim, name="kirim_chiqim"),
 

@@ -43,7 +43,7 @@ def generate_ref():
 
 
 class PhoneCode(models.Model):
-    phone = models.CharField(max_length=25)
+    phone = models.CharField(max_length=200)
     code = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
@@ -52,7 +52,7 @@ class PhoneCode(models.Model):
 
 
 class PhoneCodeSpeaker(models.Model):
-    phone = models.CharField(max_length=25)
+    phone = models.CharField(max_length=200)
     code = models.CharField(max_length=5)
 
     def __str__(self):
@@ -467,6 +467,10 @@ class Course(models.Model):
         verbose_name = "Kurs"
         verbose_name_plural = "Kurslar"
 
+class Discount(models.model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    amount = models.IntegerField(default=0)
+    expire_day = models.DateTimeField(auto_now_add=False)
 
 class CourseModule(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)

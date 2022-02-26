@@ -77,6 +77,7 @@ admin.site.register(CourseModule)
 admin.site.register(IsFinished)
 admin.site.register(File)
 admin.site.register(ReferalValue)
+admin.site.register(PhoneCode)
 
 
 @admin.register(VideoCourse)

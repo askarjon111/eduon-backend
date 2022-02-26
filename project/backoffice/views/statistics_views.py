@@ -91,7 +91,7 @@ def user_statistics(request):
             users36_45 += 1
         elif yosh >= 46:
             users46p += 1
-    male = Users.objects.filter(Q(gender='Erkak')).count()
+    male = Users.objects.filter(gender='Erkak').count()
     if users.count() != 0:
         mpercent = (male / users.count()) * 100
         fpercent = 100 - mpercent
