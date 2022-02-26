@@ -68,7 +68,7 @@ def content_and_auditory(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([MarketingManagerPermission or OwnerPermission or ManagerPermission])
 def user_statistics(request):
-    users = Order.objects.all()
+    users = Users.objects.all()
     users1_17 = 0
     users18_23 = 0
     users24_29 = 0
@@ -76,7 +76,7 @@ def user_statistics(request):
     users36_45 = 0
     users46p = 0
     users_unknown = Users.objects.filter(Q(age=None)).count()
-    age = [i.user.age.year for i in users if i.user.age is not None]
+    age = [i.age.year for i in users if i.age is not None]
     for i in age:
         yosh = datetime.datetime.now().year - i
         if 1 <= yosh <= 17:
@@ -91,7 +91,7 @@ def user_statistics(request):
             users36_45 += 1
         elif yosh >= 46:
             users46p += 1
-    male = Users.objects.filter(Q(gender='Erkak')).count()
+    male = Users.objects.filter(gender='erkak').count()
     if users.count() != 0:
         mpercent = (male / users.count()) * 100
         fpercent = 100 - mpercent
@@ -139,7 +139,7 @@ def order_statistics(request):
     if query == "hafta":
         weekly_statistics = Order.objects.filter(
             date__year=datetime.datetime.now().year,
-            date__week=datetime.datetime.now().isocalendar().week
+            date__week=datetime.datetime.now().isocalendar()[1]
         ).annotate(
             day=ExtractDay('date'),
         ).values(
