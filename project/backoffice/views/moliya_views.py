@@ -30,5 +30,5 @@ def kirim_chiqim(request):
         "transactions": transactions.data,
         "orders": orders.data
     }
-    
+
     return paginator.get_paginated_response(data)

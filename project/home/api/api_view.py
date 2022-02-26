@@ -23,6 +23,8 @@ from home.models import (
 from home.sms import sms_send
 from home.serializers import CourseSerializer
 from rest_framework_simplejwt.backends import TokenBackend
+from paycom.models import Transaction
+from paycom.serializers import TransactionSerializer
 from simplejwt.tokens import RefreshToken
 from .serializers import (
     BillingSerializer, OrderSerializer, UsersSerializer, CountrySerializer, RegionSerialzier, GetCourseSerializer, SpeakerGetSerializer, CategorySerializer,
@@ -30,7 +32,7 @@ from .serializers import (
     VideoSerializer
 
 )
-from ..serializers import  CoursesWithDiscountSerializer, UserSerializers, VideoCourseSerializer
+from ..serializers import  CoursesWithDiscountSerializer, OrderSerializers, UserSerializers, VideoCourseSerializer
 
 
 @api_view(['get'])
@@ -49,20 +51,27 @@ def courses_with_discount(request):
 
     return JsonResponse(data, status=200)
 
-@api_view(['get'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([])
-def speaker_orders(request):
-    query = Order.objects.filter(course__author__speaker__id=request.user.id)
-    orders = OrderSerializer(query, many=True)
-    billings = BillingSerializer(query, many=True)
-    data = {
-        "success": True,
-        "error": "",
-        "orders": orders.data,
-        "billings": billings.data
-    }
-    return Response(data)
+# @api_view(['get'])
+# @authentication_classes([JWTAuthentication])
+# @permission_classes([])
+# def kirim_chiqim(request):
+#     transactions = Transaction.objects.all().order_by('time')
+#     orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
+#     paginator = PageNumberPagination()
+#     paginator.page_size = 12
+#     transaction_page = paginator.paginate_queryset(transactions, request)
+#     order_page = paginator.paginate_queryset(orders, request)
+#     transactions = TransactionSerializer(
+#         transaction_page, many=True, context={'request': request})
+#     orders = OrderSerializers(
+#         order_page, many=True, context={'request': request})
+
+#     data = {
+#         "transactions": transactions.data,
+#         "orders": orders.data
+#     }
+
+#     return paginator.get_paginated_response(data)
 
 
 def get_financial_statistics(request):

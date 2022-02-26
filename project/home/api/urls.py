@@ -7,7 +7,7 @@ from .api_view import (
     boughted_course_detail, get_top_course, get_speaker, get_rating, set_rating, set_comment, get_comment,
     create_invoise, create_invoise_payme, payment_history, get_statistics, get_speaker_data, upload_file,
     get_speaker_courses, verified_courses, verified_speaker_courses, get_courses, get_sell_course_statistics,
-    get_user_country_statistics, get_rank_statistics, speaker_orders
+    get_user_country_statistics, get_rank_statistics
 )
 from home.views import CourseCreateView, CourseListView, CourseUpdateView
 
@@ -57,7 +57,7 @@ urlpatterns = [
     path('filter-by-language/', filter_by_language),
     path('get-languages/', get_languages),
     path('financial-statistics/', get_financial_statistics),
-    path('speaker-orders/', speaker_orders),
+    # path('speaker-orders/', speaker_orders),
     path('content-and-auditory/', content_and_auditory),
     path('courses-with-discount/', courses_with_discount, name="courses_with_discount"),
 ]
