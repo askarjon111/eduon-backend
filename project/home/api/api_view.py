@@ -17,7 +17,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 from home.models import (
-    Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
+    Discount, Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
     Speaker, RankCourse, CommentCourse, OrderPayment, VideoCourse, File
 )
 from home.sms import sms_send
@@ -30,9 +30,24 @@ from .serializers import (
     VideoSerializer
 
 )
-from ..serializers import  UserSerializers, VideoCourseSerializer
+from ..serializers import  CoursesWithDiscountSerializer, UserSerializers, VideoCourseSerializer
 
 
+@api_view(['get'])
+@authentication_classes([])
+@permission_classes([])
+def courses_with_discount(request):
+
+    discounts = Discount.objects.all()
+    courses = []
+    for discount in discounts:
+        courses.append(discount.course)
+    data = {
+        "success": True,
+        "courses": CoursesWithDiscountSerializer(courses, many=True).data
+    }
+
+    return JsonResponse(data, status=200)
 
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
