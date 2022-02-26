@@ -91,24 +91,7 @@ CLICK_SETTINGS = {
     'merchant_user_id': '17661'
 }
 
-DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
-            },
-        }
-    }
-
-# if DEBUG:
-#     DATABASES = {
-#         'default': {
-#             "ENGINE": 'django.db.backends.sqlite3',
-#             "NAME": os.path.join(BASE_DIR, "db.sqlite3")
-#         }
-#     }
-# else:
-#     DATABASES = {
+# DATABASES = {
 #         'default': {
 #             'ENGINE': 'django.db.backends.mysql',
 #             'OPTIONS': {
@@ -116,6 +99,23 @@ DATABASES = {
 #             },
 #         }
 #     }
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            "ENGINE": 'django.db.backends.sqlite3',
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3")
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
+            },
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

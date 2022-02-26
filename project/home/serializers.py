@@ -328,19 +328,42 @@ class CoursesWithDiscountSerializer(serializers.ModelSerializer):
     expire_day = serializers.SerializerMethodField()
     discount_price = serializers.SerializerMethodField()
     author = AuthorShortSerializer(read_only=True)
-    
+    course_rank = serializers.SerializerMethodField()
+    sell_count = serializers.SerializerMethodField()
+
+
     def get_expire_day(self, obj):
         discount = Discount.objects.get(course_id=obj.id)
         expire_day = discount.expire_day
         
         return expire_day
-    
+
     def get_discount_price(self, obj):
         discount_price = obj.price - obj.discount
         return discount_price
+    
+    def get_course_rank(self, obj):
+        cr = RankCourse.objects.filter(course_id=obj.id)
+        value = cr.aggregate(value=Sum('course_value')).get('value')
+        count = cr.filter(course_value__gt=0).count()
+        if value is None:
+            value = 0
+        if count > 0:
+            return {"rank": round(value / count, 2), "count": count}
+        else:
+            return {"rank": 0, "count": 0}
+
+    def get_sell_count(self, obj):
+        try:
+            sells = Order.objects.filter(course_id=obj.id)
+            return sells.count()
+        except:
+            return 0
+
     class Meta:
         model = Course
-        fields = ['id', 'name', 'image', 'price', 'discount', 'expire_day', 'discount_price', 'author']
+        fields = ['id', 'name', 'image', 'course_rank', 'sell_count',
+                  'price', 'discount', 'expire_day', 'discount_price', 'author']
 
 class CourseSerializer(serializers.ModelSerializer):
     author = SpeakerSerializer(many=False, required=True)
