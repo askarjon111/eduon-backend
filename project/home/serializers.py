@@ -319,10 +319,15 @@ class ForWhomCourseSerializer(serializers.ModelSerializer):
         model = ForWhomCourse
         fields = ['id', 'title', 'course']
 
+class AuthorShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Speaker
+        fields = ['id', 'speaker', 'image', 'kasbi']
 
 class CoursesWithDiscountSerializer(serializers.ModelSerializer):
     expire_day = serializers.SerializerMethodField()
     discount_price = serializers.SerializerMethodField()
+    author = AuthorShortSerializer(read_only=True)
     
     def get_expire_day(self, obj):
         discount = Discount.objects.get(course_id=obj.id)
@@ -335,7 +340,7 @@ class CoursesWithDiscountSerializer(serializers.ModelSerializer):
         return discount_price
     class Meta:
         model = Course
-        fields = ['id', 'name', 'image', 'price', 'discount', 'expire_day', 'discount_price']
+        fields = ['id', 'name', 'image', 'price', 'discount', 'expire_day', 'discount_price', 'author']
 
 class CourseSerializer(serializers.ModelSerializer):
     author = SpeakerSerializer(many=False, required=True)

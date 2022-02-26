@@ -9,7 +9,7 @@ def delete_discount():
     discounts = Discount.objects.filter(expire_day=date.today())
     for discount in discounts:
         course = discount.course
-        course.discount = 0git
+        course.discount = 0
         course.save()
         discount.delete()
 
