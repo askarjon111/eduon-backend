@@ -467,8 +467,8 @@ class Course(models.Model):
         verbose_name = "Kurs"
         verbose_name_plural = "Kurslar"
 
-class Discount(models.model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+class Discount(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='discount_course')
     amount = models.IntegerField(default=0)
     expire_day = models.DateTimeField(auto_now_add=False)
 
