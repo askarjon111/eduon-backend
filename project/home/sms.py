@@ -1,6 +1,5 @@
 import json
 from django.http import JsonResponse
-
 import requests
 
 from eduon import settings
@@ -16,6 +15,7 @@ def sms_login_global():
     r = requests.post(settings.SMS_BASE_URL_GLOBAL + '/oauth/token',
                 {'client_id': settings.SMS_CLIENT_ID, 'secret': settings.SMS_SECRET_KEY_GLOBAL,
                  "expires_in": 3600}).json()
+    print(r)
     settings.SMS_TOKEN_GLOBAL = r['jwt']
 
 

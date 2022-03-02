@@ -218,7 +218,11 @@ def country_statistics(request):
     uid = set()
     for i in users:
         if i.user_id not in uid:
-            ctry = i.user.country.name
+            
+            if i.user.country is None:
+                ctry = "Noaniq"
+            else:
+                ctry = i.user.country.name
             uid.add(i.user_id)
             cnt += 1
             if ctry in country.keys():
