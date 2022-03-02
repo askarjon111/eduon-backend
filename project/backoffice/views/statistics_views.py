@@ -5,7 +5,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.db.models import Count, Q
-from django.db.models.functions import ExtractDay, ExtractMonth, ExtractHour
+from django.db.models.functions import ExtractDay, ExtractMonth, ExtractHour, ExtractWeekDay
 from backoffice.permissions import MarketingManagerPermission, OwnerPermission, ManagerPermission
 
 
@@ -139,9 +139,8 @@ def order_statistics(request):
     if query == "hafta":
         weekly_statistics = Order.objects.filter(
             date__year=datetime.datetime.now().year,
-            date__week=datetime.datetime.now().isocalendar()[1]
-        ).annotate(
-            day=ExtractDay('date'),
+            date__week=datetime.datetime.now().isocalendar()[1]).annotate(
+            day=ExtractWeekDay('date'),
         ).values(
             'day'
         ).annotate(
@@ -219,7 +218,11 @@ def country_statistics(request):
     uid = set()
     for i in users:
         if i.user_id not in uid:
-            ctry = i.user.country.name
+            
+            if i.user.country is None:
+                ctry = "Noaniq"
+            else:
+                ctry = i.user.country.name
             uid.add(i.user_id)
             cnt += 1
             if ctry in country.keys():
