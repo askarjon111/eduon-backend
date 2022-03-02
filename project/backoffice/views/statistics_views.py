@@ -5,7 +5,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.db.models import Count, Q
-from django.db.models.functions import ExtractDay, ExtractMonth, ExtractHour
+from django.db.models.functions import ExtractDay, ExtractMonth, ExtractHour, ExtractWeekDay
 from backoffice.permissions import MarketingManagerPermission, OwnerPermission, ManagerPermission
 
 
@@ -139,9 +139,8 @@ def order_statistics(request):
     if query == "hafta":
         weekly_statistics = Order.objects.filter(
             date__year=datetime.datetime.now().year,
-            date__week=datetime.datetime.now().isocalendar()[1]
-        ).annotate(
-            day=ExtractDay('date'),
+            date__week=datetime.datetime.now().isocalendar()[1]).annotate(
+            day=ExtractWeekDay('date'),
         ).values(
             'day'
         ).annotate(
