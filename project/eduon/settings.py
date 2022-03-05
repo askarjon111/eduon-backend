@@ -226,6 +226,7 @@ CORS_ORIGIN_WHITELIST = [
     # Front end
     "https://eduon.uz",
     "https://speaker.eduon.uz",
+    "http://157.230.10.27:3001",
     # Islom front end
     "http://192.168.100.247:3000",
     "http://192.168.100.247:3001",
@@ -233,6 +234,8 @@ CORS_ORIGIN_WHITELIST = [
     "http://192.168.100.36:3001",
     "http://192.168.43.115:3000",
     "http://192.168.43.115:3001",
+    "http://192.168.100.199:3000",
+    "http://192.168.100.199:3001",
     # Ibrohim
     "http://192.168.10.203:3000",
     "http://192.168.10.203:3001",
