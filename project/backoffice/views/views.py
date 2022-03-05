@@ -20,6 +20,8 @@ from eduon import settings
 from home.models import *
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.response import Response
+from django.contrib.auth.models import Group
 
 
 @api_view(['post'])
@@ -32,6 +34,10 @@ def AdminLoginView(request):
         try:
             admin = Admin.objects.get(admin__username=username)
             user = User.objects.get(username=username)
+            roles = []
+            groups = Group.objects.filter(user=user)
+            for group in groups:
+                roles.append(group.name)
 
             if check_password(password, user.password):
                 ser = AdminLoginSerializer(admin)
@@ -49,9 +55,11 @@ def AdminLoginView(request):
                             'first_name': user.first_name,
                             'last_name': user.last_name,
                             'username': user.username,
-                            'email': user.email
+                            'email': user.email,
+                            'roles': roles
                         },
-                        "token": tk
+                        "token": tk,
+                        
                     }
                 }
             else:
@@ -73,7 +81,7 @@ def AdminLoginView(request):
             "error": "{}".format(er),
             "message": ""
         }
-    return JsonResponse(data)
+    return Response(data)
 
 
 def PagenatorPage(List, num, request):
