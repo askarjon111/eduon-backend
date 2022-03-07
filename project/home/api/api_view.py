@@ -97,7 +97,10 @@ def send_code(request):
         type = request.GET.get('type')
         error = False
         code = random.randint(100000, 999999)
-        stds = Users.objects.filter(phone=phone)
+        if phone.find('@') > 0:
+            stds = Users.objects.filter(email=phone)
+        else:
+            stds = Users.objects.filter(phone=phone)
         sent_code = PhoneCode.objects.filter(
             phone=phone, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=5)).count()
         if sent_code < 3:
@@ -254,12 +257,21 @@ def registeration(request):
 def reset_password(request):
     try:
         phone = request.data.get('phone')
+        email = request.data.get('email')
         password = request.data.get('password')
         code = request.data.get('code')
-        ph_c = PhoneCode.objects.filter(phone=phone, code=code)
+        if phone:
+            ph_c = PhoneCode.objects.filter(phone=phone, code=code)
+        elif email:
+            ph_c = PhoneCode.objects.filter(phone=email, code=code)
+
         if ph_c.count() > 0:
             try:
-                student = Users.objects.get(phone=phone)
+                if phone:
+                    student = Users.objects.get(phone=phone)
+                elif email:
+                    student = Users.objects.get(email=email)
+
                 student.password = make_password(password)
                 student.save()
                 data = {
