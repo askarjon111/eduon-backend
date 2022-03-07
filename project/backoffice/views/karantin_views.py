@@ -11,7 +11,7 @@ from rest_framework.response import Response
 # Karantindagi spikerlar
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def karantindagi_kurslar(request):
     courses = Course.objects.filter(is_banned=True).order_by('-id')
     paginator = PageNumberPagination()

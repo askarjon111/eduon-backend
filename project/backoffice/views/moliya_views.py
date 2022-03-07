@@ -13,7 +13,7 @@ from paycom.serializers import TransactionSerializer
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def kirim_chiqim(request):
     transactions = Transaction.objects.all().order_by('time')
     orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')

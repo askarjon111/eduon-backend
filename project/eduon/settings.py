@@ -95,7 +95,7 @@ CLICK_SETTINGS = {
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {git
+            'OPTIONS': {
                 'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
             },
         }

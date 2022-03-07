@@ -11,7 +11,7 @@ from home.tasks import delete_discount
 # Kurslar ro'yxati
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def course_list(request):
     courses = Course.objects.filter(is_confirmed=True).order_by('-id')
     paginator = PageNumberPagination()
@@ -25,7 +25,7 @@ def course_list(request):
 # kurs ma'lumotlari
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def course_detail(request, id):
     course = Course.objects.get(id=id)
     course_details = CourseDetailSerializer(course, context={'request': request})
@@ -40,7 +40,7 @@ def course_detail(request, id):
 # kursni karantinga yuborish
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def course_karantin(request, id):
     course = Course.objects.filter(id=id)
     course.update(is_confirmed=False)
@@ -52,7 +52,7 @@ def course_karantin(request, id):
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def set_discount_to_course(request):
     data = request.data
     course = Course.objects.filter(id=data['course_id'])
