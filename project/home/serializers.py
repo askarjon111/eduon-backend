@@ -426,47 +426,81 @@ class CourseSerializer(serializers.ModelSerializer):
             author=author, **validated_data)
 
         if language_data:
-            new_language, _ = Language.objects.get_or_create(
-                name=language_data.get('name'))
-            course.language = new_language
+            try:
+                new_language, _ = Language.objects.get_or_create(
+                    name=language_data.get('name'))
+                course.language = new_language
+            except Language.MultipleObjectsReturned:
+                new_language = Language.objects.filter(name=language_data.get('name'))
+                course.language = new_language[0]
 
         if image:
             course.image = image
 
         if categories_data:
             for category in categories_data:
-                new_category, _ = CategoryVideo.objects.get_or_create(name=category.get(
+                try:
+                    new_category, _ = CategoryVideo.objects.get_or_create(name=category.get(
                     'name'), defaults={'image': category.get('image'), 'parent': category.get('parent')})
-                course.categories.add(new_category.id)
+                    course.categories.add(new_category.id)
+                except CategoryVideo.MultipleObjectsReturned:
+                    new_category = CategoryVideo.objects.filter(name=category.get(
+                        'name'))
+                    course.categories.add(new_category[0].id)
 
         if trailer_data:
-            new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
-                'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
-            course.trailer = new_trailer
+            try:
+                new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
+                    'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
+                course.trailer = new_trailer
+            except CourseTrailer.MultipleObjectsReturned:
+                new_trailer = CourseTrailer.objects.filter(title=trailer_data.get(
+                    'title'))
+                course.trailer = new_trailer[0]
+                
 
         if tags_data:
             for tag in tags_data:
-                new_tag, _ = CourseTag.objects.get_or_create(
-                    title=tag.get('title'))
-                course.course_tags.add(new_tag.id)
+                try:
+                    new_tag, _ = CourseTag.objects.get_or_create(
+                        title=tag.get('title'))
+                    course.course_tags.add(new_tag.id)
+                except CourseTag.MultipleObjectsReturned:
+                    new_tag = CourseTag.objects.filter(title=tag.get('title'))
+                    course.course_tags.add(new_tag[0].id)
 
         if whatyoulearns_data:
             for whatyoulearn in whatyoulearns_data:
-                new_whatyoulearn, _ = WhatYouLearn.objects.get_or_create(
-                    defaults={'title': whatyoulearn.get('title'), 'course': course}, **whatyoulearn)
-                course.whatyoulearn.add(new_whatyoulearn)
+                try:
+                    new_whatyoulearn, _ = WhatYouLearn.objects.get_or_create(
+                        defaults={'title': whatyoulearn.get('title'), 'course': course}, **whatyoulearn)
+                    course.whatyoulearn.add(new_whatyoulearn)
+                except WhatYouLearn.MultipleObjectsReturned:
+                    new_whatyoulearn = WhatYouLearn.objects.filter(title=whatyoulearn.get(
+                        'title'))
+                    course.whatyoulearn.add(new_whatyoulearn[0])
 
         if requirementscourse_data:
             for requirement in requirementscourse_data:
-                new_requirement, _ = RequirementsCourse.objects.get_or_create(
-                    defaults={'title': requirement.get('title'), 'course': course}, **requirement)
-                course.courserequirements.add(new_requirement)
+                try:
+                    new_requirement, _ = RequirementsCourse.objects.get_or_create(
+                        defaults={'title': requirement.get('title'), 'course': course}, **requirement)
+                    course.courserequirements.add(new_requirement)
+                except RequirementsCourse.MultipleObjectsReturned:
+                    new_requirement = RequirementsCourse.objects.filter(title=requirement.get(
+                        'title'))
+                    course.courserequirements.add(new_requirement[0])
 
         if forwhoms_data:
             for forwhom in forwhoms_data:
-                new_forwhom, _ = ForWhomCourse.objects.get_or_create(
-                    defaults={'title': forwhom.get('title'), 'course': course}, **forwhom)
-                course.forwhom.add(new_forwhom)
+                try:
+                    new_forwhom, _ = ForWhomCourse.objects.get_or_create(
+                        defaults={'title': forwhom.get('title'), 'course': course}, **forwhom)
+                    course.forwhom.add(new_forwhom)
+                except ForWhomCourse.MultipleObjectsReturned:
+                    new_forwhom = ForWhomCourse.objects.filter(title=forwhom.get(
+                        'title'))
+                    course.forwhom.add(new_forwhom[0])
 
         course.save()
         return course
@@ -482,7 +516,6 @@ class CourseSerializer(serializers.ModelSerializer):
             'courserequirements', None)
         forwhoms_data = validated_data.pop(
             'forwhom', None)
-        author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
 
         language_id = language_data.get('id', None)
         if language_id:
