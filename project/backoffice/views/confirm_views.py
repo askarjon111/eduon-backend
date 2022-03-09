@@ -9,7 +9,7 @@ from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPerm
 # tasdiqlanmagan kurslar
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def unconfirmed_courses(request):
     courses = Course.objects.filter(is_confirmed=False).order_by('-id')
     paginator = PageNumberPagination()
@@ -23,7 +23,7 @@ def unconfirmed_courses(request):
 # kursni tasdiqlash / karantindan chiqarish
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def course_confirm(request, id):
     course = Course.objects.filter(id=id)
     course.update(is_confirmed=True)
@@ -34,7 +34,7 @@ def course_confirm(request, id):
 # kursni karantinga yuborish
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def course_ban(request, id):
     course = Course.objects.get(id=id)
     course.is_banned=True

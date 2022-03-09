@@ -12,7 +12,7 @@ from backoffice.permissions import MarketingManagerPermission, OwnerPermission, 
 # Spikerlar,  Foydalanuvchilar, Kurslar va buyurtmalar soni
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission or AdminPermission])
+@permission_classes([AdminPermission | OwnerPermission | MarketingManagerPermission | ManagerPermission])
 def total_count(request):
     speakers = Speaker.objects.all().count()
     users = Users.objects.all().count()
@@ -33,7 +33,7 @@ def total_count(request):
 # Kontent va auditoriya bo'limi
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission or AdminPermission])
+@permission_classes([AdminPermission | OwnerPermission | MarketingManagerPermission | ManagerPermission])
 def content_and_auditory(request):
     content = Course.objects.filter(
         date__year=datetime.datetime.now().year,
@@ -66,7 +66,7 @@ def content_and_auditory(request):
 # Foydalanuvchilar yoshi va jinsi
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission or AdminPermission])
+@permission_classes([AdminPermission | OwnerPermission | MarketingManagerPermission | ManagerPermission])
 def user_statistics(request):
     users = Users.objects.all()
     users1_17 = 0
@@ -133,7 +133,7 @@ def user_statistics(request):
 # Sotilgan kunlar: kecha, bugun, hafta, oy, yil uchun
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission or AdminPermission])
+@permission_classes([AdminPermission | OwnerPermission | MarketingManagerPermission | ManagerPermission])
 def order_statistics(request):
     query = request.GET.get('query')
     if query == "hafta":
@@ -210,7 +210,7 @@ def order_statistics(request):
 # Foydalanuvchilarning davlatlar bo'yicha statistikasi
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission or AdminPermission])
+@permission_classes([AdminPermission | OwnerPermission | MarketingManagerPermission | ManagerPermission])
 def country_statistics(request):
     users = Order.objects.all()
     cnt = 0
@@ -240,7 +240,7 @@ def country_statistics(request):
 
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission or AdminPermission])
+@permission_classes([AdminPermission | OwnerPermission | MarketingManagerPermission | ManagerPermission])
 def free_and_paid_courses(request):
     courses = Course.objects.all()
     paid = Course.objects.filter(turi='Pullik').count()
@@ -263,7 +263,7 @@ def free_and_paid_courses(request):
 # Kurslar foizi kategoriyalari bo'yicha
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or MarketingManagerPermission or ManagerPermission or AdminPermission])
+@permission_classes([AdminPermission | OwnerPermission | MarketingManagerPermission | ManagerPermission])
 def courses_by_categories(request):
     categories = CategoryVideo.objects.filter(parent=None)
     courses = Course.objects.all().count()

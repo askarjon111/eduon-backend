@@ -14,7 +14,7 @@ from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPerm
 # Foydalanuvchilar ro'yxati
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def users_list(request):
     users = Users.objects.all()
     paginator = PageNumberPagination()
@@ -28,7 +28,7 @@ def users_list(request):
 # user ma'lumotlari
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def user_detail(request, id):
     user = Users.objects.get(id=id)
     user_details = UserSerializer(user, context={'request': request})
@@ -49,7 +49,7 @@ def user_detail(request, id):
 # userga ban berish
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def user_ban(request, id):
     user = Users.objects.filter(id=id)
     date_of_release = request.POST.get('date_of_release')
@@ -63,7 +63,7 @@ def user_ban(request, id):
 # userni karantinga yuborish
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def user_karantin(request, id):
     user = Users.objects.filter(id=id)
     reason_of_ban = request.POST.get('reason_of_ban')
@@ -74,7 +74,7 @@ def user_karantin(request, id):
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or AdminPermission or ManagerPermission])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def user_bonus(request, id):
     user = Users.objects.get(id=id)
     bonus = request.POST.get('bonus')

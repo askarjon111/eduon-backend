@@ -11,7 +11,7 @@ from home.serializers import ContractWithSpeakerSerializer, RegBonusSerializer
 # spikerlar ulushi
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or ManagerPermission])
+@permission_classes([OwnerPermission | ManagerPermission])
 def speaker_contract_edit(request):
     if request.method == 'GET':
         speaker_contract = ContractWithSpeaker.objects.last()
@@ -34,7 +34,7 @@ def speaker_contract_edit(request):
 # Reg bonus
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or ManagerPermission])
+@permission_classes([OwnerPermission | ManagerPermission])
 def reg_bonus_edit(request):
     if request.method == 'GET':
         reg_bonus = RegBonus.objects.last()
@@ -59,7 +59,7 @@ def reg_bonus_edit(request):
 # Referal bonus
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or ManagerPermission])
+@permission_classes([OwnerPermission | ManagerPermission])
 def ref_bonus_edit(request):
     if request.method == 'GET':
         ref_bonus = ReferalValue.objects.last()
@@ -84,7 +84,7 @@ def ref_bonus_edit(request):
 # Referal bonus
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or ManagerPermission])
+@permission_classes([OwnerPermission | ManagerPermission])
 def set_discount_course(request):
     data = request.data
     course = data['course']
@@ -97,7 +97,7 @@ def set_discount_course(request):
 # Give bonus to user
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([OwnerPermission or ManagerPermission])
+@permission_classes([OwnerPermission | ManagerPermission])
 def give_bonus(request):
     data = request.data
     user_id = data['user_id']

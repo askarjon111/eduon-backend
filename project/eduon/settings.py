@@ -92,24 +92,7 @@ CLICK_SETTINGS = {
     'merchant_user_id': '17661'
 }
 
-# DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'OPTIONS': {
-#                 'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
-#             },
-#         }
-#     }
-
-if DEBUG:
-    DATABASES = {
-        'default': {
-            "ENGINE": 'django.db.backends.sqlite3',
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3")
-        }
-    }
-else:
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
@@ -117,6 +100,23 @@ else:
             },
         }
     }
+
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             "ENGINE": 'django.db.backends.sqlite3',
+#             "NAME": os.path.join(BASE_DIR, "db.sqlite3")
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'read_default_file': '/var/www/eduon_backend/project/mysql.cnf',
+#             },
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -226,6 +226,7 @@ CORS_ORIGIN_WHITELIST = [
     # Front end
     "https://eduon.uz",
     "https://speaker.eduon.uz",
+    "http://157.230.10.27:3001",
     # Islom front end
     "http://192.168.100.247:3000",
     "http://192.168.100.247:3001",
@@ -233,6 +234,8 @@ CORS_ORIGIN_WHITELIST = [
     "http://192.168.100.36:3001",
     "http://192.168.43.115:3000",
     "http://192.168.43.115:3001",
+    "http://192.168.100.199:3000",
+    "http://192.168.100.199:3001",
     # Ibrohim
     "http://192.168.10.203:3000",
     "http://192.168.10.203:3001",
