@@ -19,7 +19,7 @@ def course_list(request):
     page = paginator.paginate_queryset(courses, request)
     serializer = CourseListSerializer(
         page, many=True, context={'request': request})
-    return paginator.get_pagindiscounated_response(serializer.data)
+    return paginator.get_paginated_response(serializer.data)
 
 
 # kurs ma'lumotlari
