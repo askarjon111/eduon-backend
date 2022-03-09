@@ -9,6 +9,13 @@ from quiz.serializers import QuizSerializer
 from uniredpay.models import PayForBalance
 
 
+class OrderSerializer(serializers.ModelSerializer):
+    user = DjangoUserSerializers(read_only=True)
+    class Meta:
+        model = Order
+        fields = "__all__"
+
+
 class PaymentHistorySerializer(serializers.ModelSerializer):
     user = DjangoUserSerializers(read_only=True)
     class Meta:

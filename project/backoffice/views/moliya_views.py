@@ -5,9 +5,8 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from django.db.models import Q
 from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPermission
-from backoffice.serializers import PaymentHistorySerializer, PayForBalanceSerializer
+from backoffice.serializers import PaymentHistorySerializer, PayForBalanceSerializer, OrderSerializer
 from home.models import Order, PaymentHistory
-from home.serializers import OrderSerializers
 from uniredpay.models import PayForBalance
 
 @api_view(['GET'])
@@ -26,7 +25,7 @@ def kirim_chiqim(request):
 
         orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
         order_page = paginator.paginate_queryset(orders, request)
-        orders = OrderSerializers(
+        orders = OrderSerializer(
             order_page, many=True, context={'request': request})
 
         payforbalances = PayForBalance.objects.all().order_by('-date')
@@ -44,7 +43,7 @@ def kirim_chiqim(request):
     elif query == 'orders':
         orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
         order_page = paginator.paginate_queryset(orders, request)
-        orders = OrderSerializers(
+        orders = OrderSerializer(
             order_page, many=True, context={'request': request})
         data = {
             "orders": orders.data
