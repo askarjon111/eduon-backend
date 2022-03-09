@@ -366,14 +366,14 @@ class CoursesWithDiscountSerializer(serializers.ModelSerializer):
                   'price', 'discount', 'expire_day', 'discount_price', 'author']
 
 class CourseSerializer(serializers.ModelSerializer):
-    author = SpeakerSerializer(many=False, required=True)
+    author = SpeakerSerializer(required=True)
     sell_count = serializers.SerializerMethodField()
     view = serializers.SerializerMethodField()
     image = serializers.CharField(required=False)
     course_rank = serializers.SerializerMethodField()
     trailer = CourseTrailerSerializer(many=False, required=False)
     categories = CategorySerializer(many=True, required=False)
-    language = LanguageSerializer(many=False, required=False)
+    language = LanguageSerializer(many=False, required=True)
     course_tags = CourseTagsSerializer(many=True, required=False)
     whatyoulearn = WhatYouLearnSerializer(many=True, required=False)
     courserequirements = RequirementsCourseSerializer(
@@ -508,6 +508,19 @@ class CourseSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         image = validated_data.pop('image', None)
         language_data = validated_data.pop('language', None)
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get(
+            'description', instance.description)
+        instance.level = validated_data.get(
+            'level', instance.level)
+        instance.upload_or_youtube = validated_data.get(
+            'upload_or_youtube', instance.upload_or_youtube)
+        instance.price = validated_data.get(
+            'price', instance.price)
+        instance.has_certificate = validated_data.get(
+            'has_certificate', instance.has_certificate)
+        instance.turi = validated_data.get(
+            'turi', instance.turi)
         categories_data = validated_data.pop('categories', None)
         trailer_data = validated_data.pop('trailer', None)
         tags_data = validated_data.pop('course_tags', None)
@@ -516,13 +529,17 @@ class CourseSerializer(serializers.ModelSerializer):
             'courserequirements', None)
         forwhoms_data = validated_data.pop(
             'forwhom', None)
+        author = Speaker.objects.get(id=validated_data.pop('author').get('id'))
 
         language_id = language_data.get('id', None)
         if language_id:
-            Language.objects.get(id=language_id)
+            language = Language.objects.get(id=language_id)
+            instance.language = language
+            instance.save()
         else:
-            new_language = Language.objects.create(**language_data)
-            instance.language = new_language
+            language = Language.objects.create(**language_data)
+            instance.language = language
+            instance.save()
 
         if image:
             instance.image = image
@@ -530,7 +547,8 @@ class CourseSerializer(serializers.ModelSerializer):
         for category in categories_data:
             category_id = category.get('id', None)
             if category_id:
-                CategoryVideo.objects.get(id=category_id)
+                new_category = CategoryVideo.objects.get(id=category_id)
+                instance.categories.add(new_category.id)
             else:
 
                 new_category = CategoryVideo.objects.create(**category)
@@ -581,8 +599,9 @@ class CourseSerializer(serializers.ModelSerializer):
                 new_forwhom = ForWhomCourse.objects.create(**forwhom)
                 new_forwhom.course = instance
                 new_forwhom.save()
-
-        return super().update(instance, validated_data)
+        instance.save()
+        updated_data = super().update(instance, validated_data)
+        return instance
 
 
 class TopCourseSerializer(serializers.ModelSerializer):
