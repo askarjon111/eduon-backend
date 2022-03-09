@@ -1,12 +1,19 @@
 from rest_framework import serializers
 from home.api.serializers import FileSerializer, LanguageSerializer, SpeakerGetSerializer, VideoSerializer
-from home.models import Admin, Course, CourseModule, File, ForWhomCourse, Order, RankCourse, ReferalValue, RequirementsCourse, Speaker, Users, VideoCourse, WhatYouLearn
+from home.models import Admin, Course, CourseModule, File, ForWhomCourse, Order, RankCourse, ReferalValue, RequirementsCourse, Speaker, Users, VideoCourse, WhatYouLearn, PaymentHistory
 from django.db.models import Count, Q, Sum
 from paycom.models import Transaction
 from home.serializers import CountrySerializer, CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, DjangoUserSerializers, ForWhomCourseSerializer, RequirementsCourseSerializer, WhatYouLearnSerializer
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 from uniredpay.models import PayForBalance
+
+
+class PaymentHistorySerializer(serializers.ModelSerializer):
+    user = DjangoUserSerializers(read_only=True)
+    class Meta:
+        model = PaymentHistory
+        fields = '__all__'
 
 
 class AdminLoginSerializer(serializers.ModelSerializer):
@@ -125,9 +132,10 @@ class UserSerializer(serializers.ModelSerializer):
                   'country', 'region', 'total_balance', 'used_money', 'cash', 'courses', 'image', 'bonus', 'pay_for_balances', 'total_bonus', 'used_bonus']
 
 class PayForBalanceSerializer(serializers.ModelSerializer):
+    user = DjangoUserSerializers(read_only=True)
     class Meta:
         model = PayForBalance
-        fields = ['id', 'amount', 'date']     
+        fields = ['user', 'amount', 'date']     
 
 
 class CourseListSerializer(serializers.ModelSerializer):
