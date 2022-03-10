@@ -16,13 +16,13 @@ def delete_discount():
 
 @background(schedule=640800)
 def set_discount_to_random_courses():
-    courses = Course.objects.filter(Q(discount=0) | Q(is_confirmed=True))
+    courses = Course.objects.filter(Q(discount=0) & Q(is_confirmed=True) & Q(price__gt=0))
     courses = courses.order_by('?')[:10]
     for course in courses:
         amount = course.price * 0.5
         expire_day = date.today() + timedelta(days=7)
         Discount.objects.create(
-            course=course, amount=amount, expire_day=date.expire_day)
+            course=course, amount=amount, expire_day=expire_day)
         course.discount = amount
         course.save()
 
