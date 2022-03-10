@@ -9,6 +9,7 @@ from backoffice.serializers import PaymentHistorySerializer, PayForBalanceSerial
 from home.models import Order, PaymentHistory
 from uniredpay.models import PayForBalance
 
+
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
@@ -33,42 +34,56 @@ def kirim_chiqim(request):
             payforbalances, request)
         payforbalances = PayForBalanceSerializer(
             payforbalance_page, many=True, context={'request': request})
-        
+
         data = {
             "transactions": transactions.data,
             "orders": orders.data,
             'payforbalances': payforbalances.data
         }
-    elif query == 'orders':
+    elif query == 'users':
+        paginator = PageNumberPagination()
+        paginator.page_size = 6
+        orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
+        order_page = paginator.paginate_queryset(orders, request)
+        orders = OrderSerializer(
+            order_page, many=True, context={'request': request})
+
+        payforbalances = PayForBalance.objects.all().order_by('-date')
+        payforbalance_page = paginator.paginate_queryset(
+            payforbalances, request)
+        payforbalances = PayForBalanceSerializer(
+            payforbalance_page, many=True, context={'request': request})
+        data = {
+            "orders": orders.data,
+            'payforbalances': payforbalances.data
+        }
+    elif query == 'speakers':
+        paginator = PageNumberPagination()
+        paginator.page_size = 6
+        orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
+        order_page = paginator.paginate_queryset(orders, request)
+        orders = OrderSerializer(
+            order_page, many=True, context={'request': request})
+
+        transactions = PaymentHistory.objects.all().order_by('-date')
+        transaction_page = paginator.paginate_queryset(transactions, request)
+        transactions = PaymentHistorySerializer(
+            transaction_page, many=True, context={'request': request})
+
+        data = {
+            "orders": orders.data,
+            "transactions": transactions.data,
+        }
+    elif query == 'eduon':
         paginator = PageNumberPagination()
         paginator.page_size = 12
         orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
         order_page = paginator.paginate_queryset(orders, request)
         orders = OrderSerializer(
             order_page, many=True, context={'request': request})
+
         data = {
-            "orders": orders.data
-        }
-    elif query == 'transactions':
-        paginator = PageNumberPagination()
-        paginator.page_size = 12
-        transactions = PaymentHistory.objects.all().order_by('-date')
-        transaction_page = paginator.paginate_queryset(transactions, request)
-        transactions = PaymentHistorySerializer(
-            transaction_page, many=True, context={'request': request})
-        
-        data = {
-            "transactions": transactions.data,
-        }
-    elif query == 'payforbalances':
-        paginator = PageNumberPagination()
-        paginator.page_size = 12
-        payforbalances = PayForBalance.objects.all().order_by('-date')
-        payforbalance_page = paginator.paginate_queryset(payforbalances, request)
-        payforbalances = PayForBalanceSerializer(payforbalance_page, many=True, context={'request': request})
-        
-        data = {
-            'payforbalances': payforbalances.data
+            "orders": orders.data,
         }
 
     return paginator.get_paginated_response(data)

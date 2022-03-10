@@ -11,6 +11,12 @@ from uniredpay.models import PayForBalance
 
 class OrderSerializer(serializers.ModelSerializer):
     user = DjangoUserSerializers(read_only=True)
+    type = serializers.SerializerMethodField()
+
+    def get_type(self, obj):
+        type = 'order'
+        return type
+
     class Meta:
         model = Order
         fields = "__all__"
@@ -18,6 +24,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class PaymentHistorySerializer(serializers.ModelSerializer):
     user = DjangoUserSerializers(read_only=True)
+    type = serializers.SerializerMethodField()
+    
+    def get_type(self, obj):
+        type = 'transaction'
+        return type
+
     class Meta:
         model = PaymentHistory
         fields = '__all__'
@@ -140,9 +152,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PayForBalanceSerializer(serializers.ModelSerializer):
     user = DjangoUserSerializers(read_only=True)
+    type = serializers.SerializerMethodField()
+
+    def get_type(self, obj):
+        type = 'payforbalance'
+        return type
+
     class Meta:
         model = PayForBalance
-        fields = ['user', 'amount', 'date']     
+        fields = ['user', 'amount', 'date', 'type']     
 
 
 class CourseListSerializer(serializers.ModelSerializer):
