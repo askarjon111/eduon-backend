@@ -333,7 +333,8 @@ class CoursesWithDiscountSerializer(serializers.ModelSerializer):
 
 
     def get_expire_day(self, obj):
-        discount = Discount.objects.get(course_id=obj.id)
+        discount = Discount.objects.filter(course_id=obj.id)[0]
+        print(discount)
         expire_day = discount.expire_day
         
         return expire_day
