@@ -1,0 +1,54 @@
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/base.py", line 369, in execute
+    output = self.handle(*args, **options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/background_task/management/commands/process_tasks.py", line 123, in handle
+    self.run(*args, **options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/background_task/management/commands/process_tasks.py", line 109, in run
+    time.sleep(sleep)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/base.py", line 369, in execute
+    output = self.handle(*args, **options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/background_task/management/commands/process_tasks.py", line 123, in handle
+    self.run(*args, **options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/background_task/management/commands/process_tasks.py", line 109, in run
+    time.sleep(sleep)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/django/core/management/base.py", line 369, in execute
+    output = self.handle(*args, **options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/background_task/management/commands/process_tasks.py", line 123, in handle
+    self.run(*args, **options)
+  File "/var/www/eduon_backend/venv/lib/python3.8/site-packages/background_task/management/commands/process_tasks.py", line 109, in run
+    time.sleep(sleep)
+KeyboardInterrupt

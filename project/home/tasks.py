@@ -2,7 +2,7 @@ from datetime import date, timezone,  timedelta
 from background_task import background
 from home.models import Course, Discount
 from django.db.models import Q
-
+from background_task.models import Task
 
 @background(schedule=600)
 def delete_discount():
@@ -27,5 +27,6 @@ def set_discount_to_random_courses():
         course.save()
 
 
-set_discount_to_random_courses()
-delete_discount()
+if Task.objects.filter(task_name='home.tasks.set_discount_to_random_courses').count() < 1:
+    set_discount_to_random_courses()
+    delete_discount()
