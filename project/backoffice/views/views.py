@@ -96,24 +96,18 @@ def eduon_revenue(request):
     if speaker_cash['cash__sum'] is None:
         with_users_cash = wallet_balance
     else:
-        if len(wallet_balance) > 2:
-            with_users_cash = int(wallet_balance) / 100 - speaker_cash['cash__sum']
+        with_users_cash = int(wallet_balance) / 100 - speaker_cash['cash__sum']
 
     if user_cash['cash__sum'] is None:
         eduon_revenue = with_users_cash
     else:
-        user_cash = str(user_cash['cash__sum'])
-        if len(user_cash) > 2:
-            eduon_revenue = with_users_cash - int(user_cash[:-2])
-        else:
-            eduon_revenue = with_users_cash
-  
+        eduon_revenue = with_users_cash - user_cash['cash__sum']
+
 
     data = {
         "speaker_cash": speaker_cash,
-        "eduon_revenue": eduon_revenue,
         "user_cash": user_cash,
-        "with_users_cash": with_users_cash
+        "eduon_revenue": eduon_revenue,
     }
     return JsonResponse(data)
 
