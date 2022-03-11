@@ -4,7 +4,7 @@ import requests
 # from .bot import EduonBot
 from eduon import settings
 from .views.views import *
-from backoffice.views import statistics_views, speakers_views, users_views, courses_views, moliya_views, confirm_views, settings_views, karantin_views
+from backoffice.views import statistics_views, speakers_views, users_views, courses_views, moliya_views, confirm_views, settings_views, karantin_views, views
 
 urlpatterns = [
     path('', HomeView.as_view(), name='backoffice-home'),
@@ -56,6 +56,8 @@ urlpatterns = [
          name="free_and_paid_courses"),
     path('courses-by-categories', statistics_views.courses_by_categories,
          name="courses_by_categories"),
+    path('eduon-revenue', views.eduon_revenue, name="eduon_revenue"),
+
     # backoffice speaker
     path('speakers-list', speakers_views.speakers_list, name="speakers_list"),
     path('speaker-ban/<int:id>', speakers_views.speaker_ban, name="speaker_ban"),

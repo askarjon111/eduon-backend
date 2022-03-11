@@ -22,6 +22,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django.contrib.auth.models import Group
+from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPermission
 
 
 @api_view(['post'])
@@ -82,6 +83,33 @@ def AdminLoginView(request):
             "message": ""
         }
     return Response(data)
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
+def eduon_revenue(request):
+    speaker_cash = Speaker.objects.filter(cash__gt=0).aggregate(Sum('cash'))
+    user_cash = Users.objects.filter(cash__gt=0).aggregate(Sum('cash'))
+    wallets = wallet_api(data={}, method='wallet.balance')
+    wallet_balance = str(wallets['result']['balance'])
+    if speaker_cash['cash__sum'] is None:
+        with_users_cash = wallet_balance
+    else:
+        with_users_cash = int(wallet_balance[:-2]) - speaker_cash['cash__sum']
+    
+    if user_cash['cash__sum'] is None:
+        eduon_revenue = with_users_cash
+    else:
+        eduon_revenue = with_users_cash - user_cash['cash__sum']
+        
+        
+
+    data = {
+        "speaker_cash": speaker_cash,
+        "eduon_revenue": eduon_revenue,
+    }
+    return JsonResponse(data)
 
 
 def PagenatorPage(List, num, request):

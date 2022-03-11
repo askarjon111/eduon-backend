@@ -109,7 +109,7 @@ class SpeakerAdmin(admin.ModelAdmin):
     list_filter = ('cash',)
     list_max_show_all = 50
     search_fields = ('speaker__username', 'speaker__first_name')
-    readonly_fields = ('cash', 'wallet_number')
+    readonly_fields = ('wallet_number',)
     exclude = ('card_date', 'wallet_expire')
 
     def get_first_name(self, obj):

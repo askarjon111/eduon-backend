@@ -9,7 +9,6 @@ from backoffice.serializers import PaymentHistorySerializer, PayForBalanceSerial
 from home.models import Order, PaymentHistory
 from uniredpay.models import PayForBalance
 
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
