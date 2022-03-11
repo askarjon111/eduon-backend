@@ -303,11 +303,11 @@ UNICOIN_HOST_UZCARD = "https://core.unired.uz/api/v1/unired"
 UNICOIN_HOST_HUMO = "https://core.unired.uz/api/v1/humo"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'bakhadiroff5101@gmail.com'
-EMAIL_HOST_PASSWORD = 'xfez aqvw ocee uomc'
+EMAIL_HOST = 'smtp.yandex.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'info@eduon.uz'
+EMAIL_HOST_PASSWORD = 'ksscweqfnzljohty'
 
 UNIRED_LOGIN = "Eduon"
 UNIRED_PASSWORD = "Nr9WAVeS1TjV"
