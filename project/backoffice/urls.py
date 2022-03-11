@@ -100,6 +100,9 @@ urlpatterns = [
     
     # Backoffice Karantin
     path('karantindagi-kurslar', karantin_views.karantindagi_kurslar, name="karantindagi_kurslar"),
+    path('users-cash-to-bonus', views.users_cash_to_bonus,
+         name="users_cash_to_balance"),
+
 ]
 
 # r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',

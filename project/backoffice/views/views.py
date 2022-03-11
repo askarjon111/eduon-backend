@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Sum
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, DetailView
 from rest_framework.views import APIView
@@ -96,20 +96,36 @@ def eduon_revenue(request):
     if speaker_cash['cash__sum'] is None:
         with_users_cash = wallet_balance
     else:
-        with_users_cash = int(wallet_balance[:-2]) - speaker_cash['cash__sum']
-    
+        if len(wallet_balance) > 2:
+            with_users_cash = int(wallet_balance) / 100 - speaker_cash['cash__sum']
+
     if user_cash['cash__sum'] is None:
         eduon_revenue = with_users_cash
     else:
-        eduon_revenue = with_users_cash - user_cash['cash__sum']
-        
-        
+        user_cash = str(user_cash['cash__sum'])
+        if len(user_cash) > 2:
+            eduon_revenue = with_users_cash - int(user_cash[:-2])
+        else:
+            eduon_revenue = with_users_cash
+  
 
     data = {
         "speaker_cash": speaker_cash,
         "eduon_revenue": eduon_revenue,
+        "user_cash": user_cash,
+        "with_users_cash": with_users_cash
     }
     return JsonResponse(data)
+
+
+def users_cash_to_bonus(request):
+    users = Users.objects.filter(cash__gt=0)
+    for user in users:
+        user.bonus += user.cash
+        user.cash = 0
+        user.save()
+        
+    return HttpResponse('ok')
 
 
 def PagenatorPage(List, num, request):
