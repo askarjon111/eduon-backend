@@ -50,6 +50,7 @@ class ReferalValueSerializer(serializers.ModelSerializer):
 class SpeakerSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     courses = serializers.SerializerMethodField()
+    orders = serializers.SerializerMethodField()
     students = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
     revenue = serializers.SerializerMethodField()
@@ -60,13 +61,19 @@ class SpeakerSerializer(serializers.ModelSerializer):
         first_name = obj.speaker.first_name
         last_name = obj.speaker.last_name
         return f"{first_name} {last_name}"
+    
+    
+    def get_orders(self, obj):
+        orders = Order.objects.filter(course__author=obj.id)
+        return orders.count()
+    
 
     def get_courses(self, obj):
         courses = Course.objects.filter(author=obj.id)
         return courses.count()
 
     def get_students(self, obj):
-        students = Order.objects.filter(course__author_id=obj.id)
+        students = Order.objects.filter(course__author_id=obj.id).values_list('user', flat=True).distinct()
         return students.count()
 
     def get_rating(self, obj):
@@ -99,7 +106,7 @@ class SpeakerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Speaker
         fields = ['id', 'name', 'both_date', 'kasbi', 'phone', 'country', 'city', 'compony', 'card_number', 'cash', 'courses',
-                  'students', 'rating', 'revenue', 'eduons_revenue', 'transactions',  'image']
+                  'students', 'rating', 'revenue', 'eduons_revenue', 'transactions',  'image', 'orders']
 
 
 class UserSerializer(serializers.ModelSerializer):
