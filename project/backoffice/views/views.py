@@ -101,17 +101,8 @@ def eduon_revenue(request):
     if user_cash['cash__sum'] is None:
         eduon_revenue = with_users_cash
     else:
-<<<<<<< HEAD
         eduon_revenue = with_users_cash - user_cash['cash__sum']
 
-=======
-        user_cash = str(user_cash['cash__sum'])
-git
-            eduon_revenue = with_users_cash - int(user_cash[:-2])
-        else:
-            eduon_revenue = with_users_cash
-  
->>>>>>> server
 
     data = {
         "speaker_cash": speaker_cash,
