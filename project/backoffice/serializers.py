@@ -56,11 +56,17 @@ class SpeakerSerializer(serializers.ModelSerializer):
     revenue = serializers.SerializerMethodField()
     eduons_revenue = serializers.SerializerMethodField()
     transactions = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
 
     def get_name(self, obj):
         first_name = obj.speaker.first_name
         last_name = obj.speaker.last_name
         return f"{first_name} {last_name}"
+    
+    
+    def get_email(self, obj):
+        email = obj.speaker.email
+        return email
     
     
     def get_orders(self, obj):
@@ -105,7 +111,7 @@ class SpeakerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Speaker
-        fields = ['id', 'name', 'both_date', 'kasbi', 'phone', 'country', 'city', 'compony', 'card_number', 'cash', 'courses',
+        fields = ['id', 'name', 'both_date', 'kasbi', 'phone', 'email', 'country', 'city', 'compony', 'card_number', 'cash', 'courses',
                   'students', 'rating', 'revenue', 'eduons_revenue', 'transactions',  'image', 'orders']
 
 
