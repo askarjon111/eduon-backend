@@ -47,13 +47,13 @@ def speaker_detail(request, id):
 
 
 # spikerga ban berish
-@api_view(['POST'])
+@api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def speaker_ban(request, id):
     speaker = Speaker.objects.filter(id=id)
-    date_of_release = request.POST.get('date_of_release')
-    reason_of_ban = request.POST.get('reason_of_ban')
+    date_of_release = request.GET.get('date_of_release')
+    reason_of_ban = request.GET.get('reason_of_ban')
     speaker.update(status=0, date_of_release=date_of_release, reason_of_ban=reason_of_ban)
 
     release_speaker()
