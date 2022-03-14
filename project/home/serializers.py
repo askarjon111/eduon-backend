@@ -452,7 +452,7 @@ class CourseSerializer(serializers.ModelSerializer):
         if trailer_data:
             try:
                 new_trailer, _ = CourseTrailer.objects.get_or_create(title=trailer_data.get(
-                    'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'))
+                    'title'), is_file=trailer_data.get('is_file'), video=trailer_data.get('video'), url=trailer_data.get('url'))
                 course.trailer = new_trailer
             except CourseTrailer.MultipleObjectsReturned:
                 new_trailer = CourseTrailer.objects.filter(title=trailer_data.get(
