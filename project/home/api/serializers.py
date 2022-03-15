@@ -1,6 +1,7 @@
 from django.db.models import Sum, Q
 from moviepy.editor import VideoFileClip
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, Serializer, CharField
+from home import serializers
 from home.models import *
 from home.serializers import CourseModuleSerializer, CourseTagsSerializer, CourseTrailerSerializer, ForWhomCourseSerializer, RequirementsCourseSerializer, VideoCourseGetSerializer, VideoCourseSerializer, WhatYouLearnSerializer
 from quiz.models import Quiz
@@ -581,6 +582,14 @@ class OrderSerializer(ModelSerializer):
         model = Order
         fields = "__all__"
 
+
+class SpeakerTransactionSerializer(Serializer):
+    amount = CharField()
+    type = SerializerMethodField()
+    
+    def get_type(self, obj):
+        type = "transaction"
+        return type
 
 class BillingSerializer(ModelSerializer):
     class Meta:

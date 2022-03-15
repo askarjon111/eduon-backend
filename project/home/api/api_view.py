@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.mail import send_mail
 from django.conf import settings
-from backoffice.serializers import PaymentHistorySerializer
+from backoffice import serializers as backoffice_serializers
 
 from home.models import (
     Discount, PaymentHistory, Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
@@ -27,38 +27,62 @@ from rest_framework_simplejwt.backends import TokenBackend
 from paycom.models import Transaction
 from paycom.serializers import TransactionSerializer
 from simplejwt.tokens import RefreshToken
+from uniredpay.serializers import CardHistorySerializers
+from uniredpay.uniredpay_conf import wallet_api, get_user
 from .serializers import (
-    BillingSerializer, OrderSerializer, UsersSerializer, CountrySerializer, RegionSerialzier, GetCourseSerializer, SpeakerGetSerializer, CategorySerializer,
+    BillingSerializer, OrderSerializer, SpeakerTransactionSerializer, UsersSerializer, CountrySerializer, RegionSerialzier, GetCourseSerializer, SpeakerGetSerializer, CategorySerializer,
     CourseDetailSerializer, BoughtedCourseSerializer, RatingSerializer, CommentSerializer, OrderPaymentSerializer,
     VideoSerializer
 
 )
-from ..serializers import  CoursesWithDiscountSerializer, OrderSerializers, UserSerializers, VideoCourseSerializer
-
+from ..serializers import CoursesWithDiscountSerializer, OrderSerializers, UserSerializers, VideoCourseSerializer
 
 
 @api_view(['get'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([])
 def kirim_chiqim_speaker(request):
-    speaker = request.data.get('speaker')
+    speaker = request.GET.get('speaker')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    speaker = Speaker.objects.get(id=speaker)
+    
     paginator = PageNumberPagination()
     paginator.page_size = 6
     orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
     order_page = paginator.paginate_queryset(orders, request)
-    orders = OrderSerializer(
+    orders = backoffice_serializers.OrderSerializer(
         order_page, many=True, context={'request': request})
+    # serial = CardHistorySerializers(data=request.data)
+    
+    # if not serial.is_valid():
+    #             return Response(serial.errors)
 
-    transactions = PaymentHistory.objects.filter(user=speaker).order_by('-date')
-    transaction_page = paginator.paginate_queryset(transactions, request)
-    transactions = PaymentHistorySerializer(
-        transaction_page, many=True, context={'request': request})
+    if not speaker.wallet_number:
+        return Response({'status': False, 'error': "Online wallet not found"})
+    
+    if start_date is None:
+        start_date = datetime.datetime.today() - datetime.timedelta(days=90)
+        end_date = datetime.datetime.today()
+        
+
+    data = {
+            'number': speaker.wallet_number,
+            'expire': speaker.wallet_expire,
+            'start_date': start_date.strftime('%Y%m%d'),
+            'end_date': end_date.strftime('%Y%m%d')
+        }
+
+    res = wallet_api(data=data, method='wallet.history')
+    # transaction_page = paginator.paginate_queryset(res, request)
+    # transactions = CardHistorySerializers(
+    #     transaction_page, many=True, context={'request': request})
 
     data = {
         "orders": orders.data,
-        "transactions": transactions.data,
+        "transactions": SpeakerTransactionSerializer(res['result']['transactions'], many=True).data
     }
-    
+
     return Response(data)
 
 
@@ -1358,7 +1382,7 @@ def get_rank_statistics(request):
                 Q(course_value=5), Q(course__author=speaker.id)).count()
             add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+                total = (cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5) / add
             else:
                 total = 0
             data = {
@@ -1383,7 +1407,7 @@ def get_rank_statistics(request):
                 Q(content_value=5), Q(course__author=speaker.id)).count()
             add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+                total = (cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5) / add
             else:
                 total = 0
             data = {
@@ -1409,7 +1433,7 @@ def get_rank_statistics(request):
 
             add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+                total = (cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5) / add
             else:
                 total = 0
             data = {
@@ -1444,7 +1468,7 @@ def get_rank_statistics(request):
                     cnt_5 += 1
             add = cnt_1 + cnt_2 + cnt_3 + cnt_4 + cnt_5
             if add > 0:
-                total =( cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5 )/ add
+                total = (cnt_1*1 + cnt_2*2 + cnt_3*3 + cnt_4*4 + cnt_5*5) / add
             else:
                 total = 0
             data = {
@@ -1486,7 +1510,7 @@ def content_and_auditory(request):
         content=Count('id')
     ).order_by('month')
     auditory = Order.objects.filter(Q(course__author_id=sp.id) & Q(user__regdate__year=datetime.datetime.now().year),
-    ).annotate(
+                                    ).annotate(
         month=ExtractMonth('user__regdate'),
     ).values(
         'month'

@@ -4,6 +4,7 @@ from django.contrib import admin
 from . import models
 
 admin.site.register(models.PayForBalance)
+admin.site.register(models.SpeakerTransaction)
 # admin.site.register(models.UserSms)
 
 
