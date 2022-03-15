@@ -180,6 +180,7 @@ class CourseListSerializer(serializers.ModelSerializer):
     course_rank = serializers.SerializerMethodField()
     sell_count = serializers.SerializerMethodField()
     author_image = serializers.SerializerMethodField()
+    videos_count = serializers.SerializerMethodField()
 
     def get_author_image(self, obj):
         author_image = obj.author.image.url
@@ -202,10 +203,16 @@ class CourseListSerializer(serializers.ModelSerializer):
             return sells.count()
         except:
             return 0
+    
+    def get_videos_count(slef, obj):
+        videos_count = VideoCourse.objects.filter(course=obj).count()
+        
+        return videos_count
+        
     class Meta:
         model = Course
         fields = ['id', 'name', 'image', 'author_image',
-                  'price', 'view', 'course_rank', 'sell_count']
+                  'price', 'view', 'course_rank', 'sell_count', 'videos_count']
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
