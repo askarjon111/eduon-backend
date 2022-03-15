@@ -12,7 +12,7 @@ from home.models import Users, Course, Order, Speaker
 from home.serializers import OrderSerializers
 from simplejwt.backends import TokenBackend
 from uniredpay import models, serializers
-from uniredpay.models import PayForBalance, PercentageOfSpeaker, UserSms
+from uniredpay.models import PayForBalance, PercentageOfSpeaker, SpeakerTransaction, UserSms
 from uniredpay.unired_sms import sms_send
 
 from uniredpay import uniredpay_conf
@@ -438,7 +438,7 @@ def get_money_from_wallet(request):
     if not seria.is_valid():
         return Response({'status': False, 'error': seria.errors})
 
-    if speaker.cash < 10000:
+    if speaker.cash < 100:
         return Response({'status': False, 'error': "Hisobingizda 50 ming dan kam mablag' bor!!!"})
 
     if speaker.cash:
@@ -452,13 +452,15 @@ def get_money_from_wallet(request):
         return Response({'status': False, 'error': "Sizda yetarli mablag' mavjud emas!!!"})
 
     try:
-        res = uniredpay_conf.wallet_api(data=data, method='transfer.proceed')
+        res = uniredpay_conf.wallet_api(data=data, method='transfer.proceed')     
     except Exception as e:
         return Response({'status': False, 'error': f"{e}"})
 
     if res.get('status'):
         speaker.cash = speaker.calculate_cash
         speaker.save()
+        SpeakerTransaction.objects.create(
+            speaker=speaker, amount=data['amount'])
         return Response({'status': True, 'message': 'Successfully'})
 
     return Response(res)

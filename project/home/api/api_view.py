@@ -15,9 +15,10 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.mail import send_mail
 from django.conf import settings
+from backoffice.serializers import PaymentHistorySerializer
 
 from home.models import (
-    Discount, Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
+    Discount, PaymentHistory, Users, PhoneCode, Country, Region, Course, Order, ContractWithSpeaker, CategoryVideo,
     Speaker, RankCourse, CommentCourse, OrderPayment, VideoCourse, File
 )
 from home.sms import sms_send
@@ -33,6 +34,32 @@ from .serializers import (
 
 )
 from ..serializers import  CoursesWithDiscountSerializer, OrderSerializers, UserSerializers, VideoCourseSerializer
+
+
+
+@api_view(['get'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([])
+def kirim_chiqim_speaker(request):
+    speaker = request.data.get('speaker')
+    paginator = PageNumberPagination()
+    paginator.page_size = 6
+    orders = Order.objects.filter(Q(summa__gt=0)).order_by('-date')
+    order_page = paginator.paginate_queryset(orders, request)
+    orders = OrderSerializer(
+        order_page, many=True, context={'request': request})
+
+    transactions = PaymentHistory.objects.filter(user=speaker).order_by('-date')
+    transaction_page = paginator.paginate_queryset(transactions, request)
+    transactions = PaymentHistorySerializer(
+        transaction_page, many=True, context={'request': request})
+
+    data = {
+        "orders": orders.data,
+        "transactions": transactions.data,
+    }
+    
+    return Response(data)
 
 
 @api_view(['get'])

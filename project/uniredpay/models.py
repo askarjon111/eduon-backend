@@ -1,12 +1,17 @@
 from django.db import models
 
-from home.models import Users, Course
+from home.models import Speaker, Users, Course
 
 
 class PercentageOfSpeaker(models.Model):
     from_own_staff = models.SmallIntegerField(default=90)
     from_user = models.SmallIntegerField(default=70)
 
+
+class SpeakerTransaction(models.Model):
+    speaker = models.ForeignKey(Speaker, on_delete=models.SET_NULL, null=True)
+    amount = models.PositiveIntegerField(default=0)
+    date = models.DateTimeField(auto_now_add=True)
 
 class PayForBalance(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
