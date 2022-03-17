@@ -42,8 +42,10 @@ def course_detail(request, id):
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def course_karantin(request, id):
-    course = Course.objects.filter(id=id)
-    course.update(is_confirmed=False)
+    course = Course.objects.get(id=id)
+    course.is_confirmed = False
+    course.is_banned = True
+    course.save()
 
     return JsonResponse({'status': 'ok'})
 
