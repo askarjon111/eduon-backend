@@ -83,19 +83,10 @@ class Permissions(models.Model):
 
 
 class Admin(models.Model):
-    permessions = (
-        (1, "Super admin"),
-        (2, "Speakerlar bo'limi"),
-        (3, "Foydalanuvchilar bo'limi"),
-        (4, "Kurslar bo'limi"),
-        (5, "Moliya bo'limi"),
-        (6, "Tasdiq bo'limi"),
-        (7, "To'lov bo'limi"),
-        (8, "Sozlamalar bo'limi"),
-        (9, "Dashboard bo'limi"),
-    )
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.ManyToManyField(Permissions)
+    image = ResizedImageField(upload_to=slugify_upload, null=True, blank=True)
+    promoted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='promoted_by', null=True, blank=True)
+    promoted_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.admin.username

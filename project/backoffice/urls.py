@@ -4,7 +4,7 @@ import requests
 # from .bot import EduonBot
 from eduon import settings
 from .views.views import *
-from backoffice.views import statistics_views, speakers_views, users_views, courses_views, moliya_views, confirm_views, settings_views, karantin_views, views
+from backoffice.views import statistics_views, speakers_views, users_views, courses_views, moliya_views, confirm_views, settings_views, karantin_views, views, admin_views
 
 urlpatterns = [
     path('', HomeView.as_view(), name='backoffice-home'),
@@ -102,7 +102,11 @@ urlpatterns = [
     path('karantindagi-kurslar', karantin_views.karantindagi_kurslar, name="karantindagi_kurslar"),
     path('users-cash-to-bonus', views.users_cash_to_bonus,
          name="users_cash_to_balance"),
-
+    
+    # backoffice admin
+    path('admin-list', admin_views.admin_list, name="admin_list"),
+    path('add-new-admin', admin_views.add_new_admin, name="add_new_admin"),
+    path('edit-admin/<int:id>', admin_views.edit_admin, name="edit_admin"),
 ]
 
 # r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',

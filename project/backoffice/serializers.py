@@ -7,7 +7,7 @@ from home.serializers import CountrySerializer, CourseModuleSerializer, CourseTa
 from quiz.models import Quiz
 from quiz.serializers import QuizSerializer
 from uniredpay.models import PayForBalance
-
+from django.contrib.auth.models import Group, User
 
 class OrderSerializer(serializers.ModelSerializer):
     user = DjangoUserSerializers(read_only=True)
@@ -33,6 +33,27 @@ class PaymentHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentHistory
         fields = '__all__'
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    admin = DjangoUserSerializers()
+    promoted_by = DjangoUserSerializers()
+    roles = serializers.SerializerMethodField()
+
+    
+    def get_roles(self, obj):
+        user = User.objects.get(id=obj.admin.id)
+        roles = []
+        groups = Group.objects.filter(user=user)
+        for group in groups:
+            roles.append(group.name)
+        
+        return roles
+            
+    
+    class Meta:
+        model = Admin
+        fields = ['admin', 'promoted_at', 'promoted_by', 'roles']
 
 
 class AdminLoginSerializer(serializers.ModelSerializer):
@@ -180,10 +201,16 @@ class CourseListSerializer(serializers.ModelSerializer):
     course_rank = serializers.SerializerMethodField()
     sell_count = serializers.SerializerMethodField()
     author_image = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
     videos_count = serializers.SerializerMethodField()
+    trailer = CourseTrailerSerializer()
 
     def get_author_image(self, obj):
         author_image = obj.author.image.url
+        return author_image
+    
+    def get_author_name(self, obj):
+        author_image = f"{obj.author.speaker.first_name} {obj.author.speaker.last_name}"
         return author_image
 
     def get_course_rank(self, obj):
@@ -211,8 +238,8 @@ class CourseListSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Course
-        fields = ['id', 'name', 'image', 'author_image',
-                  'price', 'view', 'course_rank', 'sell_count', 'videos_count']
+        fields = ['id', 'name', 'image', 'author_image', 'author_name',
+                  'price', 'view', 'course_rank', 'sell_count', 'videos_count', 'trailer']
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):

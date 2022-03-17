@@ -11,7 +11,7 @@ from backoffice.permissions import OwnerPermission, AdminPermission, ManagerPerm
 @authentication_classes([JWTAuthentication])
 @permission_classes([OwnerPermission | AdminPermission | ManagerPermission])
 def unconfirmed_courses(request):
-    courses = Course.objects.filter(is_confirmed=False).order_by('-id')
+    courses = Course.objects.filter(is_confirmed=False, is_banned=False).order_by('-id')
     paginator = PageNumberPagination()
     paginator.page_size = 12
     page = paginator.paginate_queryset(courses, request)
