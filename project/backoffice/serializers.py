@@ -53,7 +53,7 @@ class AdminSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Admin
-        fields = ['admin', 'promoted_at', 'promoted_by', 'roles']
+        fields = ['id', 'admin', 'promoted_at', 'promoted_by', 'roles']
 
 
 class AdminLoginSerializer(serializers.ModelSerializer):
@@ -78,6 +78,11 @@ class SpeakerSerializer(serializers.ModelSerializer):
     eduons_revenue = serializers.SerializerMethodField()
     transactions = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
+    
+    def get_type(self, obj):
+        type = 'speaker'
+        return type
 
     def get_name(self, obj):
         first_name = obj.speaker.first_name
@@ -133,7 +138,7 @@ class SpeakerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Speaker
         fields = ['id', 'name', 'both_date', 'kasbi', 'phone', 'email', 'country', 'city', 'compony', 'card_number', 'cash', 'courses',
-                  'students', 'rating', 'revenue', 'eduons_revenue', 'transactions',  'image', 'orders']
+                  'students', 'rating', 'revenue', 'eduons_revenue', 'transactions',  'image', 'orders', 'type', 'reason_of_ban']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -145,6 +150,11 @@ class UserSerializer(serializers.ModelSerializer):
     used_bonus = serializers.SerializerMethodField()
     total_balance = serializers.SerializerMethodField()
     used_money = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
+    
+    def get_type(self, obj):
+        type = 'user'
+        return type
 
     def get_name(self, obj):
         first_name = obj.first_name
@@ -182,7 +192,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ['id', 'name', 'age', 'job', 'phone',
-                  'country', 'region', 'total_balance', 'used_money', 'cash', 'courses', 'image', 'bonus', 'pay_for_balances', 'total_bonus', 'used_bonus']
+                  'country', 'region', 'total_balance', 'used_money', 'cash', 'courses', 'image', 'bonus', 'pay_for_balances', 'total_bonus', 'used_bonus', 'type', 'reason_of_ban']
 
 class PayForBalanceSerializer(serializers.ModelSerializer):
     user = DjangoUserSerializers(read_only=True)
@@ -204,6 +214,11 @@ class CourseListSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     videos_count = serializers.SerializerMethodField()
     trailer = CourseTrailerSerializer()
+    type = serializers.SerializerMethodField()
+    
+    def get_type(self, obj):
+        type = 'course'
+        return type
 
     def get_author_image(self, obj):
         author_image = obj.author.image.url
@@ -239,7 +254,7 @@ class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['id', 'name', 'image', 'author_image', 'author_name',
-                  'price', 'view', 'course_rank', 'sell_count', 'videos_count', 'trailer']
+                  'price', 'view', 'course_rank', 'sell_count', 'videos_count', 'trailer', 'type', 'reason_of_ban']
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):

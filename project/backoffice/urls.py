@@ -99,7 +99,8 @@ urlpatterns = [
     path('give-bonus', settings_views.give_bonus, name="give_bonus"),
     
     # Backoffice Karantin
-    path('karantindagi-kurslar', karantin_views.karantindagi_kurslar, name="karantindagi_kurslar"),
+    path('karantin', karantin_views.karantin,
+         name="karantin"),
     path('users-cash-to-bonus', views.users_cash_to_bonus,
          name="users_cash_to_balance"),
     
@@ -107,6 +108,7 @@ urlpatterns = [
     path('admin-list', admin_views.admin_list, name="admin_list"),
     path('add-new-admin', admin_views.add_new_admin, name="add_new_admin"),
     path('edit-admin/<int:id>', admin_views.edit_admin, name="edit_admin"),
+    path('delete-admin/<int:id>', admin_views.delete_admin, name="delete_admin"),
 ]
 
 # r = requests.post(settings.SMS_BASE_URL + '/api/auth/login/',

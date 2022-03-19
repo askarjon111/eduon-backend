@@ -30,7 +30,7 @@ def add_new_admin(request):
     user.groups.add(Group.objects.get(name=data['role']))
     user.save()
     
-    admin = Admin.objects.create(admin=user, promoted_by=request.user, image=data['image'])
+    admin = Admin.objects.create(admin=user, promoted_by=request.user, image=data.get('image'))
     admin.save()
     
     return Response({'status': 'ok'})
@@ -43,8 +43,8 @@ def edit_admin(request, id):
     data = request.data
     admin = Admin.objects.get(id=id) 
     user = User.objects.get(id=admin.admin.id)
-    user.first_name = data['first_name']
-    user.username = data['username']
+    user.first_name = data.get('first_name')
+    user.username = data.get('username')
     user.groups.add(Group.objects.get(name=data['role']))
     user.set_password(data['password'])
     user.save()
@@ -52,4 +52,14 @@ def edit_admin(request, id):
     admin = Admin.objects.create(admin=user, promoted_by=request.user)
     admin.save()
 
+    return Response({'status': 'ok'})
+
+
+@api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([OwnerPermission])
+def delete_admin(request, id):
+    admin = Admin.objects.get(id=id)
+    admin.admin.delete()
+    admin.delete()
     return Response({'status': 'ok'})

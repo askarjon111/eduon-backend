@@ -67,7 +67,7 @@ def user_ban(request, id):
 def user_karantin(request, id):
     user = Users.objects.filter(id=id)
     reason_of_ban = request.POST.get('reason_of_ban')
-    user.update(is_active=0, reason_of_ban=reason_of_ban)
+    user.update(is_active=False, reason_of_ban=reason_of_ban)
 
     return JsonResponse({'status': 'ok'})
 
