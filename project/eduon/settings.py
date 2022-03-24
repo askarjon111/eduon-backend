@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-
+from celery.schedules import crontab
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -12,8 +12,21 @@ from corsheaders.defaults import default_methods
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+LOGGING_CONFIG = None
 # Application definition
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
 
 INSTALLED_APPS = [
     'adminlte3',
@@ -319,3 +332,35 @@ UZCARD_TERMINAL_ID = '92415924'
 
 HUMO_MERCHANT_ID = '011860000118613'
 HUMO_TERMINAL_ID = '23610C9U'
+
+
+CRONJOBS = [
+    ('* * * * *', 'backoffice.cron.set_discount_to_random_courses',
+     '>> /home/work/EduOnBack/project/cron.log'),
+    ('* * * * *', 'backoffice.cron.delete_discount',
+     '>> /home/work/EduOnBack/project/cron.log'),
+    ('* * * * *', 'backoffice.cron.test_cron_function',
+     '>> /home/work/EduOnBack/project/cron.log')
+]
+
+# CELERY STUFF
+# BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Tashkent'
+CELERY_BEAT_SCHEDULE = {
+    "set_discount_to_random_courses": {
+        "task": "set_discount_to_random_courses",
+        "schedule": crontab(hour=13, day_of_week=0)
+    },
+    "delete_discount_task": {
+        "task": "delete_discount_task",
+        "schedule": crontab()
+    },
+    "print_test": {
+        "task": "print_test",
+        "schedule": crontab()
+    }
+}

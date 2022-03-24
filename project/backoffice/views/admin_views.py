@@ -49,7 +49,7 @@ def edit_admin(request, id):
     user.set_password(data['password'])
     user.save()
 
-    admin = Admin.objects.create(admin=user, promoted_by=request.user)
+    admin = Admin.objects.update(admin=user, promoted_by=request.user)
     admin.save()
 
     return Response({'status': 'ok'})
