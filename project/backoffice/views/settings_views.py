@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from backoffice.permissions import OwnerPermission, ManagerPermission
-from home.serializers import ContractWithSpeakerSerializer, RegBonusSerializer
-
+from home.serializers import ContractWithSpeakerSerializer, DjangoUserSerializers, RegBonusSerializer
+from django.db.models import Q
 
 # spikerlar ulushi
 @api_view(['GET', 'POST'])
@@ -93,6 +93,37 @@ def set_discount_course(request):
     course.discount = discount
     course.save()
     return JsonResponse({'status': course.name + ' discount set to ' + str(course.discount)})
+
+
+# Search users to give bonus
+@api_view(['get'])
+@authentication_classes([])
+@permission_classes([])
+def search_user(request):
+    try:
+        search = request.GET.get('q')
+        if search is None:
+            search = ""
+        query = Users.objects.filter(Q(first_name__icontains=search) | Q(
+            last_name__icontains=search) | Q(phone__contains=search) | Q(email__contains=search))
+
+        serializer = DjangoUserSerializers(query, many=True)
+        data = {
+            "success": True,
+            "error": "",
+            "message": "Userlar olindi!",
+            "data_courses": serializer.data,
+        }
+
+    except Exception as er:
+        data = {
+            "success": False,
+            "error": "{}".format(er),
+            "message": ""
+        }
+
+    return Response(data)
+
 
 # Give bonus to user
 @api_view(['POST'])

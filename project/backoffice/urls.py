@@ -97,6 +97,7 @@ urlpatterns = [
          name="reg_bonus_edit"),
     path('set-discount', settings_views.set_discount_course, name="set_discount_course"),
     path('give-bonus', settings_views.give_bonus, name="give_bonus"),
+    path('search-user', settings_views.search_user, name="search_user"),
     
     # Backoffice Karantin
     path('karantin', karantin_views.karantin,
