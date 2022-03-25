@@ -4,15 +4,19 @@ from home.models import Course, Discount
 from django.db.models import Q
 from background_task.models import Task
 
-@background(schedule=600)
+
+@background(schedule=60)
 def delete_discount():
-    discounts = Discount.objects.filter(expire_day=date.today())
+    discounts = Discount.objects.filter(expire_day__lte=date.today())
     for discount in discounts:
         course = discount.course
+        print(discount)
+        print('course')
         course.discount = 0
         course.save()
         discount.delete()
 
+delete_discount()
 
 @background(schedule=640800)
 def set_discount_to_random_courses():

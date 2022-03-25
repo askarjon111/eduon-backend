@@ -41,16 +41,13 @@ def add_new_admin(request):
 @permission_classes([OwnerPermission])
 def edit_admin(request, id):
     data = request.data
-    admin = Admin.objects.get(id=id) 
+    admin = Admin.objects.get(id=id)
     user = User.objects.get(id=admin.admin.id)
     user.first_name = data.get('first_name')
     user.username = data.get('username')
     user.groups.add(Group.objects.get(name=data['role']))
     user.set_password(data['password'])
     user.save()
-
-    admin = Admin.objects.update(admin=user, promoted_by=request.user)
-    admin.save()
 
     return Response({'status': 'ok'})
 
