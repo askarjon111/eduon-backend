@@ -98,6 +98,9 @@ urlpatterns = [
     path('set-discount', settings_views.set_discount_course, name="set_discount_course"),
     path('give-bonus', settings_views.give_bonus, name="give_bonus"),
     path('search-user', settings_views.search_user, name="search_user"),
+    path('get-default-discount-amount', settings_views.get_default_discount_amount, name="get_default_discount_amount"),
+    path('change-course-discount', settings_views.change_course_discount, name="change_course_discount"),
+    path('delete-discounts', settings_views.delete_discounts, name="delete_discounts"),
     
     # Backoffice Karantin
     path('karantin', karantin_views.karantin,

@@ -463,6 +463,11 @@ class Discount(models.Model):
     amount = models.IntegerField(default=0)
     expire_day = models.DateTimeField(auto_now_add=False)
 
+
+class DiscountAmount(models.Model):
+    amount = models.IntegerField(default=0)
+
+
 class CourseModule(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     course = models.ForeignKey(Course, verbose_name=_(

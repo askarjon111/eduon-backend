@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from backoffice.serializers import ReferalValueSerializer
-from home.models import ContractWithSpeaker, Course, ReferalValue, RegBonus, Users
+from home.models import ContractWithSpeaker, Course, Discount, DiscountAmount, ReferalValue, RegBonus, Users
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
@@ -138,3 +138,54 @@ def give_bonus(request):
     user.bonus += int(bonus)
     user.save()
     return JsonResponse({'status': 'ok'})
+
+
+# Get default discount amount
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([OwnerPermission | ManagerPermission])
+def get_default_discount_amount(request):
+    discount = DiscountAmount.objects.last()
+    if discount:
+        data = {
+            'discount': discount.amount
+        }
+    else:
+        data = {
+            'discount': 'Belgilanmagan!'
+        }
+    
+    return Response(data)
+
+
+# Change course discount default amount
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([OwnerPermission | ManagerPermission])
+def change_course_discount(request):
+    discount = DiscountAmount.objects.last()
+    if discount is not None:
+        discount.amount = request.data['amount']
+        discount.save()
+    else:
+        DiscountAmount.objects.create(amount=request.data['amount'])
+    
+    return Response({'status': 'ok'})
+
+
+# delete discounts
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([OwnerPermission | ManagerPermission])
+def delete_discounts(request):
+    discounts = request.POST.getlist("discounts")
+    items_map = map(int, discounts)
+    items_int = list(items_map)
+    
+    for discount_id in items_int:
+        discount = Discount.objects.get(id=discount_id)
+        discount.course.discount = 0
+        discount.course.save()
+        discount.delete()
+    
+    return Response({'status': 'ok'})

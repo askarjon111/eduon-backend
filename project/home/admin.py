@@ -80,6 +80,7 @@ admin.site.register(ReferalValue)
 admin.site.register(PhoneCode)
 admin.site.register(PhoneCodeSpeaker)
 admin.site.register(Discount)
+admin.site.register(DiscountAmount)
 
 
 @admin.register(VideoCourse)
