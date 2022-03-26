@@ -25,7 +25,7 @@ from home.serializers import (SpeakerLoginSerializer, SpeakerSerializer, CourseS
 
 from .models import *
 from .serializers import DjangoUserSerializers, GetSpeakerSerializer
-
+from django.core.mail import send_mail
 
 class CourseCreateView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
@@ -950,22 +950,32 @@ from home.sms import sms_send
 
 def check_phone_number(request):
     phone_number = request.POST.get('phone_number')
+    
+    if phone_number.find('@') > 0:
+        speaker = Speaker.objects.filter(speaker__email=phone_number)
+    else:
+        speaker = Speaker.objects.filter(phone=phone_number)
 
-    if Speaker.objects.filter(phone=phone_number).exists():
+    if speaker.exists():
         data = {
             "status": False,
             "data": "Speaker already exists"
         }
         return JsonResponse(data, status=405)
+
     if phone_number is not None:
         code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
-        print(phone_number)
-        res = sms_send(
-            phone_number,
-            settings.SMS_REGISTER_TEXT + code
-        )
-        phone_number = str(phone_number)
-        phone_number = phone_number.replace("+", "")
+        if phone_number.find('@') > 0:
+            res = send_mail(
+                subject='Tasdiqlash kodi',
+                message=settings.SMS_REGISTER_TEXT + code,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[phone_number]
+            )
+        else:
+            res = sms_send(phone_number, settings.SMS_REGISTER_TEXT + code)
+            phone_number = str(phone_number)
+            phone_number = phone_number.replace("+", "")
         if res is not None:
             PhoneCodeSpeaker.objects.update_or_create(phone=phone_number, defaults={'code': code})
             data = {
@@ -1023,13 +1033,19 @@ def full_register(request):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         phone_number = request.POST.get('phone_number')
+        email = request.data.get("email")
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         gender = request.POST.get('gender')
         code = request.POST.get('code')
-        phone_number = str(phone_number)
-        phone_number = phone_number.replace('+', '')
-        ph_c = PhoneCodeSpeaker.objects.filter(phone=phone_number, code=code)
+        if phone_number is None:
+            ph_c = PhoneCodeSpeaker.objects.filter(phone=email, code=code)
+            print('email')
+        else:
+            phone_number = str(phone_number)
+            phone_number = phone_number.replace('+', '')
+            ph_c = PhoneCodeSpeaker.objects.filter(phone=phone_number, code=code)
+            print('phone')
         if password1 == password2:
             if ph_c.count() > 0:
                 if User.objects.filter(username=phone_number).exists():
@@ -1038,7 +1054,8 @@ def full_register(request):
                     us.save()
                 else:
                     us = User.objects.create(
-                        username=phone_number,
+                        username=email,
+                        email=email,
                         password=make_password(password1),
                         first_name=first_name,
                         last_name=last_name

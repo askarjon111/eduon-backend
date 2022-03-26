@@ -138,11 +138,6 @@ def get_financial_statistics(request):
 @authentication_classes([])
 @permission_classes([])
 def send_code(request):
-    # was_limited = getattr(request, 'limited', False)
-    # if was_limited:
-    #     return JsonResponse({"code": 1, 'msg': 'try many times'},json_dumps_params={'ensure_ascii':False})
-    # else:
-
     try:
         phone = request.GET.get('phone')
         type = request.GET.get('type')

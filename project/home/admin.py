@@ -78,6 +78,7 @@ admin.site.register(IsFinished)
 admin.site.register(File)
 admin.site.register(ReferalValue)
 admin.site.register(PhoneCode)
+admin.site.register(PhoneCodeSpeaker)
 admin.site.register(Discount)
 
 
