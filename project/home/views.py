@@ -1113,11 +1113,17 @@ def full_register(request):
 def LogIn(request):
     try:
         phone = request.POST.get('phone')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        phone = str(phone).replace('+', '')
+
         try:
-            speaker = Speaker.objects.filter(phone=phone).first()
-            us = User.objects.get(username=phone)
+            if phone is None:
+                us = User.objects.get(email=email)
+                speaker = Speaker.objects.filter(speaker=us).first()
+            else:
+                phone = str(phone).replace('+', '')
+                us = User.objects.get(username=phone)
+                speaker = Speaker.objects.filter(speaker=us).first()
 
             if check_password(password, us.password):
                 ser = SpeakerLoginSerializer(speaker)
